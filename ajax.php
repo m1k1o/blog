@@ -16,8 +16,8 @@ if(empty($_SESSION['token'])){
 
 // Validate token
 $headers = apache_request_headers();
-if(isset($headers['CsrfToken']) && !empty($_SESSION['token'])){
-	if($headers['CsrfToken'] !== $_SESSION['token']) {
+if(isset($headers['Csrf-Token']) && !empty($_SESSION['token'])){
+	if($headers['Csrf-Token'] !== $_SESSION['token']) {
 		error("Wrong CSRF token.");
 	}
 } else {

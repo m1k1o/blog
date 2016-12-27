@@ -10,7 +10,7 @@ if(empty($_SESSION['token'])){
 	}
 }
 
-//$.ajaxSetup({headers:{'CsrfToken':'token'}});
+//$.ajaxSetup({headers:{'Csrf-Token':'token'}});
 
 if(Config::get_safe("logs", false))
 	file_put_contents('logs/visitors.log', date('Y-m-d H:i:s')."\t".$_SERVER["REMOTE_ADDR"]."\t".$_SERVER["HTTP_USER_AGENT"].PHP_EOL, FILE_APPEND);
@@ -239,7 +239,7 @@ if(Config::get_safe("logs", false))
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<!--<script src="static/scripts/jquery.min.js"></script>-->
-	<script>$["\x61\x6A\x61\x78\x53\x65\x74\x75\x70"]({"\x68\x65\x61\x64\x65\x72\x73":{"\x43\x73\x72\x66\x54\x6F\x6B\x65\x6E":"<?php echo $_SESSION['token'];?>"}});</script>
+	<script>$["\x61\x6A\x61\x78\x53\x65\x74\x75\x70"]({"\x68\x65\x61\x64\x65\x72\x73":{"\x43\x73\x72\x66-\x54\x6F\x6B\x65\x6E":"<?php echo $_SESSION['token'];?>"}});</script>
 	<script src="static/scripts/app.js?v=<?php echo Config::get("version"); ?>"></script>
 </body>
 </html>
