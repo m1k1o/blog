@@ -1,0 +1,4 @@
+<Files ~ "\.(ini|log|sql)$">
+	Order Allow,Deny
+	Deny from All
+</Files>
