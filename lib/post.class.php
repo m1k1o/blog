@@ -17,8 +17,9 @@ class Post
 	}
 	
 	private static function pirvacy($c){
-		if($c == "public" || $c == "friends")
+		if($c == "public" || $c == "friends"){
 			return $c;
+		}
 		
 		return "private";
 	}
@@ -54,7 +55,7 @@ class Post
 		}
 	}
 	
-	private static function random_str($len = 10) {
+	private static function random_str($len = 10){
 		$chr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 		$chr_len = strlen($chr);
 		$random_str = '';
@@ -245,23 +246,29 @@ class Post
 			$p = $meta->getAttribute('property');
 			$c = $meta->getAttribute('content');
 			
-			if($n == 'twitter:description' || $p == 'og:description' || $n == 'description')
+			if($n == 'twitter:description' || $p == 'og:description' || $n == 'description'){
 				$content["desc"] = substr($c, 0, 180);
+			}
 			
-			if($n == 'twitter:title' || $p == 'og:title' || $p == 'title')
+			if($n == 'twitter:title' || $p == 'og:title' || $p == 'title'){
 				$content["title"] = $c;
+			}
 			
-			if($p == 'og:url')
+			if($p == 'og:url'){
 				$content["link"] = $c;
+			}
 			
-			if($p == 'og:type')
+			if($p == 'og:type'){
 				$content["is_video"] = ($c == "video");
+			}
 			
-			if($n == 'twitter:image:src' || $p == 'og:image')
+			if($n == 'twitter:image:src' || $p == 'og:image'){
 				$content["thumb"] = $c;
+			}
 			
-			if($n == 'twitter:domain')
+			if($n == 'twitter:domain'){
 				$content["host"] = $c;
+			}
 		}
 		
 		return [
@@ -280,11 +287,14 @@ class Post
 		if($r["data"]){
 			preg_match('/^data\:image\/(jpe?g|png|gif)\;base64,(.*)$/', $r["data"], $m);
 			
-			if(!$m)
+			if(!$m){
 				throw new Exception("invalid file");
+			}
 			
 			$ext = $m[1];
-			if($ext == "jpeg") $ext = "jpg";
+			if($ext == "jpeg"){
+				$ext = "jpg";
+			}
 			
 			// Decode photo
 			$photo = base64_decode($m[2]);
@@ -296,15 +306,17 @@ class Post
 			$ext = pathinfo($r["name"], PATHINFO_EXTENSION);
 		}
 		
-		if(!$_FILES && !$r["data"])
+		if(!$_FILES && !$r["data"]){
 			throw new Exception("no file");
+		}
 		
 		// Create MD5
 		$md5 = md5($photo);
 		
 		// Find duplicate
-		if($d = DB::get_instance()->query("SELECT `path`, `thumb` FROM `images` WHERE `md5` = ? AND `status` = 1 LIMIT 1", $md5)->first())
+		if($d = DB::get_instance()->query("SELECT `path`, `thumb` FROM `images` WHERE `md5` = ? AND `status` = 1 LIMIT 1", $md5)->first()){
 			return $d;
+		}
 		
 		// Save to DB
 		$id = DB::get_instance()->query(
@@ -355,11 +367,13 @@ class Post
 	}
 	
 	public static function login($r){
-		if(!Config::get_safe("force_login", false))
+		if(!Config::get_safe("force_login", false)){
 			return true;
+		}
 		
-		if(self::is_logged_in())
+		if(self::is_logged_in()){
 			throw new Exception("You are already logged in.");
+		}
 		
 		if(Config::get("nick") == $r["nick"] && Config::get_safe("pass", "") == $r["pass"]){
 			$_SESSION["logged_in"] = md5($r["nick"].$r["pass"]);
@@ -371,11 +385,13 @@ class Post
 	}
 	
 	public static function logout($r){
-		if(!Config::get_safe("force_login", false))
+		if(!Config::get_safe("force_login", false)){
 			throw new Exception("You can't log out. There is no account.");
+		}
 		
-		if(!self::is_logged_in())
+		if(!self::is_logged_in()){
 			throw new Exception("You are not even logged in.");
+		}
 		
 		$_SESSION["logged_in"] = false;
 		return true;
