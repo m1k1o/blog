@@ -55,67 +55,6 @@ class Post
 		}
 	}
 	
-	private static function random_str($len = 10){
-		$chr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-		$chr_len = strlen($chr);
-		$random_str = '';
-		
-		for($i = 0; $i < $len; $i++){
-			$random_str .= $chr[rand(0, $chr_len - 1)];
-		}
-		
-		return $random_str;
-	}
-	
-	public static function thumb($source_path, $thumb_path){
-		ini_set('memory_limit', '128M');
-		
-		$thumb_w = 476;
-		$thumb_h = 476;
-		
-		$source_details = getimagesize($source_path); // pass id to thumb name
-		$source_w = $source_details[0];
-		$source_h = $source_details[1];
-		
-		if($source_w > $source_h){
-			$new_w = $thumb_w;
-			$new_h = intval($source_h * $new_w / $source_w);
-		} else {
-			$new_h = $thumb_h;
-			$new_w = intval($source_w * $new_h / $source_h);
-		}
-		
-		//$dest_x = intval(($thumb_w - $new_w) / 2);
-		//$dest_y = intval(($thumb_h - $new_h) / 2);
-		
-		switch($source_details[2]){
-			case IMAGETYPE_GIF:
-				$imgt = "ImageGIF";
-				$imgcreatefrom = "ImageCreateFromGIF";
-				break;
-			
-			case IMAGETYPE_JPEG:
-				$imgt = "ImageJPEG";
-				$imgcreatefrom = "ImageCreateFromJPEG";
-				break;
-			
-			case IMAGETYPE_PNG:
-				$imgt = "ImagePNG";
-				$imgcreatefrom = "ImageCreateFromPNG";
-				break;
-			
-			default:
-				return false;
-		}
-		
-		$old_image = $imgcreatefrom($source_path);
-		$new_image = imagecreatetruecolor($new_w, $new_h);
-		imagecopyresampled($new_image, $old_image, 0, 0, 0, 0, $new_w, $new_h, $source_w, $source_h);
-		//$new_image = imagecreatetruecolor($thumb_w, $thumb_h);
-		//imagecopyresized($new_image, $old_image, $dest_x, $dest_y, 0, 0, $new_w, $new_h, $source_w, $source_h);
-		return $imgt($new_image, $thumb_path);
-	}
-	
 	public static function insert($r){
 		self::login_protected();
 		
@@ -281,65 +220,7 @@ class Post
 	public static function upload_image($r){
 		self::login_protected();
 		
-		$photo = null;
-		$ext = null;
-		
-		if($r["data"]){
-			preg_match('/^data\:image\/(jpe?g|png|gif)\;base64,(.*)$/', $r["data"], $m);
-			
-			if(!$m){
-				throw new Exception("invalid file");
-			}
-			
-			$ext = $m[1];
-			if($ext == "jpeg"){
-				$ext = "jpg";
-			}
-			
-			// Decode photo
-			$photo = base64_decode($m[2]);
-		}
-		
-		if($_FILES){
-			$photo = file_get_contents($_FILES["file"]["tmp_name"]);
-			$r["name"] = $_FILES['file']['name'];
-			$ext = pathinfo($r["name"], PATHINFO_EXTENSION);
-		}
-		
-		if(!$_FILES && !$r["data"]){
-			throw new Exception("no file");
-		}
-		
-		// Create MD5
-		$md5 = md5($photo);
-		
-		// Find duplicate
-		if($d = DB::get_instance()->query("SELECT `path`, `thumb` FROM `images` WHERE `md5` = ? AND `status` = 1 LIMIT 1", $md5)->first()){
-			return $d;
-		}
-		
-		// Save to DB
-		$id = DB::get_instance()->query(
-			"INSERT INTO `images` ".
-			"(`id`, `name`, `path`, `thumb`, `type`, `md5`, `datetime`, `status`) ".
-			"VALUES (NULL, ?, NULL, NULL, ?, ?, NOW(), 1);",
-			$r["name"], $ext, $md5
-		)->last_id();
-		
-		// Create path name
-		$name = dechex($id).self::random_str(3).".".$ext;
-		$path = 'i/'.$name;
-		$thumb = 't/'.$name;
-		
-		// Save path
-		file_put_contents($path, $photo);
-		
-		// Create thumb
-		self::thumb($path, $thumb);
-		
-		// Save to DB
-		DB::get_instance()->query("UPDATE `images` SET `path` = ?, `thumb` = ? WHERE `id` = ?", $path, $thumb, $id);
-		return ["path" => $path, "thumb" => $thumb];
+		return Image::upload($r["name"], $r["data"]);
 	}
 	
 	public static function load($r){
