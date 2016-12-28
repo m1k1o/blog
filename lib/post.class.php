@@ -378,9 +378,7 @@ class Post
 			return ["error" => false];
 		}
 		
-		if(Config::get_safe("logs", false))
-			file_put_contents('logs/login_fails.log', date('Y-m-d H:i:s')."\t".$_SERVER["REMOTE_ADDR"]."\t".$_SERVER["HTTP_USER_AGENT"]."\t".$r["nick"].PHP_EOL, FILE_APPEND);
-		
+		Log::put("login_fails", $r["nick"]);
 		return ["error" => true, "msg" => "The nick or password is incorrect."];
 	}
 	

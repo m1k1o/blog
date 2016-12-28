@@ -12,8 +12,7 @@ if(empty($_SESSION['token'])){
 
 //$.ajaxSetup({headers:{'Csrf-Token':'token'}});
 
-if(Config::get_safe("logs", false))
-	file_put_contents('logs/visitors.log', date('Y-m-d H:i:s')."\t".$_SERVER["REMOTE_ADDR"]."\t".$_SERVER["HTTP_USER_AGENT"].PHP_EOL, FILE_APPEND);
+Log::put("visitors");
 ?><!DOCTYPE html>
 <html>
 <head>

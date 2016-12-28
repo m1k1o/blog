@@ -2,8 +2,7 @@
 include 'common.php';
 
 function error($msg){
-	if(Config::get_safe("logs", false))
-		file_put_contents('logs/ajax_errors.log', date('Y-m-d H:i:s')."\t".$_SERVER["REMOTE_ADDR"]."\t".$_SERVER["HTTP_USER_AGENT"]."\t".$msg.PHP_EOL, FILE_APPEND);
+	Log::put("ajax_errors", $msg);
 	header('Content-Type: application/json');
 	echo json_encode(["error" => true, "msg" => $msg]);
 	exit;
@@ -31,8 +30,7 @@ $f = ['Post', @$r["action"]];
 // If method exists
 if(is_callable($f)){
 	$c = call_user_func($f, $r);
-	if(Config::get_safe("logs", false))
-		file_put_contents('logs/ajax_access.log', date('Y-m-d H:i:s')."\t".$_SERVER["REMOTE_ADDR"]."\t".$_SERVER["HTTP_USER_AGENT"]."\t".@$r["action"].PHP_EOL, FILE_APPEND);
+	Log::put("ajax_access", @$r["action"]);
 } else {
 	error("Method was not found.");
 }
