@@ -10,6 +10,12 @@ class Post
 		return !empty($_SESSION["logged_in"]) && $_SESSION["logged_in"] == md5(Config::get("nick").Config::get_safe("pass", ""));
 	}
 	
+	private static function login_protected(){
+		if(!self::is_logged_in()){
+			throw new Exception("You need to be logged in to perform this action.");
+		}
+	}
+	
 	private static function pirvacy($c){
 		if($c == "public" || $c == "friends")
 			return $c;
@@ -110,9 +116,7 @@ class Post
 	}
 	
 	public static function insert($r){
-		if(!self::is_logged_in()){
-			return ["error" => true, "msg" => "You need to be logged in to perform this action."];
-		}
+		self::login_protected();
 		
 		$p = self::pirvacy($r["pirvacy"]);
 		$text = self::parse_content($r["text"]);
@@ -137,9 +141,7 @@ class Post
 	}
 
 	public static function update($r){
-		if(!self::is_logged_in()){
-			return ["error" => true, "msg" => "You need to be logged in to perform this action."];
-		}
+		self::login_protected();
 		
 		$r["pirvacy"] = self::pirvacy($r["pirvacy"]);
 		$plain_text = $r["text"];
@@ -149,35 +151,27 @@ class Post
 	}
 	
 	public static function hide($r){
-		if(!self::is_logged_in()){
-			return ["error" => true, "msg" => "You need to be logged in to perform this action."];
-		}
+		self::login_protected();
 		
 		DB::get_instance()->query("UPDATE `posts` SET `status` = 4 WHERE `id` = ?", $r["id"]);
 		return ["done" => true];
 	}
 	
 	public static function delete($r){
-		if(!self::is_logged_in()){
-			return ["error" => true, "msg" => "You need to be logged in to perform this action."];
-		}
+		self::login_protected();
 		
 		DB::get_instance()->query("UPDATE `posts` SET `status` = 5 WHERE `id` = ?", $r["id"]);
 		return ["done" => true];
 	}
 	
 	public static function edit_data($r){
-		if(!self::is_logged_in()){
-			return ["error" => true, "msg" => "You need to be logged in to perform this action."];
-		}
+		self::login_protected();
 		
 		return DB::get_instance()->query("SELECT `plain_text` AS `text`, `feeling`, `persons`, `location`, `pirvacy`, `content_type`, `content` FROM `posts` WHERE `id` = ? AND `status` = 1", $r["id"])->first();
 	}
 	
 	public static function get_date($r){
-		if(!self::is_logged_in()){
-			return ["error" => true, "msg" => "You need to be logged in to perform this action."];
-		}
+		self::login_protected();
 		
 		$date = DB::get_instance()->query("SELECT DATE_FORMAT(`datetime`,'%Y %c %e %k %i') AS `date_format` FROM `posts` WHERE `id` = ? AND `status` = 1", $r["id"])->first("date_format");
 		$date = array_map("intval", explode(" ", $date));
@@ -186,9 +180,7 @@ class Post
 	}
 	
 	public static function set_date($r){
-		if(!self::is_logged_in()){
-			return ["error" => true, "msg" => "You need to be logged in to perform this action."];
-		}
+		self::login_protected();
 		
 		$d = $r["date"];
 		$datetime = "{$d[0]}/{$d[1]}/{$d[2]} {$d[3]}:{$d[4]}";
@@ -199,9 +191,7 @@ class Post
 	}
 	
 	public static function parse_link($r){
-		if(!self::is_logged_in()){
-			return ["error" => true, "msg" => "You need to be logged in to perform this action."];
-		}
+		self::login_protected();
 		
 		$l = $r["link"];
 		
@@ -282,9 +272,7 @@ class Post
 	}
 	
 	public static function upload_image($r){
-		if(!self::is_logged_in()){
-			return ["error" => true, "msg" => "You need to be logged in to perform this action."];
-		}
+		self::login_protected();
 		
 		$photo = null;
 		$ext = null;
@@ -293,7 +281,7 @@ class Post
 			preg_match('/^data\:image\/(jpe?g|png|gif)\;base64,(.*)$/', $r["data"], $m);
 			
 			if(!$m)
-				return ["error" => true, "msg" => "invalid file"];
+				throw new Exception("invalid file");
 			
 			$ext = $m[1];
 			if($ext == "jpeg") $ext = "jpg";
@@ -309,7 +297,7 @@ class Post
 		}
 		
 		if(!$_FILES && !$r["data"])
-			return ["error" => true, "msg" => "no file"];
+			throw new Exception("no file");
 		
 		// Create MD5
 		$md5 = md5($photo);
@@ -368,29 +356,29 @@ class Post
 	
 	public static function login($r){
 		if(!Config::get_safe("force_login", false))
-			return ["error" => false];
+			return true;
 		
 		if(self::is_logged_in())
-			return ["error" => true, "msg" => "You are already logged in."];
+			throw new Exception("You are already logged in.");
 		
 		if(Config::get("nick") == $r["nick"] && Config::get_safe("pass", "") == $r["pass"]){
 			$_SESSION["logged_in"] = md5($r["nick"].$r["pass"]);
-			return ["error" => false];
+			return true;
 		}
 		
 		Log::put("login_fails", $r["nick"]);
-		return ["error" => true, "msg" => "The nick or password is incorrect."];
+		throw new Exception("The nick or password is incorrect.");
 	}
 	
 	public static function logout($r){
 		if(!Config::get_safe("force_login", false))
-			return ["error" => true, "msg" => "You can't log out. There is no account."];
+			throw new Exception("You can't log out. There is no account.");
 		
 		if(!self::is_logged_in())
-			return ["error" => true, "msg" => "You are not even logged in."];
+			throw new Exception("You are not even logged in.");
 		
 		$_SESSION["logged_in"] = false;
-		return ["error" => false];
+		return true;
 	}
 	
 	public static function handshake($r){
