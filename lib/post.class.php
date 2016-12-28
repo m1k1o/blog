@@ -2,16 +2,8 @@
 
 class Post
 {
-	private static function is_logged_in(){
-		if(!Config::get_safe("force_login", false)){
-			return true;
-		}
-		
-		return !empty($_SESSION["logged_in"]) && $_SESSION["logged_in"] == md5(Config::get("nick").Config::get_safe("pass", ""));
-	}
-	
 	private static function login_protected(){
-		if(!self::is_logged_in()){
+		if(!User::is_logged_in()){
 			throw new Exception("You need to be logged in to perform this action.");
 		}
 	}
@@ -238,7 +230,7 @@ class Post
 			"SELECT `id`, `text`, `feeling`, `persons`, `location`, `pirvacy`, `content_type`, `content`, DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i') AS `datetime` ".
 			"FROM `posts` ".
 			"WHERE ".
-				(!self::is_logged_in() ? "`pirvacy` = 'public' AND " : "").
+				(!User::is_logged_in() ? "`pirvacy` = 'public' AND " : "").
 				($until ? "`posts`.`datetime` < DATE_ADD('{$until}', INTERVAL +1 MONTH) AND " : "").
 				($id ? "`id` = {$id} AND " : "").
 				"`status` = 1 ".
@@ -248,37 +240,14 @@ class Post
 	}
 	
 	public static function login($r){
-		if(!Config::get_safe("force_login", false)){
-			return true;
-		}
-		
-		if(self::is_logged_in()){
-			throw new Exception("You are already logged in.");
-		}
-		
-		if(Config::get("nick") == $r["nick"] && Config::get_safe("pass", "") == $r["pass"]){
-			$_SESSION["logged_in"] = md5($r["nick"].$r["pass"]);
-			return true;
-		}
-		
-		Log::put("login_fails", $r["nick"]);
-		throw new Exception("The nick or password is incorrect.");
+		return User::login($r["nick"], $r["pass"]);
 	}
 	
-	public static function logout($r){
-		if(!Config::get_safe("force_login", false)){
-			throw new Exception("You can't log out. There is no account.");
-		}
-		
-		if(!self::is_logged_in()){
-			throw new Exception("You are not even logged in.");
-		}
-		
-		$_SESSION["logged_in"] = false;
-		return true;
+	public static function logout(){
+		return User::logout();
 	}
 	
 	public static function handshake($r){
-		return ["logged_in" => self::is_logged_in()];
+		return ["logged_in" => User::is_logged_in()];
 	}
 }
