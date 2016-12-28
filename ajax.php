@@ -1,41 +1,32 @@
 <?php
 include 'common.php';
 
-function error($msg){
-	Log::put("ajax_errors", $msg);
-	header('Content-Type: application/json');
-	echo json_encode(["error" => true, "msg" => $msg]);
-	exit;
-}
+$ajax = new Ajax();
 
-// Check if exists token
-if(empty($_SESSION['token'])){
-	error("Direct access violation.");
-}
-
-// Validate token
-$headers = apache_request_headers();
-if(isset($headers['Csrf-Token']) && !empty($_SESSION['token'])){
-	if($headers['Csrf-Token'] !== $_SESSION['token']) {
-		error("Wrong CSRF token.");
+try {
+	$ajax->token();
+	
+	// Prepare inputs
+	$request = array_merge(@$_POST, @$_GET);
+	if(empty($request["action"])){
+		throw new Exception("No action specified.");
 	}
-} else {
-	error("No CSRF token.");
+	
+	$method = ['Post', $request["action"]];
+	
+	// If method exists
+	if(!is_callable($method)){
+		throw new Exception("Method was not found.");
+	}
+	
+	// CAll method
+	$response = call_user_func($method, $request);
+	$ajax->set_response($response);
+	
+	// Log
+	Log::put("ajax_access", $request["action"]);
+} catch (Exception $e) {
+	$ajax->set_error($e->getMessage());
 }
 
-// Prepare inputs
-$r = array_merge(@$_POST, @$_GET);
-$f = ['Post', @$r["action"]];
-
-// If method exists
-if(is_callable($f)){
-	$c = call_user_func($f, $r);
-	Log::put("ajax_access", @$r["action"]);
-} else {
-	error("Method was not found.");
-}
-
-// Flush
-header('Content-Type: application/json');
-echo json_encode($c);
-exit;
+$ajax->json_response();
