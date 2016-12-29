@@ -247,7 +247,7 @@ for($m=0;$m<=60;$m+=10){
 		<!-- Pirvacy Settings -->
 		<ul class="b_dropdown pirvacy_settings">
 			<li><a class="set" data-val="public"><i class="public"></i>Öffentlich</a></li>
-			<li><a class="set" data-val="friends"><i class="friends"></i>Friends</a></li>
+			<!--<li><a class="set" data-val="friends"><i class="friends"></i>Friends</a></li>-->
 			<li><a class="set" data-val="private"><i class="private"></i>Nur ich</a></li>
 		</ul>
 	</div>
