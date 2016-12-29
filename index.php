@@ -14,27 +14,25 @@ if(empty($_SESSION['token'])){
 
 Log::put("visitors");
 
-$date = explode(" ", date("h d m Y"));
-
-$year = intval($date[3]);
+$year = intval(date("Y"));
 $years = '';
 for($y=$year-5;$y<=$year+5;$y++){
-	$years .= '<option'.($y == $year ? ' selected' : '').'>'.$y.'</option>';
+	$years .= sprintf('<option>%d</option>', $y);
 }
 
 $months = '';
 for($m=1;$m<=12;$m++){
-	$months .= '<option'.($m == $date[2] ? ' selected' : '').'>'.$m.'</option>';
+	$months .= sprintf('<option value="%d">%02d</option>', $m, $m);
 }
 
 $days = '';
 for($d=1;$d<=31;$d++){
-	$days .= sprintf('<option value="%d"%s>%02d</option>', $d, $d == $date[1] ? ' selected' : '', $d);
+	$days .= sprintf('<option value="%d">%02d</option>', $d, $d);
 }
 
 $hours = '';
 for($h=0;$h<=60;$h++){
-	$hours .= sprintf('<option value="%d"%s>%02d</option>', $h, $h == $date[0] ? ' selected' : '', $h);
+	$hours .= sprintf('<option value="%d">%02d</option>', $h, $h);
 }
 
 $minutes = '';
