@@ -8,14 +8,6 @@ class Post
 		}
 	}
 	
-	private static function pirvacy($c){
-		if($c == "public" || $c == "friends"){
-			return $c;
-		}
-		
-		return "private";
-	}
-	
 	private static function parse_content($c){
 		//$c = htmlentities($c);
 		
@@ -47,53 +39,81 @@ class Post
 		}
 	}
 	
+	private static function raw_data($raw_input){
+		$default_input = [
+			"text" => '',
+			"feeling" => '',
+			"persons" => '',
+			"location" => '',
+			"content_type" => '',
+			"content" => '',
+			"pirvacy" => ''
+		];
+		
+		// Handle only allowed keys
+		$raw_output = array();
+		foreach($default_input as $key => $def){
+			// Key exists in input
+			if(array_key_exists($key, $raw_input)){
+				$raw_output[$key] = $raw_input[$key];
+			} else {
+				$raw_output[$key] = $default_input[$key];
+			}
+		}
+		
+		if($raw_output['pirvacy'] != "public" && $raw_output['pirvacy'] != "friends"){
+			$raw_output['pirvacy'] =  "private";
+		}
+		
+		return $raw_output;
+	}
+
 	public static function insert($r){
 		self::login_protected();
 		
-		$p = self::pirvacy($r["pirvacy"]);
-		$text = self::parse_content($r["text"]);
-		$post_id = DB::get_instance()->query(
-			"INSERT INTO `posts` ".
-			"(`id`, `text`, `plain_text`, `feeling`, `persons`, `location`, `pirvacy`, `content_type`, `content`, `datetime`, `status`) ".
-			"VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 1);",
-			$text, $r["text"], $r["feeling"], $r["persons"], $r["location"], $p, $r["content_type"], $r["content"]
-		)->last_id();
+		$data = self::raw_data($r);
 		
-		return [
-			"text" => $text,
-			"feeling" => $r["feeling"],
-			"persons" => $r["persons"],
-			"location" => $r["location"],
-			"pirvacy" => $p,
-			"content_type" => $r["content_type"],
-			"content" => $r["content"],
-			"datetime" => date("d M Y H:i"),
-			"id" => $post_id
-		];
+		$data['plain_text'] = $data['text'];
+		$data['text'] = self::parse_content($data['text']);
+		$data['datetime'] = 'NOW()';
+		$data['status'] = '1';
+		
+		$data['id'] = DB::get_instance()->insert('posts', $data)->last_id();
+		
+		$data['datetime'] = date("d M Y H:i");
+		unset($data['plain_text']);
+		
+		return $data;
 	}
 
 	public static function update($r){
 		self::login_protected();
+
+		$data = self::raw_data($r);
 		
-		$r["pirvacy"] = self::pirvacy($r["pirvacy"]);
-		$plain_text = $r["text"];
-		$r["text"] = self::parse_content($r["text"]);
-		DB::get_instance()->query("UPDATE `posts` SET `text` = ?, `plain_text` = ?, `feeling` = ?, `persons` = ?, `location` = ?, `pirvacy` = ?, `content_type` = ?, `content` = ? WHERE `id` = ? AND `status` = 1", $r["text"], $plain_text, $r["feeling"], $r["persons"], $r["location"], $r["pirvacy"], $r["content_type"], $r["content"], $r["id"]);
-		return $r;
+		$data['plain_text'] = $data['text'];
+		$data['text'] = self::parse_content($data['text']);
+		
+		DB::get_instance()->update('posts', $data, "WHERE `id` = ? AND `status` = 1", $r["id"]);
+		
+		$data['id'] = $this->_id;
+		unset($data['plain_text']);
+		
+		return $data;
 	}
 	
 	public static function hide($r){
 		self::login_protected();
 		
 		DB::get_instance()->query("UPDATE `posts` SET `status` = 4 WHERE `id` = ?", $r["id"]);
-		return ["done" => true];
+		return true;
 	}
 	
 	public static function delete($r){
 		self::login_protected();
 		
 		DB::get_instance()->query("UPDATE `posts` SET `status` = 5 WHERE `id` = ?", $r["id"]);
-		return ["done" => true];
+		return true;
 	}
 	
 	public static function edit_data($r){
@@ -117,9 +137,7 @@ class Post
 		$d = $r["date"];
 		$datetime = "{$d[0]}/{$d[1]}/{$d[2]} {$d[3]}:{$d[4]}";
 		DB::get_instance()->query("UPDATE `posts` SET `datetime` = ? WHERE `id` = ? AND `status` = 1", $datetime, $r["id"]);
-		return [
-			"datetime" => date("d M Y H:i", strtotime($datetime))
-		];
+		return [ "datetime" => date("d M Y H:i", strtotime($datetime)) ];
 	}
 	
 	public static function parse_link($r){
