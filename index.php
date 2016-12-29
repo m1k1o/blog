@@ -60,10 +60,10 @@ for($m=0;$m<=60;$m+=10){
 	<div id="dd_mask" class="mask"></div>
 	<div id="prepared" style="display:none;">
 		<!-- Login Button -->
-		<button type="button" class="button blue login_btn">Anmelden</button>
+		<button type="button" class="button blue login_btn">Login</button>
 		
 		<!-- Logout Button -->
-		<button type="button" class="button gray logout_btn">Abmelden</button>
+		<button type="button" class="button gray logout_btn">Logout</button>
 		
 		<!-- Login Modal -->
 		<div class="modal login_modal">
@@ -71,16 +71,16 @@ for($m=0;$m<=60;$m+=10){
 				<div class="modal-content">
 					<div class="modal-header">
 						<a class="close"></a>
-						<h4 class="modal-title">Anmeldung</h4>
+						<h4 class="modal-title">Login</h4>
 					</div>
 					<div class="modal-body">
-						<input type="text" class="nick" placeholder="Benutzername">&nbsp;
-						<input type="password" class="pass" placeholder="Kennwort">
+						<input type="text" class="nick" placeholder="Nick">&nbsp;
+						<input type="password" class="pass" placeholder="Password">
 					</div>
 					<div class="modal-footer">
 						<div class="buttons">
-							<a class="button gray close">Abbrechen</a>
-							<button type="button" class="button blue do_login">Anmelden</button>
+							<a class="button gray close">Cancel</a>
+							<button type="button" class="button blue do_login">Login</button>
 						</div>
 					</div>
 				</div>
@@ -116,17 +116,17 @@ for($m=0;$m<=60;$m+=10){
 		<!-- New Post -->
 		<div class="b_post new_post">
 			<div class="modal-header">
-				<h4 class="modal-title">Verfasse einen Beitrag</h4>
+				<h4 class="modal-title">Post</h4>
 			</div>
 			<div class="edit-form"></div>
 		</div>
 		
 		<!-- Post Tools -->
 		<ul class="b_dropdown post_tools">
-			<li><a class="edit_post">Beitrag bearbeiten</a></li>
-			<li><a class="edit_date">Datum ändern</a></li>
-			<li><a class="hide">In der Chronik verbergen</a></li>
-			<li><a class="delete_post">Löschen</a></li>
+			<li><a class="edit_post">Edit Post</a></li>
+			<li><a class="edit_date">Change Date</a></li>
+			<li><a class="hide">Hide from Timeline</a></li>
+			<li><a class="delete_post">Delete</a></li>
 		</ul>
 		
 		<!-- Edit Modal -->
@@ -135,21 +135,21 @@ for($m=0;$m<=60;$m+=10){
 				<div class="modal-content">
 					<div class="modal-header">
 						<a class="close"></a>
-						<h4 class="modal-title">Beitrag bearbeiten</h4>
+						<h4 class="modal-title">Edit Post</h4>
 					</div>
 					<div class="edit_form">
 						<div class="modal-body drop_space">
-							<div class="e_drag"><span>Fotos hierher ziehen</span></div>
+							<div class="e_drag"><span>Drag photos here</span></div>
 							<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="e_profile">
-							<div class="e_text" contenteditable="true" placeholder="Was machst du gerade?"></div>
+							<div class="e_text" contenteditable="true" placeholder="What's on your mind?"></div>
 						</div>
 						<input type="hidden" class="i_content_type">
 						<input type="hidden" class="i_content">
 						<div class="modal-body content"></div>
 						<table class="options_content">
-							<tr class="feeling"><th>Fühlen</th><td><input type="text" class="i_feeling" placeholder="Wie fühlst du dich?"><button class="clear"></button></td></tr>
-							<tr class="persons"><th>Mit</th><td><input type="text" class="i_persons" placeholder="Wer begleitet dich?"><button class="clear"></button></td></tr>
-							<tr class="location"><th>Hier</th><td><input type="text" class="i_location" placeholder="Wo bist du?"><button class="clear"></button></td></tr>
+							<tr class="feeling"><th>Feeling</th><td><input type="text" class="i_feeling" placeholder="How are you feeling?"><button class="clear"></button></td></tr>
+							<tr class="persons"><th>With</th><td><input type="text" class="i_persons" placeholder="Who are you with?"><button class="clear"></button></td></tr>
+							<tr class="location"><th>At</th><td><input type="text" class="i_location" placeholder="Where are you?"><button class="clear"></button></td></tr>
 						</table>
 						<div class="modal-footer">
 							<ul class="options">
@@ -160,7 +160,7 @@ for($m=0;$m<=60;$m+=10){
 							</ul>
 							<div class="buttons">
 								<span class="button gray pirvacy"><span class="cnt"></span><i class="arrow"></i></span>
-								<button type="button" class="button blue save">Speichern</button>
+								<button type="button" class="button blue save">Save</button>
 							</div>
 						</div>
 					</div>
@@ -174,23 +174,23 @@ for($m=0;$m<=60;$m+=10){
 				<div class="modal-content">
 					<div class="modal-header">
 						<a class="close"></a>
-						<h4 class="modal-title">Datum ändern</h4>
+						<h4 class="modal-title">Change date</h4>
 					</div>
 					<div class="modal-body">
 						<select class="year">
-							<option value="" disabled="1">Jahr:</option>
+							<option value="" disabled="1">Year:</option>
 							<?php echo $years; ?>
 						</select>
 						<select class="month">
-							<option value="" disabled="1">Monat:</option>
+							<option value="" disabled="1">Month:</option>
 							<?php echo $months; ?>
 						</select>
 						<select class="day">
-							<option value="" disabled="1">Tag:</option>
+							<option value="" disabled="1">Day:</option>
 							<?php echo $days; ?>
 						</select>
 						<select class="hour">
-							<option value="" disabled="1">Stunde:</option>
+							<option value="" disabled="1">Hour:</option>
 							<?php echo $hours; ?>
 						</select>
 						<select class="minute">
@@ -200,8 +200,8 @@ for($m=0;$m<=60;$m+=10){
 					</div>
 					<div class="modal-footer">
 						<div class="buttons">
-							<a class="button gray close">Abbrechen</a>
-							<button type="button" class="button blue save">Speichern</button>
+							<a class="button gray close">Cancel</a>
+							<button type="button" class="button blue save">Save</button>
 						</div>
 					</div>
 				</div>
@@ -214,13 +214,13 @@ for($m=0;$m<=60;$m+=10){
 				<div class="modal-content">
 					<div class="modal-header">
 						<a class="close"></a>
-						<h4 class="modal-title">Beitrag löschen</h4>
+						<h4 class="modal-title">Delete Post</h4>
 					</div>
-					<div class="modal-body">Dieser Beitrag wird gelöscht und du wirst ihn nicht mehr finden können. Du kannst den Beitrag auch bearbeiten, wenn du nur etwas ändern möchtest.</div>
+					<div class="modal-body">This post will be deleted and you'll no longer be able to find it. You can also edit this post if you just want to change something.</div>
 					<div class="modal-footer">
 						<div class="buttons">
-							<a class="button gray close">Abbrechen</a>
-							<button type="button" class="button blue delete">Beitrag löschen</button>
+							<a class="button gray close">Cancel</a>
+							<button type="button" class="button blue delete">Delete Post</button>
 						</div>
 					</div>
 				</div>
@@ -233,7 +233,7 @@ for($m=0;$m<=60;$m+=10){
 				<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="b_profile">
 				<div class="b_desc">
 					<div class="b_sharer">
-						<span class="b_name"><?php echo Config::get("name"); ?></span><span class="b_options"> - </span><span class="b_feeling"></span><span class="b_with"> mit </span><span class="b_persons"></span><span class="b_here"> hier: </span><span class="b_location"></span>
+						<span class="b_name"><?php echo Config::get("name"); ?></span><span class="b_options"> - </span><span class="b_feeling"></span><span class="b_with"> with </span><span class="b_persons"></span><span class="b_here"> here: </span><span class="b_location"></span>
 					</div>
 					<i class="pirvacy_icon"></i>
 					<a class="b_date"></a>
@@ -246,9 +246,9 @@ for($m=0;$m<=60;$m+=10){
 		
 		<!-- Pirvacy Settings -->
 		<ul class="b_dropdown pirvacy_settings">
-			<li><a class="set" data-val="public"><i class="public"></i>Öffentlich</a></li>
+			<li><a class="set" data-val="public"><i class="public"></i>Public</a></li>
 			<!--<li><a class="set" data-val="friends"><i class="friends"></i>Friends</a></li>-->
-			<li><a class="set" data-val="private"><i class="private"></i>Nur ich</a></li>
+			<li><a class="set" data-val="private"><i class="private"></i>Only me</a></li>
 		</ul>
 	</div>
 	
