@@ -14,7 +14,7 @@ body {
   text-align: center;
 }
 
-.bluebar h1{
+.bluebar h1 {
   margin: 0;
   padding: 0;
   font-size: 24px;
@@ -569,7 +569,7 @@ body {
   float: left;
 }
 
-.e_drag{
+.e_drag {
   display: none;
   position: absolute;
   top: 0;
@@ -587,17 +587,17 @@ body {
   box-sizing: border-box;
 }
 
-.e_drag span{
+.e_drag span {
   display: table-cell;
   vertical-align: middle;
 }
 
-.e_drag.active{
+.e_drag.active {
   border-color: #75a3f5;
   color: #75a3f5;
 }
 
-.is-dragevent .e_drag{
+.is-dragevent .e_drag {
   display: table;
 }
 
@@ -640,11 +640,11 @@ body {
   background-color: #f2f2f2;
 }
 
-.options li.kepet a{
+.options li.kepet a {
   position: relative;
 }
 
-.options li.kepet a span{
+.options li.kepet a span {
   height: 100%;
   overflow: hidden;
   position: absolute;
@@ -836,7 +836,7 @@ i.public {
   background-position: -68px -275px;
 }
 
-.error{
+.error {
   color: #a94442;
   background-color: #f2dede;
   padding: 15px;
@@ -845,7 +845,7 @@ i.public {
   border-radius: 4px;
 }
 
-.error .clear{
+.error .clear {
   float: right;
   margin-top: 5px;
   margin-left: 15px;
@@ -858,7 +858,7 @@ body > .error {
   max-width: 300px;
 }
 
-.more_posts{
+.more_posts {
   display: none;
   text-align: center;
   margin-bottom: 10px;
