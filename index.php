@@ -272,19 +272,51 @@ if(!empty($scripts)){
 		
 		<!-- Post Row -->
 		<div class="b_post post_row">
-			<div class="b_header">
-				<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="b_profile">
-				<div class="b_desc">
-					<div class="b_sharer">
-						<span class="b_name"><?php echo Config::get("name"); ?></span><span class="b_options"> - </span><span class="b_feeling"></span><span class="b_with"> <?php echo __("with"); ?> </span><span class="b_persons"></span><span class="b_here"> <?php echo __("here:"); ?> </span><span class="b_location"></span>
+			<div class="b_inner">
+				<div class="b_header">
+					<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="b_profile">
+					<div class="b_desc">
+						<div class="b_sharer">
+							<span class="b_name"><?php echo Config::get("name"); ?></span><span class="b_options"> - </span><span class="b_feeling"></span><span class="b_with"> <?php echo __("with"); ?> </span><span class="b_persons"></span><span class="b_here"> <?php echo __("here:"); ?> </span><span class="b_location"></span>
+						</div>
+						<i class="privacy_icon"></i>
+						<a class="b_date"></a>
+						<a class="b_tools"></a>
 					</div>
-					<i class="privacy_icon"></i>
-					<a class="b_date"></a>
-					<a class="b_tools"></a>
 				</div>
+				<div class="b_text"></div>
+				<div class="b_content"></div>
 			</div>
-			<div class="b_text"></div>
-			<div class="b_content"></div>
+			<div class="b_socialbox">
+				<?php /*
+				<ul class="b_buttons">
+					<li><a class="active"><i class="like"></i>Like</a></li>
+					<li><a><i class="comment"></i>Comment</a></li>
+				</ul>
+				<div class="b_comments">
+					<div class="b_comment">
+						<img src="static/images/profile.jpg" width="32" height="32" class="b_profile" />
+						<div class="b_c_input">
+							<textarea placeholder="Write comment ..."></textarea>
+						</div>
+					</div>
+					<ul>
+						<li class="b_comment">
+							<img src="static/images/profile.jpg" width="32" height="32" class="b_profile" />
+							<div class="b_c_content">
+								<p><span class="b_name">Max Mustermann</span> Sample Text</p>
+								<a class="b_date">12 Oct 2016 07:59</a>
+							</div>
+							<a class="b_tools"></a>
+						</li>
+					</ul>
+					<div class="b_panel">
+						<a class="btn">Show more comments</a>
+						<span class="count">2 from 52</span>
+					</div>
+				</div>
+				*/ ?>
+			</div>
 		</div>
 		
 		<!-- Pirvacy Settings -->

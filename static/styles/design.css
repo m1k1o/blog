@@ -135,12 +135,15 @@ body {
   border-radius: 3px;
   background-color: #fff;
   margin-bottom: 10px;
-  padding: 12px;
   position: relative;
 }
 
 .b_post.new_post {
   padding: 0;
+}
+
+.b_inner {
+  padding: 12px;
 }
 
 .b_header {
@@ -429,13 +432,126 @@ body {
   max-height: 470px;
 }
 
-.b_textarea {
+.b_socialbox {
+  
+}
+
+.b_buttons {
+  list-style-type: none;
+  margin: 0 12px;
+  padding: 5px 0;
+  border-top: 1px solid #e5e5e5;
+}
+
+.b_buttons li {
+  display: inline-block;
+}
+
+.b_buttons li a {
+  color: #7f7f7f;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 14px;
+  margin-right: 20px;
+  padding: 4px 4px 4px 0;
+  cursor: pointer;
+}
+
+.b_buttons li a:hover {
+  text-decoration: underline;
+}
+
+i.like, i.comment {
+  background: url(../images/tools.png) no-repeat;
+  display: inline-block;
+  height: 14px;
+  margin: 0 6px -2px 0;
+  width: 14px;
+}
+
+i.like {
+  background-position: 0px -62px;
+}
+
+i.comment {
+  background-position: 0px -47px
+}
+
+.b_buttons li a.active {
+  color: rgb(88, 144, 255);
+}
+
+.b_buttons li a.active i.like {
+  background-position: 0px -92px;
+}
+
+.b_comments {
+  border-top: 1px solid #e1e2e3;
+  background-color: #f6f7f9;
+  border-radius: 0 0 3px 3px;
+  color: #1d2129;
+  padding: 7px 0;
+}
+
+.b_comments .b_panel {
+  font-size: 13px;
+  overflow: hidden;
+  padding: 5px 12px;
+}
+
+.b_comments .b_panel .btn {
+  color: #365899;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.b_comments .b_panel .btn:hover {
+  text-decoration: underline;
+}
+
+.b_comments .b_panel .count {
+  float: right;
+  color: #9197a3;
+}
+
+.b_comments ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.b_comment {
+  position: relative;
+  padding: 5px 12px;
+  overflow: hidden;
+}
+
+.b_comment p {
+  margin: 0;
+}
+
+.b_comment .b_c_content {
+  font-size: 13px;
+  margin-left: 37px;
+}
+
+.b_comment .b_c_input {
+  margin-left: 37px;
+  font-size: 0;
+}
+
+.b_comment .b_c_input textarea {
+  font-size: 13px;
+  padding: 5px;
+  background-color: #fff;
+  box-sizing: border-box;
+  min-height: 30px;
+  height: auto;
   width: 100%;
-  max-width: 100%;
   min-width: 100%;
-  height: 200px;
-  min-height: 200px;
-  border: 0;
+  max-width: 100%;
+  outline: 0;
 }
 
 .mask {
@@ -663,7 +779,7 @@ body {
 }
 
 .t_area .e_text  {
-  white-space: pre;
+  white-space: pre-wrap;
   margin: 0 0 0 10px;
   min-height: 88px;
   max-width: 100%;
