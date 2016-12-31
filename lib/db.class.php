@@ -1,12 +1,14 @@
 <?php
 
-// v3.43
+// v3.43 (+ query counter)
 class DB
 {
 	private static $_instance = null;
 	
 	private $_PDO;
 	private $_query;
+	
+	private $_query_counter;
 	
 	// Handle instances
 	public final static function get_instance(){
@@ -26,11 +28,8 @@ class DB
 			throw new DBException("Mysql host or socket must be defined");
 		}
 		
-		if($socket !== false){
-			$server = 'unix_socket='.$socket;
-		} else {
-			$server = 'host='.$host;
-		}
+		// Socket or host
+		$server = ($socket !== false ? 'unix_socket=' : 'host=').$socket;
 		
 		// Try to connect
 		try {
@@ -44,10 +43,10 @@ class DB
 				// Username
 				Config::get('mysql_user'),
 				// Password
-				Config::get('mysql_pass', '')
+				Config::get_safe('mysql_pass', '')
 			);
 			$this->_PDO->exec('SET NAMES utf8'); 
-		} catch (\PDOException $e) {
+		} catch (PDOException $e) {
 			throw new DBException($e->getMessage());
 		}
 		
@@ -100,15 +99,11 @@ class DB
 			
 			// Execute
 			$this->_query->execute();
-		} catch (\PDOException $e) {
+		} catch (PDOException $e) {
 			throw new DBException($e->getMessage());
 		}
 		
-		// Debug mode
-		//if(Config::get_safe('debug', false)){
-		//	echo "<!-- ".$this->_query->queryString." + ".json_encode($params)." -->\n";
-		//}
-		
+		$this->_query_counter++;
 		return $this;
 	}
 	
@@ -263,10 +258,15 @@ class DB
 		// Try to execute MySQL
 		try {
 			$this->_PDO->exec($sql);
-			return $this;
-		} catch (\PDOException $e) {
+		} catch (PDOException $e) {
 			throw new DBException($e->getMessage());
 		}
+		
+		return $this;
+	}
+	
+	public final function total_queries(){
+		return $this->_query_counter;
 	}
 }
 
