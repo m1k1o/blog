@@ -2,7 +2,7 @@
 
 class Config
 {
-	private static $_settings = [];
+	private static $_settings = null;
 	
 	private static function init(){
 		$config_file = PROJECT_PATH.'/config.ini';
@@ -15,7 +15,7 @@ class Config
 		$custom_config = PROJECT_PATH.'/custom.ini';
 		
 		if(is_readable($custom_config)){
-			$custom = parse_ini_file(PROJECT_PATH.'/custom.ini');
+			$custom = parse_ini_file($custom_config);
 			if($custom !== false){
 				self::$_settings = array_merge(self::$_settings, $custom);
 			}
@@ -23,12 +23,12 @@ class Config
 	}
 	
 	public static function get($key){
-		if(empty(self::$_settings)){
+		if(self::$_settings === null){
 			self::init();
 		}
 		
 		if(!array_key_exists($key, self::$_settings)){
-			throw new ConfigException('Key "'.$key.'" not found in settings');
+			throw new ConfigException(sprintf('Key "%s" not found in settings.', $key));
 		}
 		
 		return self::$_settings[$key];
@@ -45,4 +45,4 @@ class Config
 	}
 }
 
-class ConfigException extends Exception{}
+class ConfigException extends Exception {}
