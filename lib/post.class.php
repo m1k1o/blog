@@ -96,7 +96,6 @@ class Post
 		
 		DB::get_instance()->update('posts', $data, "WHERE `id` = ? AND `status` = 1", $r["id"]);
 		
-		$data['id'] = $this->_id;
 		unset($data['plain_text']);
 		
 		return $data;
