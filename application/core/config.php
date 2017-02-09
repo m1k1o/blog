@@ -1,4 +1,5 @@
 <?php
+namespace Core;
 
 class Config
 {
@@ -45,4 +46,4 @@ class Config
 	}
 }
 
-class ConfigException extends Exception {}
+class ConfigException extends \Exception {}

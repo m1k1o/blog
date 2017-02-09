@@ -1,14 +1,15 @@
 <?php
+namespace Core;
 
-// v3.43 (+ query counter)
 class DB
 {
 	private static $_instance = null;
 	
 	private $_PDO;
 	private $_query;
-	
-	private $_query_counter;
+
+	private $_query_counter = 0;
+	public $_escape_output = false;
 	
 	// Handle instances
 	public final static function get_instance(){
@@ -46,7 +47,7 @@ class DB
 				Config::get_safe('mysql_pass', '')
 			);
 			$this->_PDO->exec('SET NAMES utf8'); 
-		} catch (PDOException $e) {
+		} catch (\PDOException $e) {
 			throw new DBException($e->getMessage());
 		}
 		
@@ -99,7 +100,7 @@ class DB
 			
 			// Execute
 			$this->_query->execute();
-		} catch (PDOException $e) {
+		} catch (\PDOException $e) {
 			throw new DBException($e->getMessage());
 		}
 		
@@ -229,7 +230,17 @@ class DB
 	
 	// Get all rows
 	public final function all($type = \PDO::FETCH_ASSOC){
-		return $this->_query->fetchAll($type);
+		$rows = $this->_query->fetchAll($type);
+		
+		if($this->_escape_output){
+			foreach($rows as &$row){
+				foreach($row as &$col){
+					$col = htmlspecialchars($col);
+				}
+			}
+		}
+
+		return $rows;
 	}
 	
 	// Get all values to one dimensional array
@@ -258,7 +269,7 @@ class DB
 		// Try to execute MySQL
 		try {
 			$this->_PDO->exec($sql);
-		} catch (PDOException $e) {
+		} catch (\PDOException $e) {
 			throw new DBException($e->getMessage());
 		}
 		
@@ -271,4 +282,4 @@ class DB
 }
 
 // Handle DB errors
-class DBException extends Exception{}
+class DBException extends \Exception{}

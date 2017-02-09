@@ -1,4 +1,6 @@
 <?php
+namespace Core;
+
 /**
  * SplClassLoader implementation that implements the technical interoperability
  * standards for PHP 5.3 namespaces and class names.
@@ -134,7 +136,7 @@ class SplClassLoader
 			$full = ($this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '') . $fileName;
 			
 			if (!file_exists($full)) {
-				throw new Exception("Class file for '".$className."' not found");
+				throw new \Exception("Class file for '".$className."' not found");
 			}
 			
 			require $full;

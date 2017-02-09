@@ -1,4 +1,5 @@
 <?php
+namespace Core;
 
 class Ajax
 {
@@ -16,16 +17,16 @@ class Ajax
 	
 	public function token(){
 		if(empty($_SESSION['token'])){
-			throw new Exception("Direct access violation.");
+			throw new \Exception("Direct access violation.");
 		}
 		
 		$headers = apache_request_headers();
 		if(!isset($headers['Csrf-Token']) || empty($_SESSION['token'])){
-			throw new Exception("No CSRF token.");
+			throw new \Exception("No CSRF token.");
 		}
 		
 		if($headers['Csrf-Token'] !== $_SESSION['token']){
-			throw new Exception("Wrong CSRF token.");
+			throw new \Exception("Wrong CSRF token.");
 		}
 	}
 	
