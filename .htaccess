@@ -1,4 +1,4 @@
-<Files ~ "\.(ini|log|sql)$">
+<Files ~ "\.(ini|sql)$">
 	Order Allow,Deny
 	Deny from All
 </Files>
