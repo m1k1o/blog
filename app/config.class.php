@@ -5,14 +5,14 @@ class Config
 	private static $_settings = null;
 	
 	private static function init(){
-		$config_file = PROJECT_PATH.'/config.ini';
+		$config_file = PROJECT_PATH.'config.ini';
 		
 		if(!is_readable($config_file)){
 			throw new ConfigException('Cannot read config file');
 		}
 		
 		self::$_settings = parse_ini_file($config_file);
-		$custom_config = PROJECT_PATH.'/custom.ini';
+		$custom_config = PROJECT_PATH.'custom.ini';
 		
 		if(is_readable($custom_config)){
 			$custom = parse_ini_file($custom_config);

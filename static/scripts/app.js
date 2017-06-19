@@ -15,7 +15,10 @@ var posts = {
 	
 	filter: {
 		until: null,    // Show posts until specified date
-		id: null        // Show only one post with specified id
+		id: null,       // Show only one post with specified id
+		tag: null,      // Show posts that contains specified tag 
+		loc: null,      // Show posts that location contains specified location 
+		person: null    // Show posts that person contains specified person 
 	},
 	
 	tryload: function(){
@@ -288,7 +291,7 @@ var new_post = {
 		var edit_form = $('#prepared .edit_form').clone();
 		new_post.obj.find(".edit-form").append(edit_form);
 		
-		new_post.obj.apply_edit({"pirvacy": "private"});
+		new_post.obj.apply_edit({"privacy": "private"});
 		
 		$(new_post.obj).find(".save").click(function(){
 			$.post({
@@ -302,7 +305,7 @@ var new_post = {
 					location: new_post.obj.find(".i_location").val(),
 					content_type: new_post.obj.find(".i_content_type").val(),
 					content: new_post.obj.find(".i_content").val(),
-					pirvacy: new_post.obj.find(".pirvacy").data("val")
+					privacy: new_post.obj.find(".privacy").data("val")
 				},
 				success: function(data){
 					if(data.error){
@@ -531,12 +534,12 @@ $.fn.apply_edit = function(data){
 			});
 		});
 		
-		// Set pirvacy button events
-		modal.find(".pirvacy").click(function(){
-			var pirvacy_btn = $(this);
+		// Set privacy button events
+		modal.find(".privacy").click(function(){
+			var privacy_btn = $(this);
 			
 			// Find dropdown
-			o_mask = $("#prepared .pirvacy_settings").clone();
+			o_mask = $("#prepared .privacy_settings").clone();
 			$("body").append(o_mask);
 			o_mask.css({
 				top: $(this).offset().top + $(this).height() + 'px',
@@ -548,16 +551,16 @@ $.fn.apply_edit = function(data){
 			o_mask.show();
 			
 			$(o_mask).find(".set").click(function(){
-				pirvacy_btn.data("val", $(this).data("val"));
-				pirvacy_btn.find(".cnt").html($(this).html());
+				privacy_btn.data("val", $(this).data("val"));
+				privacy_btn.find(".cnt").html($(this).html());
 				$("#dd_mask").click();
 			});
 			
 		});
 		
-		// Set pirvacy button content
-		modal.find(".pirvacy").data("val", data.pirvacy);
-		modal.find(".pirvacy .cnt").html($("#prepared .pirvacy_settings .set[data-val="+data.pirvacy+"]").html());
+		// Set privacy button content
+		modal.find(".privacy").data("val", data.privacy);
+		modal.find(".privacy .cnt").html($("#prepared .privacy_settings .set[data-val="+data.privacy+"]").html());
 		
 		// Add content
 		if(data.content_type){
@@ -615,6 +618,12 @@ $.fn.post_fill = function(data){
 	post.data("id", data.id);
 	
 	post.find(".b_text").html(data.text);
+	post.find(".b_text").find(".tag").click(function(){
+		var tag = $(this).text();
+		tag = tag.substr(1);
+		location.hash = 'tag\='+tag;
+	});
+
 	post.find(".b_date").attr("href", "#id="+data.id);
 	
 	var chars = 380;
@@ -622,7 +631,7 @@ $.fn.post_fill = function(data){
 		var b_more = [];
 		b_more.push($("<span>" + data.text.substr(0, chars) + "</span>"));
 		b_more.push($("<span>&hellip;&nbsp;</span>"));
-		b_more.push($("<a>Mehr anzeigen</a>"));
+		b_more.push($('#prepared .show_more').clone());
 		b_more.push($("<span>" + data.text + "</span>").hide());
 		post.find(".b_text").html(b_more);
 		
@@ -635,14 +644,16 @@ $.fn.post_fill = function(data){
 	
 	post.find(".b_feeling").html(data.feeling);
 	post.find(".b_persons").html(data.persons);
-	post.find(".b_location").html(data.location);
+	post.find(".b_location").html(data.location).click(function(){
+		location.hash = 'loc\='+$(this).text();
+	});
 	
 	post.find(".b_options").hide();
 	post.find(".b_here").hide();
 	post.find(".b_with").hide();
 	post.find(".b_location").hide();
 	
-	post.find(".pirvacy_icon").attr("class", "pirvacy_icon "+data.pirvacy).attr("title", "Shared with: "+data.pirvacy);
+	post.find(".privacy_icon").attr("class", "privacy_icon "+data.privacy).attr("title", "Shared with: "+data.privacy);
 	
 	if(data.content_type && typeof cnt_funcs[data.content_type] === "function"){
 		try{
@@ -741,7 +752,7 @@ $.fn.apply_post = function(){
 									location: modal.find(".i_location").val(),
 									content_type: modal.find(".i_content_type").val(),
 									content: modal.find(".i_content").val(),
-									pirvacy: modal.find(".pirvacy").data("val")
+									privacy: modal.find(".privacy").data("val")
 								},
 								success: function(data){
 									if(data.error){

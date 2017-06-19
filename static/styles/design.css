@@ -783,7 +783,7 @@ body {
   margin: 3px;
 }
 
-.pirvacy {
+.privacy {
   cursor: pointer;
   padding: 0 8px;
 }
@@ -815,7 +815,7 @@ i.private {
   background-position: -17px -211px;
 }
 
-.pirvacy_settings a:hover i.private {
+.privacy_settings a:hover i.private {
   background-position: 0 -211px;
 }
 
@@ -823,7 +823,7 @@ i.friends {
   background-position: -17px -177px;
 }
 
-.pirvacy_settings a:hover i.friends {
+.privacy_settings a:hover i.friends {
   background-position: 0 -177px;
 }
 
@@ -831,7 +831,7 @@ i.public {
   background-position: 0 -270px;
 }
 
-.pirvacy_settings a:hover i.public {
+.privacy_settings a:hover i.public {
   background: url(../images/y_KJ3X1mNCs.png) no-repeat;
   background-position: -68px -275px;
 }
@@ -862,4 +862,13 @@ body > .error {
   display: none;
   text-align: center;
   margin-bottom: 10px;
+}
+
+.tag {
+  cursor: pointer;
+}
+
+.tag:hover,
+.tag:active {
+  text-decoration: underline;
 }

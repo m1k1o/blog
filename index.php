@@ -40,6 +40,13 @@ for($m=0;$m<=60;$m+=10){
 	$minutes .= sprintf('<option value="%d">%02d</option>', $m, $m);
 }
 
+$header_path = PROJECT_PATH.'data/header.html';
+if(file_exists($header_path)){
+	$header = file_get_contents($header_path);
+} else {
+	$header = '';
+}
+
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -60,10 +67,13 @@ for($m=0;$m<=60;$m+=10){
 	<div id="dd_mask" class="mask"></div>
 	<div id="prepared" style="display:none;">
 		<!-- Login Button -->
-		<button type="button" class="button blue login_btn">Login</button>
+		<a class="show_more"><?php echo __("Show More"); ?></a>
+
+		<!-- Login Button -->
+		<button type="button" class="button blue login_btn"><?php echo __("Login"); ?></button>
 		
 		<!-- Logout Button -->
-		<button type="button" class="button gray logout_btn">Logout</button>
+		<button type="button" class="button gray logout_btn"><?php echo __("Logout"); ?></button>
 		
 		<!-- Login Modal -->
 		<div class="modal login_modal">
@@ -71,16 +81,16 @@ for($m=0;$m<=60;$m+=10){
 				<div class="modal-content">
 					<div class="modal-header">
 						<a class="close"></a>
-						<h4 class="modal-title">Login</h4>
+						<h4 class="modal-title"><?php echo __("Logout"); ?></h4>
 					</div>
 					<div class="modal-body">
-						<input type="text" class="nick" placeholder="Nick">&nbsp;
-						<input type="password" class="pass" placeholder="Password">
+						<input type="text" class="nick" placeholder="<?php echo __("Nick"); ?>">&nbsp;
+						<input type="password" class="pass" placeholder="<?php echo __("Password"); ?>">
 					</div>
 					<div class="modal-footer">
 						<div class="buttons">
-							<a class="button gray close">Cancel</a>
-							<button type="button" class="button blue do_login">Login</button>
+							<a class="button gray close"><?php echo __("Cancel"); ?></a>
+							<button type="button" class="button blue do_login"><?php echo __("Logout"); ?></button>
 						</div>
 					</div>
 				</div>
@@ -116,17 +126,17 @@ for($m=0;$m<=60;$m+=10){
 		<!-- New Post -->
 		<div class="b_post new_post">
 			<div class="modal-header">
-				<h4 class="modal-title">Post</h4>
+				<h4 class="modal-title"><?php echo __("Post"); ?></h4>
 			</div>
 			<div class="edit-form"></div>
 		</div>
 		
 		<!-- Post Tools -->
 		<ul class="b_dropdown post_tools">
-			<li><a class="edit_post">Edit Post</a></li>
-			<li><a class="edit_date">Change Date</a></li>
-			<li><a class="hide">Hide from Timeline</a></li>
-			<li><a class="delete_post">Delete</a></li>
+			<li><a class="edit_post"><?php echo __("Edit Post"); ?></a></li>
+			<li><a class="edit_date"><?php echo __("Change Date"); ?></a></li>
+			<li><a class="hide"><?php echo __("Hide from Timeline"); ?></a></li>
+			<li><a class="delete_post"><?php echo __("Delete Post"); ?></a></li>
 		</ul>
 		
 		<!-- Edit Modal -->
@@ -135,21 +145,21 @@ for($m=0;$m<=60;$m+=10){
 				<div class="modal-content">
 					<div class="modal-header">
 						<a class="close"></a>
-						<h4 class="modal-title">Edit Post</h4>
+						<h4 class="modal-title"><?php echo __("Edit Post"); ?></h4>
 					</div>
 					<div class="edit_form">
 						<div class="modal-body drop_space">
-							<div class="e_drag"><span>Drag photos here</span></div>
+							<div class="e_drag"><span><?php echo __("Drag photos here"); ?></span></div>
 							<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="e_profile">
-							<div class="e_text" contenteditable="true" placeholder="What's on your mind?"></div>
+							<div class="e_text" contenteditable="true" placeholder="<?php echo __("What\'s on your mind?"); ?>"></div>
 						</div>
 						<input type="hidden" class="i_content_type">
 						<input type="hidden" class="i_content">
 						<div class="modal-body content"></div>
 						<table class="options_content">
-							<tr class="feeling"><th>Feeling</th><td><input type="text" class="i_feeling" placeholder="How are you feeling?"><button class="clear"></button></td></tr>
-							<tr class="persons"><th>With</th><td><input type="text" class="i_persons" placeholder="Who are you with?"><button class="clear"></button></td></tr>
-							<tr class="location"><th>At</th><td><input type="text" class="i_location" placeholder="Where are you?"><button class="clear"></button></td></tr>
+							<tr class="feeling"><th><?php echo __("Feeling"); ?></th><td><input type="text" class="i_feeling" placeholder="<?php echo __("How are you feeling?"); ?>"><button class="clear"></button></td></tr>
+							<tr class="persons"><th><?php echo __("With"); ?></th><td><input type="text" class="i_persons" placeholder="<?php echo __("Who are you with?"); ?>"><button class="clear"></button></td></tr>
+							<tr class="location"><th><?php echo __("At"); ?></th><td><input type="text" class="i_location" placeholder="<?php echo __("Where are you?"); ?>"><button class="clear"></button></td></tr>
 						</table>
 						<div class="modal-footer">
 							<ul class="options">
@@ -159,8 +169,8 @@ for($m=0;$m<=60;$m+=10){
 								<li class="location"><a></a></li>
 							</ul>
 							<div class="buttons">
-								<span class="button gray pirvacy"><span class="cnt"></span><i class="arrow"></i></span>
-								<button type="button" class="button blue save">Save</button>
+								<span class="button gray privacy"><span class="cnt"></span><i class="arrow"></i></span>
+								<button type="button" class="button blue save"><?php echo __("Save"); ?></button>
 							</div>
 						</div>
 					</div>
@@ -174,34 +184,34 @@ for($m=0;$m<=60;$m+=10){
 				<div class="modal-content">
 					<div class="modal-header">
 						<a class="close"></a>
-						<h4 class="modal-title">Change date</h4>
+						<h4 class="modal-title"><?php echo __("Change Date"); ?></h4>
 					</div>
 					<div class="modal-body">
 						<select class="year">
-							<option value="" disabled="1">Year:</option>
+							<option value="" disabled="1"><?php echo __("Year:"); ?></option>
 							<?php echo $years; ?>
 						</select>
 						<select class="month">
-							<option value="" disabled="1">Month:</option>
+							<option value="" disabled="1"><?php echo __("Month:"); ?></option>
 							<?php echo $months; ?>
 						</select>
 						<select class="day">
-							<option value="" disabled="1">Day:</option>
+							<option value="" disabled="1"><?php echo __("Day:"); ?></option>
 							<?php echo $days; ?>
 						</select>
 						<select class="hour">
-							<option value="" disabled="1">Hour:</option>
+							<option value="" disabled="1"><?php echo __("Hour:"); ?></option>
 							<?php echo $hours; ?>
 						</select>
 						<select class="minute">
-							<option value="" disabled="1">Minute:</option>
+							<option value="" disabled="1"><?php echo __("Minute:"); ?></option>
 							<?php echo $minutes; ?>
 						</select>
 					</div>
 					<div class="modal-footer">
 						<div class="buttons">
-							<a class="button gray close">Cancel</a>
-							<button type="button" class="button blue save">Save</button>
+							<a class="button gray close"><?php echo __("Cancel"); ?></a>
+							<button type="button" class="button blue save"><?php echo __("Save"); ?></button>
 						</div>
 					</div>
 				</div>
@@ -214,13 +224,13 @@ for($m=0;$m<=60;$m+=10){
 				<div class="modal-content">
 					<div class="modal-header">
 						<a class="close"></a>
-						<h4 class="modal-title">Delete Post</h4>
+						<h4 class="modal-title"><?php echo __("Delete Post"); ?></h4>
 					</div>
-					<div class="modal-body">This post will be deleted and you'll no longer be able to find it. You can also edit this post if you just want to change something.</div>
+					<div class="modal-body"><?php echo __("This post will be deleted and you'll no longer be able to find it. You can also edit this post if you just want to change something."); ?></div>
 					<div class="modal-footer">
 						<div class="buttons">
-							<a class="button gray close">Cancel</a>
-							<button type="button" class="button blue delete">Delete Post</button>
+							<a class="button gray close"><?php echo __("Cancel"); ?></a>
+							<button type="button" class="button blue delete"><?php echo __("Delete Post"); ?></button>
 						</div>
 					</div>
 				</div>
@@ -233,9 +243,9 @@ for($m=0;$m<=60;$m+=10){
 				<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="b_profile">
 				<div class="b_desc">
 					<div class="b_sharer">
-						<span class="b_name"><?php echo Config::get("name"); ?></span><span class="b_options"> - </span><span class="b_feeling"></span><span class="b_with"> with </span><span class="b_persons"></span><span class="b_here"> here: </span><span class="b_location"></span>
+						<span class="b_name"><?php echo Config::get("name"); ?></span><span class="b_options"> - </span><span class="b_feeling"></span><span class="b_with"> <?php echo __("with"); ?> </span><span class="b_persons"></span><span class="b_here"> <?php echo __("here:"); ?> </span><span class="b_location"></span>
 					</div>
-					<i class="pirvacy_icon"></i>
+					<i class="privacy_icon"></i>
 					<a class="b_date"></a>
 					<a class="b_tools"></a>
 				</div>
@@ -245,10 +255,10 @@ for($m=0;$m<=60;$m+=10){
 		</div>
 		
 		<!-- Pirvacy Settings -->
-		<ul class="b_dropdown pirvacy_settings">
-			<li><a class="set" data-val="public"><i class="public"></i>Public</a></li>
-			<!--<li><a class="set" data-val="friends"><i class="friends"></i>Friends</a></li>-->
-			<li><a class="set" data-val="private"><i class="private"></i>Only me</a></li>
+		<ul class="b_dropdown privacy_settings">
+			<li><a class="set" data-val="public"><i class="public"></i><?php echo __("Public"); ?></a></li>
+			<!--<li><a class="set" data-val="friends"><i class="friends"></i><?php echo __("Friends"); ?></a></li>-->
+			<li><a class="set" data-val="private"><i class="private"></i><?php echo __("Only me"); ?></a></li>
 		</ul>
 	</div>
 	
@@ -258,6 +268,7 @@ for($m=0;$m<=60;$m+=10){
 	
 	<div class="headbar">
 		<div class="cover">
+			<?php echo $header; ?>
 			<div class="overlay"></div>
 			<img src="<?php echo Config::get("cover"); ?>">
 			<div class="profile">
@@ -270,14 +281,14 @@ for($m=0;$m<=60;$m+=10){
 	
 	<div id="b_feed">
 		<div class="more_posts">
-			<a href="#" class="button">Show all posts</a>
+			<a href="#" class="button"><?php echo __("Show all posts"); ?></a>
 		</div>
 		<div id="posts"></div>
 	</div>
 	
 	<div id="eof_feed">
 		<img src="static/images/zpEYXu5Wdu6.png">
-		<p><?php echo Config::get("version"); ?> &copy; 2016 <br>Miroslav Šedivý</p>
+		<p><?php echo Config::get("version"); ?> &copy; 2016-2017 <br>Miroslav Šedivý</p>
 	</div>
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>

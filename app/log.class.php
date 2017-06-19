@@ -9,15 +9,15 @@ class Log
 		"visitors"
 	];
 	
-	private static $_path = 'logs';
+	private static $_path = 'data/logs/';
 	
 	public static function put($_file, $_text = null){
 		if(!Config::get_safe("logs", false) || !in_array($_file, static::$_files)){
 			return ;
 		}
 		
-		if(false === file_put_contents(PROJECT_PATH.DS.static::$_path.DS.$_file.".log", self::line($_text), FILE_APPEND)){
-			trigger_error("Can't write to {$_file}.log file.", E_USER_NOTICE);
+		if(false === file_put_contents(PROJECT_PATH.static::$_path.$_file.".log", self::line($_text), FILE_APPEND)){
+			trigger_error(sprint("Can't write to %s.log file.", $_file), E_USER_NOTICE);
 		}
 	}
 	

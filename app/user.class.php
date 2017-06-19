@@ -18,7 +18,7 @@ class user
 		}
 		
 		if(self::is_logged_in()){
-			throw new Exception("You are already logged in.");
+			throw new Exception(__("You are already logged in."));
 		}
 		
 		if(Config::get("nick") == $nick && Config::get_safe("pass", "") == $pass){
@@ -27,16 +27,16 @@ class user
 		}
 		
 		Log::put("login_fails", $nick);
-		throw new Exception("The nick or password is incorrect.");
+		throw new Exception(__("The nick or password is incorrect."));
 	}
 	
 	public static function logout(){
 		if(!Config::get_safe("force_login", false)){
-			throw new Exception("You can't log out. There is no account.");
+			throw new Exception(__("You can't log out. There is no account."));
 		}
 		
 		if(!self::is_logged_in()){
-			throw new Exception("You are not even logged in.");
+			throw new Exception(__("You are not even logged in."));
 		}
 		
 		$_SESSION[User::SESSION_NAME] = false;

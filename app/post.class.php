@@ -4,7 +4,7 @@ class Post
 {
 	private static function login_protected(){
 		if(!User::is_logged_in()){
-			throw new Exception("You need to be logged in to perform this action.");
+			throw new Exception(__("You need to be logged in to perform this action."));
 		}
 	}
 	
@@ -15,6 +15,7 @@ class Post
 		$c = preg_replace('/\"([^\"]+)\"/i', "„$1\"", $c);
 		
 		$c = preg_replace('/(https?\:\/\/[^\" \n]+)/i', "<a href=\"\\0\" target=\"_blank\">\\0</a>", $c);
+		//$c = preg_replace('/(\#([A-Za-z0-9-_]+))/i', "<a href=\"#tag=\\1\" class=\"tag\">\\0</a>", $c);
 		$c = preg_replace('/(\#[A-Za-z0-9-_]+)/i', "<span class=\"tag\">\\0</span>", $c);
 		
 		////Headlines
@@ -30,15 +31,6 @@ class Post
 		return $c;
 	}
 	
-	private static function get_title($url){
-		$str = file_get_contents($url);
-		if(strlen($str)>0){
-			$str = trim(preg_replace('/\s+/', ' ', $str)); // supports line breaks inside <title>
-			preg_match("/\<title\>(.*)\<\/title\>/i",$str,$title); // ignore case
-			return $title[1];
-		}
-	}
-	
 	private static function raw_data($raw_input){
 		$default_input = [
 			"text" => '',
@@ -47,7 +39,7 @@ class Post
 			"location" => '',
 			"content_type" => '',
 			"content" => '',
-			"pirvacy" => ''
+			"privacy" => ''
 		];
 		
 		// Handle only allowed keys
@@ -61,8 +53,8 @@ class Post
 			}
 		}
 		
-		if($raw_output['pirvacy'] != "public" && $raw_output['pirvacy'] != "friends"){
-			$raw_output['pirvacy'] =  "private";
+		if($raw_output['privacy'] != "public" && $raw_output['privacy'] != "friends"){
+			$raw_output['privacy'] =  "private";
 		}
 		
 		return $raw_output;
@@ -118,7 +110,7 @@ class Post
 	public static function edit_data($r){
 		self::login_protected();
 		
-		return DB::get_instance()->query("SELECT `plain_text` AS `text`, `feeling`, `persons`, `location`, `pirvacy`, `content_type`, `content` FROM `posts` WHERE `id` = ? AND `status` = 1", $r["id"])->first();
+		return DB::get_instance()->query("SELECT `plain_text` AS `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content` FROM `posts` WHERE `id` = ? AND `status` = 1", $r["id"])->first();
 	}
 	
 	public static function get_date($r){
@@ -234,22 +226,44 @@ class Post
 	
 	public static function load($r){
 		$until = null;
-		if(preg_match("/^([0-9]{4})-([0-9]{2})$/", $r["filter"]["until"])){
+		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", $r["filter"]["until"])){
 			$until = $r["filter"]["until"]."-01 00:00";
 		}
 		
+		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $r["filter"]["until"])){
+			$until = $r["filter"]["until"]." 23:59";
+		}
+
 		$id = null;
 		if($r["filter"]["id"]){
 			$id = intval($r["filter"]["id"]);
 		}
 		
+		$tag = null;
+		if(preg_match("/^[A-Za-z0-9-_]+$/", $r["filter"]["tag"])){
+			$tag = '#'.$r["filter"]["tag"];
+		}
+
+		$loc = null;
+		if(preg_match("/^[^'\"]+$/", $r["filter"]["loc"])){
+			$loc = $r["filter"]["loc"];
+		}
+
+		$person = null;
+		if(preg_match("/^[^'\"]+$/", $r["filter"]["person"])){
+			$person = $r["filter"]["person"];
+		}
+
 		return DB::get_instance()->query(
-			"SELECT `id`, `text`, `feeling`, `persons`, `location`, `pirvacy`, `content_type`, `content`, DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i') AS `datetime` ".
+			"SELECT `id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`, DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i') AS `datetime` ".
 			"FROM `posts` ".
 			"WHERE ".
-				(!User::is_logged_in() ? "`pirvacy` = 'public' AND " : "").
+				(!User::is_logged_in() ? "`privacy` = 'public' AND " : "").
 				($until ? "`posts`.`datetime` < DATE_ADD('{$until}', INTERVAL +1 MONTH) AND " : "").
 				($id ? "`id` = {$id} AND " : "").
+				($tag ? "`plain_text` LIKE '%{$tag}%' AND " : "").
+				($loc ? "`location` LIKE '%{$loc}%' AND " : "").
+				($person ? "`persons` LIKE '%{$person}%' AND " : "").
 				"`status` = 1 ".
 			"ORDER BY `posts`.`datetime` DESC ".
 			"LIMIT ? OFFSET ?", $r["limit"], $r["offset"]

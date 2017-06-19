@@ -18,7 +18,7 @@ CREATE TABLE `posts` (
   `location` varchar(255) NOT NULL,
   `content` varchar(1000) NOT NULL,
   `content_type` varchar(255) NOT NULL,
-  `pirvacy` set('private','friends','public') NOT NULL,
+  `privacy` set('private','friends','public') NOT NULL,
   `datetime` datetime NOT NULL,
   `status` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
