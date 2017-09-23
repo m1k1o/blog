@@ -299,7 +299,8 @@ var new_post = {
 				url: "ajax.php",
 				data: {
 					action: "insert",
-					text: new_post.obj.find(".e_text").text(),
+					text: new_post.obj.find(".e_text").val(),
+					//text: new_post.obj.find(".e_text").text(),
 					feeling: new_post.obj.find(".i_feeling").val(),
 					persons: new_post.obj.find(".i_persons").val(),
 					location: new_post.obj.find(".i_location").val(),
@@ -448,7 +449,9 @@ $.fn.apply_edit = function(data){
 		};
 		
 		// Set data and key listeners for text div
-		modal.find(".e_text").text(data.text).keydown(function(e) {
+		//modal.find(".e_text").html(data.plain_text)
+		modal.find(".e_text").val(data.plain_text)
+		/*.keydown(function(e) {
 			if(e.keyCode === 13){
 				document.execCommand('insertHTML', false, "\n");
 				return false;
@@ -475,7 +478,10 @@ $.fn.apply_edit = function(data){
 				document.execCommand('paste', false, text);
 			}
 		});
-		
+
+		autosize($(modal.find(".e_text")));
+		//autosize.update(ta);
+
 		var file_data = modal.find(".photo_upload");
 		$(file_data).change(function(){
 			var form_data = new FormData();
@@ -626,7 +632,8 @@ $.fn.post_fill = function(data){
 	});
 
 	post.find(".b_date").attr("href", "#id="+data.id);
-	
+
+	/*
 	var chars = 380;
 	if(data.text.length > chars){
 		var b_more = [];
@@ -640,6 +647,18 @@ $.fn.post_fill = function(data){
 			$(b_more).each(function(){
 				$(this).toggle();
 			});
+		});
+	}
+	*/
+
+	var height = 200;
+	if(data.text.length > 400){
+		post.find(".b_text").css("max-height", height+"px");
+		var show_more = $('#prepared .show_more').clone();
+		show_more.insertAfter(post.find(".b_text"));
+		show_more.click(function(){
+			$(this).remove();
+			post.find(".b_text").css("max-height", '');
 		});
 	}
 	
@@ -754,7 +773,8 @@ $.fn.apply_post = function(){
 								data: {
 									action: "update",
 									id: post_id,
-									text: modal.find(".e_text").text(),
+									text: modal.find(".e_text").val(),
+									//text: modal.find(".e_text").text(),
 									feeling: modal.find(".i_feeling").val(),
 									persons: modal.find(".i_persons").val(),
 									location: modal.find(".i_location").val(),

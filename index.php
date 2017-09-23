@@ -31,7 +31,7 @@ for($d=1;$d<=31;$d++){
 }
 
 $hours = '';
-for($h=0;$h<=60;$h++){
+for($h=0;$h<=24;$h++){
 	$hours .= sprintf('<option value="%d">%02d</option>', $h, $h);
 }
 
@@ -153,7 +153,10 @@ if(file_exists($header_path)){
 						<div class="modal-body drop_space">
 							<div class="e_drag"><span><?php echo __("Drag photos here"); ?></span></div>
 							<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="e_profile">
-							<div class="e_text" contenteditable="true" placeholder="<?php echo __("What\'s on your mind?"); ?>"></div>
+							<!--<div class="e_text" contenteditable="true"></div>-->
+							<div class="t_area">
+								<textarea class="e_text" placeholder="<?php echo __("What's on your mind?"); ?>"></textarea>
+							</div>
 						</div>
 						<input type="hidden" class="i_content_type">
 						<input type="hidden" class="i_content">
@@ -272,7 +275,7 @@ if(file_exists($header_path)){
 		<div class="cover">
 			<?php echo $header; ?>
 			<div class="overlay"></div>
-			<img src="<?php echo Config::get("cover"); ?>">
+			<?php echo (Config::get_safe("cover", false) ? '<img src="'.Config::get("cover").'">' : (empty($header) ? '<div style="padding-bottom: 37%;"></div>' : '')); ?>
 			<div class="profile">
 				<img src="<?php echo Config::get("pic_big"); ?>">
 			</div>
@@ -296,6 +299,7 @@ if(file_exists($header_path)){
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<!--<script src="static/scripts/jquery.min.js"></script>-->
 	<script>$["\x61\x6A\x61\x78\x53\x65\x74\x75\x70"]({"\x68\x65\x61\x64\x65\x72\x73":{"\x43\x73\x72\x66-\x54\x6F\x6B\x65\x6E":"<?php echo $_SESSION['token'];?>"}});</script>
+	<script src="static/scripts/autosize.js"></script>
 	<?php echo Config::get("highlight") ? '<script src="static/scripts/highlight.js"></script><script>hljs.initHighlightingOnLoad();</script>' : ''; ?>
 	<script src="static/scripts/app.js?v=<?php echo Config::get("version"); ?>"></script>
 </body>

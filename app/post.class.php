@@ -13,8 +13,8 @@ class Post
 		
 		// Highlight
 		if(Config::get("highlight")){
-			$c = preg_replace_callback('/\[code(?:=([^\[]+))?\](.+?)(?:(?=\[\/code\]))\[\/code\]/m', function($m){
-				return '<code'.($m[1] ? ' class="'.$m[1].'"' : '').'>'.htmlentities($m[2]).'</code>';
+			$c = preg_replace_callback('/\[code(?:=([^\[]+))?\]((.|\s)+?)(?:(?=\[\/code\]))\[\/code\]/m', function($m){
+				return '<code'.($m[1] ? ' class="'.$m[1].'"' : '').'>'.htmlentities(trim($m[2])).'</code>';
 			}, $c);
 		} else {
 			// Links
@@ -41,6 +41,7 @@ class Post
 	private static function raw_data($raw_input){
 		$default_input = [
 			"text" => '',
+			"plain_text" => '',
 			"feeling" => '',
 			"persons" => '',
 			"location" => '',
@@ -121,7 +122,7 @@ class Post
 	public static function edit_data($r){
 		self::login_protected();
 		
-		return DB::get_instance()->query("SELECT `plain_text` AS `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content` FROM `posts` WHERE `id` = ? AND `status` = 1", $r["id"])->first();
+		return DB::get_instance()->query("SELECT `plain_text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content` FROM `posts` WHERE `id` = ? AND `status` = 1", $r["id"])->first();
 	}
 	
 	public static function get_date($r){

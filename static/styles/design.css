@@ -36,7 +36,7 @@ body {
 .cover {
   font-size: 0;
   position: relative;
-  min-height: 315px;
+  /*min-height: 315px;*/
 }
 .cover .overlay {
   background: url(../images/UgNUNkKQar6.png) bottom left repeat-x;
@@ -112,6 +112,21 @@ body {
   color: #90949c;
   font-size: 12px;
   text-transform: uppercase;
+}
+
+.show_more {
+  height: 40px;
+  line-height: 40px;
+  position: relative;
+  margin-top: -40px;
+  display: block;
+  text-align: center;
+  background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 75%, rgba(255,255,255,1) 100%);
+  background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 75%,rgba(255,255,255,1) 100%);
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 75%,rgba(255,255,255,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 );
+  cursor: pointer;
+  vertical-align: bottom;
 }
 
 .b_post {
@@ -246,6 +261,7 @@ body {
   word-wrap: break-word;
   font-size: 14px;
   padding-top: 10px;
+  overflow: hidden;
 }
 
 .b_text a,
@@ -603,12 +619,23 @@ body {
 
 .e_text {
   margin-left: 50px;
-}
-
-.e_text {
   outline: 0;
   white-space: pre-line;
   min-height: 50px;
+}
+
+.t_area  {
+  overflow: hidden;
+  padding: 0 16px 0 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.t_area .e_text  {
+  margin: 0 0 0 10px;
+  min-height: 88px;
+  max-width: 100%;
+  min-width: 100%;
 }
 
 .options {
