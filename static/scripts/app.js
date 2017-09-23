@@ -469,7 +469,7 @@ $.fn.apply_edit = function(data){
 			var t = e.currentTarget.innerHTML;
 			parse_link(t);
 		})*/.on('paste', function(e) {
-			e.preventDefault();
+			//e.preventDefault();
 			
 			var text = '';
 			if(e.clipboardData || e.originalEvent.clipboardData){
@@ -480,12 +480,13 @@ $.fn.apply_edit = function(data){
 			
 			// Try to parse link
 			parse_link(text);
-			
+			/*
 			if(document.queryCommandSupported('insertText')){
 				document.execCommand('insertText', false, text);
 			} else {
 				document.execCommand('paste', false, text);
 			}
+			*/
 		});
 
 		autosize($(modal.find(".e_text")));
