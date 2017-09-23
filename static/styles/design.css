@@ -872,3 +872,8 @@ body > .error {
 .tag:active {
   text-decoration: underline;
 }
+
+code {
+  overflow: auto;
+  white-space: nowrap;
+}
