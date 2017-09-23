@@ -69,9 +69,13 @@ class Post
 
 	public static function insert($r){
 		self::login_protected();
-		
+
 		$data = self::raw_data($r);
 		
+		if(empty($data['text'])){
+			throw new Exception(__("No data."));
+		}
+
 		$data['plain_text'] = $data['text'];
 		$data['text'] = self::parse_content($data['text']);
 		$data['datetime'] = 'NOW()';
