@@ -542,6 +542,11 @@ body {
   margin: 8px;
 }
 
+.modal-footer .buttons .left {
+  display: inline-block;
+  float: left;
+}
+
 .modal-footer:before,
 .modal-footer:after {
   content: " ";
@@ -579,6 +584,33 @@ body {
   color: #fff;
   background-color: #4267b2;
   border-color: #4267b2;
+}
+
+.login-form input {
+  height: 44px;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  /* border-radius: 2px; */
+  padding: 0 8px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.login-form input:last-child {
+  margin-bottom: 0;
+}
+
+.login-form input:hover {
+  border: 1px solid #b9b9b9;
+  border-top: 1px solid #a0a0a0;
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .e_profile {

@@ -47,6 +47,30 @@ if(file_exists($header_path)){
 	$header = '';
 }
 
+// Translate styles into html
+$styles = Config::get_safe("styles", []);
+$styles_html = '';
+if(!empty($styles)){
+	if(!is_array($styles)){
+		$styles = [$styles];
+	}
+
+	$styles = array_unique($styles);
+	$styles_html = '<link href="'.implode('" rel="stylesheet" type="text/css"/>'.PHP_EOL.'<link href="', $styles).'" rel="stylesheet" type="text/css"/>'.PHP_EOL;
+}
+
+// Translate script urls into html
+$scripts = Config::get_safe("scripts", []);
+$scripts_html = '';
+if(!empty($scripts)){
+	if(!is_array($styles)){
+		$styles = [$styles];
+	}
+	
+	$scripts = array_unique($scripts);
+	$scripts_html = '<script src="'.implode('" type="text/javascript"></script>'.PHP_EOL.'<script src="', $scripts).'" type="text/javascript"></script>'.PHP_EOL;
+}
+
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -63,7 +87,10 @@ if(file_exists($header_path)){
 	
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans&amp;subset=all" rel="stylesheet">
 
+	<link href="static/styles/lightbox.css" rel="stylesheet" type="text/css" />
 	<?php echo Config::get("highlight") ? '<link href="static/styles/highlight.css" rel="stylesheet" type="text/css" />' : ''; ?>
+
+	<?php echo $styles_html; ?>
 </head>
 <body>
 	<div id="dd_mask" class="mask"></div>
@@ -79,20 +106,21 @@ if(file_exists($header_path)){
 		
 		<!-- Login Modal -->
 		<div class="modal login_modal">
-			<div class="modal-dialog">
+			<div class="modal-dialog" style="max-width: 350px;">
 				<div class="modal-content">
 					<div class="modal-header">
 						<a class="close"></a>
-						<h4 class="modal-title"><?php echo __("Logout"); ?></h4>
+						<h4 class="modal-title"><?php echo __("Login"); ?></h4>
 					</div>
-					<div class="modal-body">
-						<input type="text" class="nick" placeholder="<?php echo __("Nick"); ?>">&nbsp;
+					<div class="modal-body login-form">
+						<input type="text" class="nick" placeholder="<?php echo __("Nick"); ?>">
 						<input type="password" class="pass" placeholder="<?php echo __("Password"); ?>">
 					</div>
 					<div class="modal-footer">
 						<div class="buttons">
+							<!--<div class="left"><a>Register</a> - <a>Forgot Password</a></div>-->
 							<a class="button gray close"><?php echo __("Cancel"); ?></a>
-							<button type="button" class="button blue do_login"><?php echo __("Logout"); ?></button>
+							<button type="button" class="button blue do_login"><?php echo __("Login"); ?></button>
 						</div>
 					</div>
 				</div>
@@ -299,8 +327,12 @@ if(file_exists($header_path)){
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<!--<script src="static/scripts/jquery.min.js"></script>-->
 	<script>$["\x61\x6A\x61\x78\x53\x65\x74\x75\x70"]({"\x68\x65\x61\x64\x65\x72\x73":{"\x43\x73\x72\x66-\x54\x6F\x6B\x65\x6E":"<?php echo $_SESSION['token'];?>"}});</script>
+
+	<script src="static/scripts/lightbox.js"></script>
 	<script src="static/scripts/autosize.js"></script>
 	<?php echo Config::get("highlight") ? '<script src="static/scripts/highlight.js"></script><script>hljs.initHighlightingOnLoad();</script>' : ''; ?>
 	<script src="static/scripts/app.js?v=<?php echo Config::get("version"); ?>"></script>
+
+	<?php echo $scripts_html; ?>
 </body>
 </html>

@@ -113,6 +113,7 @@ var posts = {
 };
 
 // Content functions
+var lightboxes = 0;
 var cnt_funcs = {
 	link: function(data){
 		var obj = $("#prepared .b_link").clone();
@@ -145,6 +146,7 @@ var cnt_funcs = {
 	image: function(data){
 		var obj = $("#prepared .b_img").clone();
 		obj.attr("href", data.path);
+		obj.attr("data-lightbox", 'image-'+lightboxes++);
 		obj.find("img").attr("src", data.thumb);
 		
 		return obj;
@@ -199,10 +201,14 @@ var login = {
 			// Clone modal
 			var modal = $('#prepared .login_modal').clone();
 			$("body").css("overflow", "hidden");
-			
-			// Focus Nick
-			modal.find(".nick").focus();
-			
+
+			// On enter save
+			modal.find(".nick,.pass").keypress(function(e) {
+				if(e.which == 13) {
+					modal.find(".do_login").click();
+				}
+			});
+
 			// On close
 			modal.find(".close").click(function(){
 				modal.close();
@@ -242,6 +248,9 @@ var login = {
 			
 			// Append modal
 			$("body").append(modal);
+			
+			// Focus Nick
+			modal.find("input.nick").focus();
 		});
 		
 		$("#headline").append(btn);
