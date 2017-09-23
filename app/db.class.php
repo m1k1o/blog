@@ -28,14 +28,11 @@ class DB
 			throw new DBException("Mysql host or socket must be defined");
 		}
 		
-		// Socket or host
-		$server = ($socket !== false ? 'unix_socket=' : 'host=').$socket;
-		
 		// Try to connect
 		try {
 			$this->_PDO = new \PDO(
 				// Server
-				'mysql:'.$server.';'.
+				'mysql:'.($socket !== false ? 'unix_socket='.$socket : 'host='.$host).';'.
 				// DB
 				'dbname='.Config::get('db_name').';'.
 				// Charset
