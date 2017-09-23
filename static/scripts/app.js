@@ -618,6 +618,7 @@ $.fn.post_fill = function(data){
 	post.data("id", data.id);
 	
 	post.find(".b_text").html(data.text);
+	
 	post.find(".b_text").find(".tag").click(function(){
 		var tag = $(this).text();
 		tag = tag.substr(1);
@@ -639,6 +640,13 @@ $.fn.post_fill = function(data){
 			$(b_more).each(function(){
 				$(this).toggle();
 			});
+		});
+	}
+	
+	// Highlight
+	if(typeof hljs !== "undefined"){
+		post.find("code").each(function(i, block) {
+			hljs.highlightBlock(block);
 		});
 	}
 	

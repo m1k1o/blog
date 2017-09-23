@@ -11,8 +11,15 @@ class Post
 	private static function parse_content($c){
 		//$c = htmlentities($c);
 		
-		// Links
-		$c = preg_replace('/\"([^\"]+)\"/i', "„$1\"", $c);
+		// Highlight
+		if(Config::get("highlight")){
+			$c = preg_replace_callback('/\[code(?:=([^\[]+))?\](.+?)(?:(?=\[\/code\]))\[\/code\]/m', function($m){
+				return '<code'.($m[1] ? ' class="'.$m[1].'"' : '').'>'.htmlentities($m[2]).'</code>';
+			}, $c);
+		} else {
+			// Links
+			$c = preg_replace('/\"([^\"]+)\"/i', "„$1\"", $c);
+		}
 		
 		$c = preg_replace('/(https?\:\/\/[^\" \n]+)/i', "<a href=\"\\0\" target=\"_blank\">\\0</a>", $c);
 		//$c = preg_replace('/(\#([A-Za-z0-9-_]+))/i', "<a href=\"#tag=\\1\" class=\"tag\">\\0</a>", $c);

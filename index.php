@@ -62,6 +62,8 @@ if(file_exists($header_path)){
 	<link href="static/styles/design.css?v=<?php echo Config::get("version"); ?>" rel="stylesheet" type="text/css" />
 	
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans&amp;subset=all" rel="stylesheet">
+
+	<?php echo Config::get("highlight") ? '<link href="static/styles/highlight.css" rel="stylesheet" type="text/css" />' : ''; ?>
 </head>
 <body>
 	<div id="dd_mask" class="mask"></div>
@@ -294,6 +296,7 @@ if(file_exists($header_path)){
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<!--<script src="static/scripts/jquery.min.js"></script>-->
 	<script>$["\x61\x6A\x61\x78\x53\x65\x74\x75\x70"]({"\x68\x65\x61\x64\x65\x72\x73":{"\x43\x73\x72\x66-\x54\x6F\x6B\x65\x6E":"<?php echo $_SESSION['token'];?>"}});</script>
+	<?php echo Config::get("highlight") ? '<script src="static/scripts/highlight.js"></script><script>hljs.initHighlightingOnLoad();</script>' : ''; ?>
 	<script src="static/scripts/app.js?v=<?php echo Config::get("version"); ?>"></script>
 </body>
 </html>
