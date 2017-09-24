@@ -7,35 +7,74 @@ class Post
 			throw new Exception(__("You need to be logged in to perform this action."));
 		}
 	}
-	
+
 	private static function parse_content($c){
-		//$c = htmlentities($c);
+		require_once APP_PATH."jbbcode/Parser.php";
+
+		$parser = new JBBCode\Parser();
+		$parser->addCodeDefinitionSet(new JBBCode\DefaultCodeDefinitionSet());
 		
-		// Highlight
 		if(Config::get("highlight")){
-			$c = preg_replace_callback('/\[code(?:=([^\[]+))?\]((.|\s)+?)(?:(?=\[\/code\]))\[\/code\]/m', function($m){
-				return '<code'.($m[1] ? ' class="'.$m[1].'"' : '').'>'.htmlentities(trim($m[2])).'</code>';
-			}, $c);
-		} else {
-			// Links
-			$c = preg_replace('/\"([^\"]+)\"/i', "„$1\"", $c);
+			$c = str_replace("\t", "  ", $c);
+			$c = preg_replace("/\[(\/?)code(=(?:[^\[]+))?\]\s*?(?:\n|\r)?/i", '[$1code$2]', $c);
+
+			// Add code definiton
+			$parser->addCodeDefinition(new class extends \JBBCode\CodeDefinition {
+				public function __construct($useOption){
+					parent::__construct($useOption);
+					$this->setTagName("code");
+					$this->setParseContent(false);
+					$this->setUseOption(true);
+				}
+			
+				public function asHtml(\JBBCode\ElementNode $el){
+					$content = $this->getContent($el);
+					return '<code class="'.$el->getAttribute().'">'.htmlentities($content).'</code>';
+				}
+			});
 		}
+
+		if(($tags = Config::get_safe("bbtags", [])) && !empty($tags)){
+			foreach($tags as $tag => $content){
+				$builder = new JBBCode\CodeDefinitionBuilder($tag, $content);
+				$parser->addCodeDefinition($builder->build());
+			}
+		}
+
+		$parser->parse($c);
+
+		// Visit every text node
+		$parser->accept(new class implements \JBBCode\NodeVisitor{
+			function visitDocumentElement(\JBBCode\DocumentElement $documentElement){
+				foreach($documentElement->getChildren() as $child) {
+					$child->accept($this);
+				}
+			}
 		
-		$c = preg_replace('/(https?\:\/\/[^\" \n]+)/i', "<a href=\"\\0\" target=\"_blank\">\\0</a>", $c);
-		//$c = preg_replace('/(\#([A-Za-z0-9-_]+))/i', "<a href=\"#tag=\\1\" class=\"tag\">\\0</a>", $c);
-		$c = preg_replace('/(\#[A-Za-z0-9-_]+)/i', "<span class=\"tag\">\\0</span>", $c);
+			function visitTextNode(\JBBCode\TextNode $textNode){
+				$c = $textNode->getValue();
+				$c = preg_replace('/\"([^\"]+)\"/i', "„$1\"", $c);
+				$c = htmlentities($c);
+				$c = preg_replace('/\*([^\*]+)\*/i', "<strong>$1</strong>", $c);
+				$c = preg_replace('/(https?\:\/\/[^\" \n]+)/i', "<a href=\"\\0\" target=\"_blank\">\\0</a>", $c);
+				$c = preg_replace('/(\#[A-Za-z0-9-_]+)/i', "<span class=\"tag\">\\0</span>", $c);
+				$c = nl2br($c);
+				$textNode->setValue($c);
+			}
 		
-		////Headlines
-		//$c = preg_replace('/^\# (.*)$/m', "<h1>$1</h1>", $c);
-		//$c = preg_replace('/^\#\# (.*)$/m', "<h2>$1</h2>", $c);
-		//$c = preg_replace('/^\#\#\# (.*)$/m', "<h3>$1</h3>", $c);
-		
-		//$c = preg_replace('/\"([^\"]+)\"/i', "&#x84;&nbsp;<i>$1</i>&nbsp;&#x93;", $c);
-		$c = preg_replace('/\*([^\*]+)\*/i', "<strong>$1</strong>", $c);
-		
-		$c = nl2br($c);
-		
-		return $c;
+			function visitElementNode(\JBBCode\ElementNode $elementNode){
+				/* We only want to visit text nodes within elements if the element's
+				 * code definition allows for its content to be parsed.
+				 */
+				if ($elementNode->getCodeDefinition()->parseContent()) {
+					foreach ($elementNode->getChildren() as $child) {
+						$child->accept($this);
+					}
+				}
+			}
+		});
+
+		return $parser->getAsHtml();
 	}
 	
 	private static function raw_data($raw_input){

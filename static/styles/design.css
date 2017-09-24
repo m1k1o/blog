@@ -934,5 +934,6 @@ body > .error {
 
 code {
   overflow: auto;
-  white-space: nowrap;
+  white-space: pre;
+  margin: 5px 0;
 }
