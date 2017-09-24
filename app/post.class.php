@@ -21,8 +21,8 @@ class Post
 
 			// Add code definiton
 			$parser->addCodeDefinition(new class extends \JBBCode\CodeDefinition {
-				public function __construct($useOption){
-					parent::__construct($useOption);
+				public function __construct(){
+					parent::__construct();
 					$this->setTagName("code");
 					$this->setParseContent(false);
 					$this->setUseOption(true);
