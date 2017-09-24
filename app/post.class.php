@@ -16,7 +16,8 @@ class Post
 		
 		if(Config::get("highlight")){
 			$c = str_replace("\t", "  ", $c);
-			$c = preg_replace("/\[(\/?)code(=(?:[^\[]+))?\]\s*?(?:\n|\r)?/i", '[$1code$2]', $c);
+			$c = preg_replace("/\[code(?:=([^\[]+))?\]\s*?(?:\n|\r)?/i", '[code=$1]', $c);
+			$c = preg_replace("/\[\/code\]\s*?(?:\n|\r)?/i", '[/code]', $c);
 
 			// Add code definiton
 			$parser->addCodeDefinition(new class extends \JBBCode\CodeDefinition {
