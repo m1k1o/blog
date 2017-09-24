@@ -63,6 +63,8 @@ class Image
 	}
 	
 	public static function upload($name, $data){
+		ini_set('memory_limit', '128M');
+
 		$photo = null;
 		$ext = null;
 		
@@ -126,7 +128,7 @@ class Image
 		self::thumb($path, $thumb);
 		
 		// Save to DB
-		DB::get_instance()->query("UPDATE `images` SET `path` = ?, `thumb` = ?, `status` = ?  WHERE `id` = ?", $path, $thumb, $status, $id);
+		DB::get_instance()->query("UPDATE `images` SET `path` = ?, `thumb` = ?, `status` = 1 WHERE `id` = ?", $path, $thumb, $id);
 		return [
 			"path" => $path,
 			"thumb" => $thumb
