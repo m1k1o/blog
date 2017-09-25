@@ -290,7 +290,7 @@ if(!empty($scripts)){
 		<!-- Pirvacy Settings -->
 		<ul class="b_dropdown privacy_settings">
 			<li><a class="set" data-val="public"><i class="public"></i><?php echo __("Public"); ?></a></li>
-			<!--<li><a class="set" data-val="friends"><i class="friends"></i><?php echo __("Friends"); ?></a></li>-->
+			<li><a class="set" data-val="friends"><i class="friends"></i><?php echo __("Friends"); ?></a></li>
 			<li><a class="set" data-val="private"><i class="private"></i><?php echo __("Only me"); ?></a></li>
 		</ul>
 	</div>

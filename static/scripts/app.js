@@ -156,7 +156,8 @@ var cnt_funcs = {
 // Login function
 var login = {
 	is: false,
-	
+	visitor: false,
+
 	// Logout button
 	logout_btn: function(name){
 		var btn = $('#prepared .logout_btn').clone();
@@ -174,11 +175,15 @@ var login = {
 						$("body").error_msg(data.msg);
 						return ;
 					}
-					
+
+					// Remove new post input
+					if(login.is){
+						new_post.remove();
+					}
+
 					// Is not logged in anymore
 					login.is = false;
-					// Remove new post input
-					new_post.remove();
+					login.visitor = false;
 					// Remove logout button
 					btn.remove();
 					// Load first posts
@@ -231,9 +236,13 @@ var login = {
 						}
 						
 						// Now is logged in
-						login.is = true;
+						login.is = data.logged_in;
+						login.visitor = data.is_visitor;
+						
 						// Logged in user can add post
-						new_post.create();
+						if(login.is){
+							new_post.create();
+						}
 						// Remove login button
 						btn.remove();
 						// Load first posts
@@ -272,11 +281,15 @@ var login = {
 				
 				// Check if is logged in
 				login.is = data.logged_in;
-				if(!login.is){
+				login.visitor = data.is_visitor;
+				if(!login.is && !login.visitor){
 					login.login_btn();
 				} else {
 					login.logout_btn();
-					// Logged in user can add post
+				}
+				
+				// Logged in user can add post
+				if(login.is){
 					new_post.create();
 				}
 				
