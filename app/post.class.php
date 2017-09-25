@@ -310,7 +310,7 @@ class Post
 			"SELECT `id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`, DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i') AS `datetime` ".
 			"FROM `posts` ".
 			"WHERE ".
-				(!User::is_logged_in() ? "`privacy` = 'public' AND " : "").
+				(!User::is_logged_in() ? (User::is_visitor() ? "`privacy` IN ('public', 'friends') AND " : "`privacy` = 'public' AND ") : "").
 				($until ? "`posts`.`datetime` < DATE_ADD('{$until}', INTERVAL +1 MONTH) AND " : "").
 				($id ? "`id` = {$id} AND " : "").
 				($tag ? "`plain_text` LIKE '%{$tag}%' AND " : "").
@@ -331,6 +331,6 @@ class Post
 	}
 	
 	public static function handshake($r){
-		return ["logged_in" => User::is_logged_in()];
+		return ["logged_in" => User::is_logged_in(), "is_visitor" => User::is_visitor()];
 	}
 }
