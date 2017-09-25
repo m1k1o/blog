@@ -57,7 +57,7 @@ body {
   height: 160px;
   border-radius: 3px;
   display: block;
-  texxt-align: center;
+  text-align: center;
   border: 1px solid rgba(0, 0, 0, .3);
   padding: 5px;
   border-radius: 2px;
@@ -214,7 +214,6 @@ body {
 .b_tools:active,
 .b_tools:focus {
   cursor: pointer;
-  ;
   background: url(../images/B89i4luGsIu.png) no-repeat;
   background-position: 5px 6px;
 }
@@ -664,6 +663,7 @@ body {
 }
 
 .t_area .e_text  {
+  white-space: pre;
   margin: 0 0 0 10px;
   min-height: 88px;
   max-width: 100%;
