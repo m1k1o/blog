@@ -980,7 +980,7 @@ $.fn.filedrop = function(options){
 				$(".e_drop").css("display", "flex");
 				window.clearTimeout(dropTimer);
 			}
-		}).on('dragleave', function(e) {
+		}).on('dragleave drop', function(e) {
 			dropTimer = window.setTimeout(function() {
 				$(".e_drop").hide();
 			}, 25);
@@ -1016,7 +1016,7 @@ $(document).on('dragover', function(e) {
 		$(".e_drag").css("display", "flex");
 		window.clearTimeout(dragTimer);
 	}
-}).on('dragleave', function(e) {
+}).on('dragleave drop', function(e) {
 	dragTimer = window.setTimeout(function() {
 		$(".e_drag").hide();
 	}, 25);
