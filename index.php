@@ -113,8 +113,8 @@ if(!empty($scripts)){
 						<h4 class="modal-title"><?php echo __("Login"); ?></h4>
 					</div>
 					<div class="modal-body login-form">
-						<input type="text" class="nick" placeholder="<?php echo __("Nick"); ?>">
-						<input type="password" class="pass" placeholder="<?php echo __("Password"); ?>">
+						<input name="username" type="text" class="nick" placeholder="<?php echo __("Nick"); ?>">
+						<input name="password" type="password" class="pass" placeholder="<?php echo __("Password"); ?>">
 					</div>
 					<div class="modal-footer">
 						<div class="buttons">
@@ -190,9 +190,9 @@ if(!empty($scripts)){
 						<input type="hidden" class="i_content">
 						<div class="modal-body content"></div>
 						<table class="options_content">
-							<tr class="feeling"><th><?php echo __("Feeling"); ?></th><td><input type="text" class="i_feeling" placeholder="<?php echo __("How are you feeling?"); ?>"><button class="clear"></button></td></tr>
-							<tr class="persons"><th><?php echo __("With"); ?></th><td><input type="text" class="i_persons" placeholder="<?php echo __("Who are you with?"); ?>"><button class="clear"></button></td></tr>
-							<tr class="location"><th><?php echo __("At"); ?></th><td><input type="text" class="i_location" placeholder="<?php echo __("Where are you?"); ?>"><button class="clear"></button></td></tr>
+							<tr class="feeling"><th><?php echo __("Feeling"); ?></th><td><input type="text" class="i_feeling" placeholder="<?php echo __("How are you feeling?"); ?>" autocomplete="off"><button class="clear"></button></td></tr>
+							<tr class="persons"><th><?php echo __("With"); ?></th><td><input type="text" class="i_persons" placeholder="<?php echo __("Who are you with?"); ?>" autocomplete="off"><button class="clear"></button></td></tr>
+							<tr class="location"><th><?php echo __("At"); ?></th><td><input type="text" class="i_location" placeholder="<?php echo __("Where are you?"); ?>" autocomplete="off"><button class="clear"></button></td></tr>
 						</table>
 						<div class="modal-footer">
 							<ul class="options">
