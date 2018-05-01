@@ -14,29 +14,13 @@ if(empty($_SESSION['token'])){
 
 Log::put("visitors");
 
-$year = intval(date("Y"));
-$years = '';
-for($y=$year-5;$y<=$year+5;$y++){
-	$years .= sprintf('<option>%d</option>', $y);
-}
-
-$months = '';
-for($m=1;$m<=12;$m++){
-	$months .= sprintf('<option value="%d">%02d</option>', $m, $m);
-}
-
-$days = '';
-for($d=1;$d<=31;$d++){
-	$days .= sprintf('<option value="%d">%02d</option>', $d, $d);
-}
-
 $hours = '';
 for($h=0;$h<=24;$h++){
 	$hours .= sprintf('<option value="%d">%02d</option>', $h, $h);
 }
 
 $minutes = '';
-for($m=0;$m<=60;$m+=10){
+for($m=0;$m<60;$m+=10){
 	$minutes .= sprintf('<option value="%d">%02d</option>', $m, $m);
 }
 
@@ -213,33 +197,43 @@ if(!empty($scripts)){
 		
 		<!-- Edit Date Modal -->
 		<div class="modal edit_date_modal">
-			<div class="modal-dialog">
+			<div class="modal-dialog small">
 				<div class="modal-content">
 					<div class="modal-header">
 						<a class="close"></a>
 						<h4 class="modal-title"><?php echo __("Change Date"); ?></h4>
 					</div>
 					<div class="modal-body">
-						<select class="year">
-							<option value="" disabled="1"><?php echo __("Year:"); ?></option>
-							<?php echo $years; ?>
-						</select>
-						<select class="month">
-							<option value="" disabled="1"><?php echo __("Month:"); ?></option>
-							<?php echo $months; ?>
-						</select>
-						<select class="day">
-							<option value="" disabled="1"><?php echo __("Day:"); ?></option>
-							<?php echo $days; ?>
-						</select>
-						<select class="hour">
-							<option value="" disabled="1"><?php echo __("Hour:"); ?></option>
-							<?php echo $hours; ?>
-						</select>
-						<select class="minute">
-							<option value="" disabled="1"><?php echo __("Minute:"); ?></option>
-							<?php echo $minutes; ?>
-						</select>
+						<div class="datepicker">
+							<input type="hidden" class="year" value="">
+							<input type="hidden" class="month" value="">
+							<input type="hidden" class="day" value="">
+							<input type="hidden" class="month_names" value="<?php echo
+								__("January").",".
+								__("February").",".
+								__("March").",".
+								__("April").",".
+								__("May").",".
+								__("June").",".
+								__("July").",".
+								__("August").",".
+								__("September").",".
+								__("October").",".
+								__("November").",".
+								__("December");
+							?>">
+						</div>
+						<div style="text-align: center;">
+							<?php echo __("Time:"); ?>&nbsp;
+							<select class="hour">
+								<option value="" disabled="1"><?php echo __("Hour:"); ?></option>
+								<?php echo $hours; ?>
+							</select>&nbsp;:&nbsp;
+							<select class="minute">
+								<option value="" disabled="1"><?php echo __("Minute:"); ?></option>
+								<?php echo $minutes; ?>
+							</select>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<div class="buttons">
@@ -329,6 +323,7 @@ if(!empty($scripts)){
 	<script>$["\x61\x6A\x61\x78\x53\x65\x74\x75\x70"]({"\x68\x65\x61\x64\x65\x72\x73":{"\x43\x73\x72\x66-\x54\x6F\x6B\x65\x6E":"<?php echo $_SESSION['token'];?>"}});</script>
 
 	<script src="static/scripts/lightbox.js"></script>
+	<script src="static/scripts/datepick.js"></script>
 	<script src="static/scripts/autosize.js"></script>
 	<?php echo Config::get("highlight") ? '<script src="static/scripts/highlight.js"></script><script>hljs.initHighlightingOnLoad();</script>' : ''; ?>
 	<script src="static/scripts/app.js?v=<?php echo Config::get("version"); ?>"></script>

@@ -849,6 +849,9 @@ $.fn.apply_post = function(){
 						modal.find(".hour").val(data[3]);
 						modal.find(".minute").val(data[4]);
 						
+						// Initialize datepick
+						datepick(modal.find(".datepicker"));
+
 						// On close
 						modal.find(".close").click(function(){
 							modal.close();

@@ -937,3 +937,59 @@ code {
   white-space: pre;
   margin: 5px 0;
 }
+
+/* datepicker */
+.datepicker {
+  text-align: center;
+}
+.datepicker table {
+  display: inline-block;
+}
+
+.datepicker th,
+.datepicker td {
+  width: 12.5%;
+}
+
+.datepicker td {
+  color: #999;
+  padding: 5px;
+  border: 1px solid transparent;
+}
+.datepicker td.active {
+  color: black;
+}
+
+.datepicker td.selected {
+  color: black;
+  background-color: #4267b2;
+}
+
+.datepicker td.today {
+  position: relative;
+}
+
+.datepicker td.today:after {
+  width: 10px;
+  height: 10px;
+  top: 50%;
+  margin-top: -5px;
+  right: 5px;
+  position: absolute;
+  display: inline-block;
+  content: ' ';
+  background-color: red;
+  border-radius: 100%;
+}
+
+.datepicker td:hover {
+  background-color: #ced0d4;
+  border-color: #ced0d4;
+  cursor: pointer;
+}
+
+.datepicker td.selected {
+  color: white;
+  border-color: #4267b2;
+  background-color: #4267b2;
+}
