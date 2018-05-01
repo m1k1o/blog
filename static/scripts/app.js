@@ -968,10 +968,24 @@ $.fn.filedrop = function(options){
 		
 		// Stop default browser actions
 		$this.bind('dragover dragleave', function(event) {
-			event.stopPropagation()
-			event.preventDefault()
-		})
-		
+			event.stopPropagation();
+			event.preventDefault();
+		});
+
+		// Check if is element being dragged
+		var dropTimer;
+		$this.on('dragover', function(e) {
+			var dt = e.originalEvent.dataTransfer;
+			if(dt.types != null && (dt.types.indexOf ? dt.types.indexOf('Files') != -1 : dt.types.contains('application/x-moz-file'))){
+				$(".e_drop").css("display", "flex");
+				window.clearTimeout(dropTimer);
+			}
+		}).on('dragleave', function(e) {
+			dropTimer = window.setTimeout(function() {
+				$(".e_drop").hide();
+			}, 25);
+		});
+
 		// Catch drop event
 		$this.bind('drop', function(event) {
 			// Stop default browser actions
@@ -995,18 +1009,18 @@ $.fn.filedrop = function(options){
 login.init();
 
 // Check if is element being dragged
-//var dragTimer;
-//$(document).on('dragover', function(e) {
-//	var dt = e.originalEvent.dataTransfer;
-//	if(dt.types != null && (dt.types.indexOf ? dt.types.indexOf('Files') != -1 : dt.types.contains('application/x-moz-file'))){
-//		$("body").addClass("is-dragevent");
-//		window.clearTimeout(dragTimer);
-//	}
-//}).on('dragleave', function(e) {
-//	dragTimer = window.setTimeout(function() {
-//		$("body").removeClass("is-dragevent");
-//	}, 25);
-//});
+var dragTimer;
+$(document).on('dragover', function(e) {
+	var dt = e.originalEvent.dataTransfer;
+	if(dt.types != null && (dt.types.indexOf ? dt.types.indexOf('Files') != -1 : dt.types.contains('application/x-moz-file'))){
+		$(".e_drag").css("display", "flex");
+		window.clearTimeout(dragTimer);
+	}
+}).on('dragleave', function(e) {
+	dragTimer = window.setTimeout(function() {
+		$(".e_drag").hide();
+	}, 25);
+});
 
 $(window)
 .on("scroll resize touchmove", posts.tryload)

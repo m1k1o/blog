@@ -164,6 +164,7 @@ if(!empty($scripts)){
 					<div class="edit_form">
 						<div class="modal-body drop_space">
 							<div class="e_drag"><span><?php echo __("Drag photos here"); ?></span></div>
+							<div class="e_drop"><span><?php echo __("Drop photos here"); ?></span></div>
 							<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="e_profile">
 							<!--<div class="e_text" contenteditable="true"></div>-->
 							<div class="t_area">

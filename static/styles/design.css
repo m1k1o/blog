@@ -616,7 +616,7 @@ body {
   float: left;
 }
 
-.e_drag {
+.e_drag, .e_drop {
   display: none;
   position: absolute;
   top: 0;
@@ -629,23 +629,18 @@ body {
   color: #7e97ba;
   font-size: 16px;
   font-weight: bold;
-  vertical-align: middle;
   text-align: center;
   box-sizing: border-box;
+  pointer-events: none;
 }
 
-.e_drag span {
-  display: table-cell;
-  vertical-align: middle;
+.e_drag span, .e_drop span {
+  margin: auto;
 }
 
-.e_drag.active {
+.e_drop {
   border-color: #75a3f5;
   color: #75a3f5;
-}
-
-.is-dragevent .e_drag {
-  display: table;
 }
 
 .e_text {
