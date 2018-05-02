@@ -143,7 +143,7 @@ var datepick = function(container) {
 				td.addClass("today");
 			}
 	
-			if(this.selected[0].val() == d && this.selected[1].val() == this.m && this.selected[2].val() == this.y) {
+			if(this.selected[0].val() == d && this.selected[1].val() == this.m + 1 && this.selected[2].val() == this.y) {
 				td.addClass("selected");
 				this.selected[3] = td;
 			}
@@ -153,7 +153,7 @@ var datepick = function(container) {
 				console.log("Set date: " + x.y + "/" + x.m + "/" + d);
 
 				x.selected[0].val(d);
-				x.selected[1].val(x.m);
+				x.selected[1].val(x.m + 1);
 				x.selected[2].val(x.y);
 
 				$(x.selected[3]).removeClass("selected");
@@ -178,7 +178,7 @@ var datepick = function(container) {
 			var months = $(container).find(".month_names").val();
 			this.months = months.split(",");
 
-			this.set_date(this.selected[1].val(), this.selected[2].val());
+			this.set_date(this.selected[1].val() - 1, this.selected[2].val());
 	
 			this.build_table(container);
 			this.load_table();
