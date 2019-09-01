@@ -20,11 +20,11 @@ class Ajax
 		}
 		
 		$headers = apache_request_headers();
-		if(!isset($headers['Csrf-Token']) || empty($_SESSION['token'])){
+		if(!isset($headers['Csrf-Token']) && !isset($headers['csrf-token'])){
 			throw new Exception("No CSRF token.");
 		}
-		
-		if($headers['Csrf-Token'] !== $_SESSION['token']){
+
+		if($headers['Csrf-Token'] !== $_SESSION['token'] && $headers['csrf-token'] !== $_SESSION['token']){
 			throw new Exception("Wrong CSRF token.");
 		}
 	}
