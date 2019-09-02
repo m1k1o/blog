@@ -1,8 +1,18 @@
 custom.ini
-data/header.html
 
+# Ignore images content
 i/*
 !i/.gitkeep
 
+# Ignore thumbnails content
 t/*
 !t/.gitkeep
+
+# Ignore all files in data but keep folder itself (and logs subfolder)
+data/*
+!data/.gitkeep
+!data/logs/
+
+# Ignore all logs files but keep folder itself
+data/logs/*
+!data/logs/.gitkeep
