@@ -15,9 +15,9 @@ class Log
 		if(!Config::get_safe("logs", false) || !in_array($_file, static::$_files)){
 			return ;
 		}
-		
-		if(false === file_put_contents(PROJECT_PATH.static::$_path.$_file.".log", self::line($_text), FILE_APPEND)){
-			trigger_error(sprint("Can't write to %s.log file.", $_file), E_USER_NOTICE);
+
+		if(false === file_put_contents(PROJECT_PATH.static::$_path.$_file.".log", self::line($_text), FILE_APPEND) && Config::get_safe('debug', false)){
+			die(sprintf("Can't write to %s.log file.", $_file));
 		}
 	}
 	
