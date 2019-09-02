@@ -24,7 +24,7 @@ for($m=0;$m<60;$m+=10){
 	$minutes .= sprintf('<option value="%d">%02d</option>', $m, $m);
 }
 
-$header_path = PROJECT_PATH.'data/header.html';
+$header_path = PROJECT_PATH.Config::get_safe("header", 'data/header.html');
 if(file_exists($header_path)){
 	$header = file_get_contents($header_path);
 } else {
