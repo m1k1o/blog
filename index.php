@@ -317,7 +317,7 @@ if(!empty($scripts)){
 	
 	<div id="eof_feed">
 		<img src="static/images/zpEYXu5Wdu6.png">
-		<p><?php echo Config::get("version"); ?> &copy; 2016-2018 <br>Miroslav Šedivý</p>
+		<p><?php echo Config::get("version"); ?> &copy; 2016-2019 <br>Miroslav Šedivý</p>
 	</div>
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
