@@ -532,14 +532,17 @@ $.fn.apply_edit = function(data){
 		if(data.feeling){
 			modal.find(".i_feeling").val(data.feeling);
 			modal.find(".options li.feeling a").addClass("active");
+			modal.find(".options_content tr.feeling").css("display", "table-row");
 		}
 		if(data.persons){
 			modal.find(".i_persons").val(data.persons);
 			modal.find(".options li.persons a").addClass("active");
+			modal.find(".options_content tr.persons").css("display", "table-row");
 		}
 		if(data.location){
 			modal.find(".i_location").val(data.location);
 			modal.find(".options li.location a").addClass("active");
+			modal.find(".options_content tr.location").css("display", "table-row");
 		}
 		
 		// Set options_content events
