@@ -452,6 +452,8 @@ $.fn.apply_edit = function(data){
 				if(ignored_links.indexOf(link) !== -1)
 					return ;
 				
+				add_content_loading();
+
 				// Parse link
 				$.get({
 					dataType: "json",
@@ -463,6 +465,7 @@ $.fn.apply_edit = function(data){
 					success: function(data){
 						if(data.error){
 							$("body").error_msg(data.msg);
+							remove_content();
 							return ;
 						}
 						
@@ -521,6 +524,8 @@ $.fn.apply_edit = function(data){
 			var form_data = new FormData();
 			form_data.append('file', file_data[0].files[0]);
 			
+			add_content_loading();
+
 			$.ajax({
 				dataType: 'json',
 				url: 'ajax.php?action=upload_image',
@@ -532,6 +537,7 @@ $.fn.apply_edit = function(data){
 				success: function(data){
 					if(data.error){
 						$("body").error_msg(data.msg);
+						remove_content();
 						return ;
 					}
 					
