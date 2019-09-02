@@ -2,8 +2,6 @@
 
 class Image
 {
-	const CHMOD = 775;
-	
 	private static function random_str($len = 10){
 		$chr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 		$chr_len = strlen($chr);
@@ -115,13 +113,8 @@ class Image
 		
 		// Save path
 		if(false === file_put_contents($path, $photo)){
-			// Try to set chmod
-			if(chmod("i", Image::CHMOD) && chmod("t", Image::CHMOD)){
-				throw new Exception("Can't write to file. Chmod has been changed, try again.");
-			}
-			
 			DB::get_instance()->query("UPDATE `images` SET `status` = 0 WHERE `id` = ?", $id);
-			throw new Exception("Can't write to file.");
+			throw new Exception("Can't write to image folders `i` and `t`.");
 		}
 		
 		// Create thumb
