@@ -127,6 +127,9 @@ var datepick = function(container) {
 		tr: null,
 		i: 0,
 		append_date: function (d, active) {
+			var y = this.y;
+			var m = this.m;
+
 			if(this.i % 7 == 0 || this.i == 0) {
 				this.tr = $("<tr>");
 				$(this.tbody).append(this.tr);
@@ -138,27 +141,27 @@ var datepick = function(container) {
 			if(active) {
 				td.addClass("active");
 			}
-	
-			if(this.today[0] == d && this.today[1] == this.m && this.today[2] == this.y) {
+
+			if(this.today[0] == d && this.today[1] == m && this.today[2] == y) {
 				td.addClass("today");
 			}
-	
-			if(this.selected[0].val() == d && this.selected[1].val() == this.m + 1 && this.selected[2].val() == this.y) {
+
+			var selected = this.selected;
+			if(selected[0].val() == d && selected[1].val() == m + 1 && selected[2].val() == y) {
 				td.addClass("selected");
-				this.selected[3] = td;
+				selected[3] = td;
 			}
 	
-			var x = this;
 			$(td).click(function(){
-				console.log("Set date: " + x.y + "/" + x.m + "/" + d);
+				console.log("Set date: " + y + "/" + (m + 1) + "/" + d);
 
-				x.selected[0].val(d);
-				x.selected[1].val(x.m + 1);
-				x.selected[2].val(x.y);
+				selected[0].val(d);
+				selected[1].val(m + 1);
+				selected[2].val(y);
 
-				$(x.selected[3]).removeClass("selected");
-				x.selected[3] = this;
-				$(x.selected[3]).addClass("selected");
+				$(selected[3]).removeClass("selected");
+				selected[3] = this;
+				$(selected[3]).addClass("selected");
 			});
 	
 			$(this.tr).append(td);
