@@ -171,6 +171,7 @@ if(!empty($scripts)){
 								<textarea class="e_text" placeholder="<?php echo __("What's on your mind?"); ?>"></textarea>
 							</div>
 						</div>
+						<div class="e_loading"><img src="static/images/loading.gif" /></div>
 						<input type="hidden" class="i_content_type">
 						<input type="hidden" class="i_content">
 						<div class="modal-body content"></div>

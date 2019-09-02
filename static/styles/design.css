@@ -643,6 +643,12 @@ body {
   color: #75a3f5;
 }
 
+.e_loading {
+  display: none;
+  text-align: center;
+  padding-bottom: 15px;
+}
+
 .e_text {
   margin-left: 50px;
   outline: 0;

@@ -412,18 +412,27 @@ $.fn.apply_edit = function(data){
 	return this.each(function(){
 		var modal = $(this);
 		
+		var add_content_loading = function(){
+			modal.find(".e_loading").css("display", "block");
+		};
+
+		var remove_content = function(){
+			modal.find(".e_loading").hide();
+
+			modal.find(".content").empty().hide();
+			modal.find(".i_content_type").val("");
+			modal.find(".i_content").val("");
+			is_content = false;
+		};
+
 		var add_content = function(type, data){
 			if(!data)
 				return;
 			
+			modal.find(".e_loading").hide();
 			var content = modal.find(".content").empty();
 			var clear = $('<button class="clear"></button>');
-			clear.click(function(){
-				content.empty().hide();
-				modal.find(".i_content_type").val("");
-				modal.find(".i_content").val("");
-				is_content = false;
-			});
+			clear.click(remove_content);
 			
 			if(typeof cnt_funcs[type] === "function")
 				content.append(clear).append(cnt_funcs[type](data)).css("display", "block");
@@ -502,8 +511,10 @@ $.fn.apply_edit = function(data){
 			*/
 		});
 
-		autosize($(modal.find(".e_text")));
-		//autosize.update(ta);
+		// Autoresize textarea
+		setTimeout(function(){
+			autosize($(modal.find(".e_text")));
+		},0);
 
 		var file_data = modal.find(".photo_upload");
 		$(file_data).change(function(){
@@ -617,6 +628,8 @@ $.fn.apply_edit = function(data){
 				
 				var reader = new FileReader()
 				reader.onload = function(event) {
+					add_content_loading();
+
 					// Parse image
 					$.post({
 						dataType: "json",
@@ -629,6 +642,7 @@ $.fn.apply_edit = function(data){
 						success: function(data){
 							if(data.error){
 								$("body").error_msg(data.msg);
+								remove_content();
 								return ;
 							}
 							
@@ -966,18 +980,15 @@ $.fn.filedrop = function(options){
 	}
 	options =  $.extend(defaults, options)
 	return this.each(function() {
-		var files = []
-		var $this = $(this)
-		
 		// Stop default browser actions
-		$this.bind('dragover dragleave', function(event) {
+		$(this).bind('dragover dragleave drop', function(event) {
 			event.stopPropagation();
 			event.preventDefault();
 		});
 
 		// Check if is element being dragged
 		var dropTimer;
-		$this.on('dragover', function(e) {
+		$(this).on('dragover', function(e) {
 			var dt = e.originalEvent.dataTransfer;
 			if(dt.types != null && (dt.types.indexOf ? dt.types.indexOf('Files') != -1 : dt.types.contains('application/x-moz-file'))){
 				$(".e_drop").css("display", "flex");
@@ -990,13 +1001,9 @@ $.fn.filedrop = function(options){
 		});
 
 		// Catch drop event
-		$this.bind('drop', function(event) {
-			// Stop default browser actions
-			event.stopPropagation()
-			event.preventDefault()
-			
+		$(this).bind('drop', function(event) {
 			// Get all files that are dropped
-			files = event.originalEvent.target.files || event.originalEvent.dataTransfer.files
+			var files = event.originalEvent.target.files || event.originalEvent.dataTransfer.files
 			
 			// Convert uploaded file to data URL and pass trought callback
 			if(options.callback)
