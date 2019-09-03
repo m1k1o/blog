@@ -35,7 +35,7 @@ var posts = {
 		location.hash.replace(/([a-z]+)\=([^\&]+)/g, function(value){
 			value = value.split("=");
 			
-			posts.filter[value[0]] = value[1];
+			posts.filter[value[0]] = decodeURIComponent(value[1]);
 			$(".more_posts").show();
 		});
 		
