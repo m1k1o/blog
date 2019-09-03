@@ -834,6 +834,7 @@ $.fn.apply_post = function(){
 										return ;
 									}
 									
+									data.id = post_id;
 									post.post_fill(data);
 									modal.close();
 								}
