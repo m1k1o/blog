@@ -35,6 +35,14 @@ class Post
 			});
 		}
 
+		// Custom tags
+		$builder = new JBBCode\CodeDefinitionBuilder("goal", "<div class=\"b_goal star\">{param}</div>");
+		$parser->addCodeDefinition($builder->build());
+
+		$builder = new JBBCode\CodeDefinitionBuilder("goal", "<div class=\"b_goal {option}\">{param}</div>");
+		$builder->setUseOption(true);
+		$parser->addCodeDefinition($builder->build());
+
 		if(($tags = Config::get_safe("bbtags", [])) && !empty($tags)){
 			foreach($tags as $tag => $content){
 				$builder = new JBBCode\CodeDefinitionBuilder($tag, $content);
