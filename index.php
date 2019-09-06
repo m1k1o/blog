@@ -96,17 +96,19 @@ if(!empty($scripts)){
 						<a class="close"></a>
 						<h4 class="modal-title"><?php echo __("Login"); ?></h4>
 					</div>
-					<div class="modal-body login-form">
-						<input name="username" type="text" class="nick" placeholder="<?php echo __("Nick"); ?>">
-						<input name="password" type="password" class="pass" placeholder="<?php echo __("Password"); ?>">
-					</div>
-					<div class="modal-footer">
-						<div class="buttons">
-							<!--<div class="left"><a>Register</a> - <a>Forgot Password</a></div>-->
-							<a class="button gray close"><?php echo __("Cancel"); ?></a>
-							<button type="button" class="button blue do_login"><?php echo __("Login"); ?></button>
+					<form>
+						<div class="modal-body login-form">
+							<input name="username" type="text" autocomplete="username" class="nick" placeholder="<?php echo __("Nick"); ?>">
+							<input name="password" type="password" autocomplete="current-password" class="pass" placeholder="<?php echo __("Password"); ?>">
 						</div>
-					</div>
+						<div class="modal-footer">
+							<div class="buttons">
+								<!--<div class="left"><a>Register</a> - <a>Forgot Password</a></div>-->
+								<a class="button gray close"><?php echo __("Cancel"); ?></a>
+								<button type="button" class="button blue do_login"><?php echo __("Login"); ?></button>
+							</div>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
