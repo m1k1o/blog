@@ -321,8 +321,7 @@ if(!empty($scripts)){
 		<img src="static/images/zpEYXu5Wdu6.png">
 		<p><?php echo Config::get("version"); ?> &copy; 2016-2019 <br>Miroslav Šedivý</p>
 	</div>
-	
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
 	<script>window.jQuery || document.write('<script src="static/scripts/jquery.min.js"><\/script>')</script>
 	<script>$["\x61\x6A\x61\x78\x53\x65\x74\x75\x70"]({"\x68\x65\x61\x64\x65\x72\x73":{"\x43\x73\x72\x66-\x54\x6F\x6B\x65\x6E":"<?php echo $_SESSION['token'];?>"}});</script>
 
