@@ -13,7 +13,37 @@ class Image
 		
 		return $random_str;
 	}
-	
+
+	private static function fix_orientation($path, $img){
+		if(!function_exists('exif_read_data')){
+			return $img;
+		}
+
+		$exif = exif_read_data($path);
+		if(!$exif || !isset($exif['Orientation'])){
+			return $img;
+		}
+
+		$deg = 0;
+		switch($exif['Orientation']){
+			case 3:
+				$deg = 180;
+				break;
+			case 6:
+				$deg = 270;
+				break;
+			case 8:
+				$deg = 90;
+				break;
+		}
+
+		if($deg){
+			return imagerotate($img, $deg, 0);
+		}
+
+		return $img;
+	}
+
 	private static function thumb($source_path, $thumb_path){
 		ini_set('memory_limit', '128M');
 		
@@ -57,6 +87,7 @@ class Image
 		imagecopyresampled($new_image, $old_image, 0, 0, 0, 0, $new_w, $new_h, $source_w, $source_h);
 		//$new_image = imagecreatetruecolor($thumb_w, $thumb_h);
 		//imagecopyresized($new_image, $old_image, $dest_x, $dest_y, 0, 0, $new_w, $new_h, $source_w, $source_h);
+		$new_image = self::fix_orientation($source_path, $new_image);
 		return $imgt($new_image, $thumb_path);
 	}
 	
