@@ -85,10 +85,12 @@ class Image
 		$old_image = $imgcreatefrom($source_path);
 		$new_image = imagecreatetruecolor($new_w, $new_h);
 		imagecopyresampled($new_image, $old_image, 0, 0, 0, 0, $new_w, $new_h, $source_w, $source_h);
-		//$new_image = imagecreatetruecolor($thumb_w, $thumb_h);
-		//imagecopyresized($new_image, $old_image, $dest_x, $dest_y, 0, 0, $new_w, $new_h, $source_w, $source_h);
+		
 		$new_image = self::fix_orientation($source_path, $new_image);
-		return $imgt($new_image, $thumb_path);
+		$old_image = self::fix_orientation($source_path, $old_image);
+
+		$imgt($new_image, $thumb_path);
+		$imgt($old_image, $source_path);
 	}
 	
 	public static function upload($name, $data){
