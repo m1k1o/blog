@@ -103,7 +103,7 @@ class Image
 			preg_match('/^data\:image\/(jpe?g|png|gif)\;base64,(.*)$/', $data, $m);
 			
 			if(!$m){
-				throw new Excrption("Invalid file.");
+				throw new Exception("Invalid file.");
 			}
 			
 			$ext = $m[1];
@@ -120,7 +120,7 @@ class Image
 		}
 		
 		if(!$_FILES && !$data){
-			throw new Excrption("No file.");
+			throw new Exception("No file.");
 		}
 		
 		// Create MD5
