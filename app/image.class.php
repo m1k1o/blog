@@ -61,7 +61,7 @@ class Image
 			$new_h = $thumb_h;
 			$new_w = intval($source_w * $new_h / $source_h);
 		}
-		
+
 		switch($source_details[2]){
 			case IMAGETYPE_GIF:
 				$imgt = "ImageGIF";
@@ -91,6 +91,7 @@ class Image
 
 		$imgt($new_image, $thumb_path);
 		$imgt($old_image, $source_path);
+		return true;
 	}
 	
 	public static function upload(){
