@@ -278,10 +278,10 @@ class Post
 		];
 	}
 	
-	public static function upload_image($r){
+	public static function upload_image(){
 		self::login_protected();
 		
-		return Image::upload($r["name"], $r["data"]);
+		return Image::upload();
 	}
 	
 	public static function load($r){
