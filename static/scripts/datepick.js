@@ -98,6 +98,11 @@ var datepick = function(container) {
 	
 			// Get first day of week
 			var dayOfWeek = new Date(this.y, this.m, 1).getDay();
+
+			// 0 is sunday - last day
+			if(dayOfWeek == 0) {
+				dayOfWeek = 7;
+			}
 	
 			// Previous month
 			this.dec_m();
