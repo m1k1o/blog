@@ -519,21 +519,24 @@ $.fn.apply_edit = function(data){
 			autosize($(modal.find(".e_text")));
 		},0);
 
-		var file_data = modal.find(".photo_upload");
-		$(file_data).change(function(){
+		var upload_image = function(file) {
+			if(file.type.match(/image/) === null){
+				$("body").error_msg("Only images can be uploaded.");
+				return ;
+			}
+
 			var form_data = new FormData();
-			form_data.append('file', file_data[0].files[0]);
-			
+			form_data.append('file', file);
+
 			add_content_loading();
 
-			$.ajax({
-				dataType: 'json',
-				url: 'ajax.php?action=upload_image',
+			$.post({
+				dataType: "json",
+				url: "ajax.php?action=upload_image",
 				cache: false,
 				contentType: false,
 				processData: false,
 				data: form_data,
-				type: 'post',
 				success: function(data){
 					if(data.error){
 						$("body").error_msg(data.msg);
@@ -544,6 +547,11 @@ $.fn.apply_edit = function(data){
 					add_content("image", data);
 				}
 			});
+		}
+
+		var file_data = modal.find(".photo_upload");
+		$(file_data).change(function(){
+			upload_image(file_data[0].files[0]);
 		});
 		
 		if(data.feeling){
@@ -621,45 +629,8 @@ $.fn.apply_edit = function(data){
 		
 		// Drag & Drop
 		modal.find(".drop_space").filedrop({
-			callback : function(file) {
-				if(file.size > 5000000){
-					$("body").error_msg("File is bigger than 5MB.");
-					return ;
-				}
-				
-				if(file.type != 'image/png' && file.type != 'image/jpg' && file.type != 'image/gif' && file.type != 'image/jpeg' ){
-					$("body").error_msg("Only images can be uploaded.");
-					return ;
-				}
-				
-				var reader = new FileReader()
-				reader.onload = function(event) {
-					add_content_loading();
-
-					// Parse image
-					$.post({
-						dataType: "json",
-						url: "ajax.php",
-						data: {
-							action: "upload_image",
-							name: file.name,
-							data: event.target.result
-						},
-						success: function(data){
-							if(data.error){
-								$("body").error_msg(data.msg);
-								remove_content();
-								return ;
-							}
-							
-							add_content("image", data);
-						}
-					});
-				}
-				reader.readAsDataURL(file);
-			}
-		})
-		
+			callback: upload_image
+		});
 	});
 };
 

@@ -93,44 +93,23 @@ class Image
 		$imgt($old_image, $source_path);
 	}
 	
-	public static function upload($name, $data){
-		ini_set('memory_limit', '128M');
-
-		$photo = null;
-		$ext = null;
-		
-		if($data){
-			preg_match('/^data\:image\/(jpe?g|png|gif)\;base64,(.*)$/', $data, $m);
-			
-			if(!$m){
-				throw new Exception("Invalid file.");
-			}
-			
-			$ext = $m[1];
-			if($ext == "jpeg") $ext = "jpg";
-			
-			// Decode photo
-			$photo = base64_decode($m[2]);
-		}
-		
-		if($_FILES){
-			$photo = file_get_contents($_FILES["file"]["tmp_name"]);
-			$name = $_FILES['file']['name'];
-			$ext = pathinfo($name, PATHINFO_EXTENSION);
-		}
-		
-		if(!$_FILES && !$data){
+	public static function upload(){
+		if(!$_FILES){
 			throw new Exception("No file.");
 		}
-		
+
 		// Create MD5
-		$md5 = md5($photo);
+		$md5 = md5_file($_FILES['file']['tmp_name']);
 		
 		// Find duplicate
 		if($d = DB::get_instance()->query("SELECT `path`, `thumb` FROM `images` WHERE `md5` = ? AND `status` = 1 LIMIT 1", $md5)->first()){
 			return $d;
 		}
 		
+		// Get metadata
+		$name = $_FILES['file']['name'];
+		$ext = pathinfo($name, PATHINFO_EXTENSION);
+
 		// Save to DB
 		$id = DB::get_instance()->query(
 			"INSERT INTO `images` ".
@@ -145,13 +124,18 @@ class Image
 		$thumb = 't/'.$name;
 		
 		// Save path
-		if(false === file_put_contents($path, $photo)){
+		if(!move_uploaded_file($_FILES['file']['tmp_name'], $path)){
 			DB::get_instance()->query("UPDATE `images` SET `status` = 0 WHERE `id` = ?", $id);
 			throw new Exception("Can't write to image folders `i` and `t`.");
 		}
 		
 		// Create thumb
-		self::thumb($path, $thumb);
+		if(!self::thumb($path, $thumb)){
+			DB::get_instance()->query("UPDATE `images` SET `status` = 0 WHERE `id` = ?", $id);
+			unlink($path);
+			unlink($thumb);
+			throw new Exception("File is not image.");
+		}
 		
 		// Save to DB
 		DB::get_instance()->query("UPDATE `images` SET `path` = ?, `thumb` = ?, `status` = 1 WHERE `id` = ?", $path, $thumb, $id);
