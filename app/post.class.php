@@ -285,32 +285,32 @@ class Post
 	}
 	
 	public static function load($r){
-		$until = null;
+		$until = [];
 		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", $r["filter"]["until"])){
 			$until = $r["filter"]["until"]."-01 00:00";
 		}
-		
+
 		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $r["filter"]["until"])){
 			$until = $r["filter"]["until"]." 23:59";
 		}
 
-		$id = null;
+		$id = [];
 		if($r["filter"]["id"]){
 			$id = intval($r["filter"]["id"]);
 		}
 		
-		$tag = null;
+		$tag = [];
 		if(preg_match("/^[A-Za-z0-9-_]+$/", $r["filter"]["tag"])){
 			$tag = '#'.$r["filter"]["tag"];
 		}
 
-		$loc = null;
-		if(preg_match("/^[^'\"]+$/", $r["filter"]["loc"])){
+		$loc = [];
+		if($r["filter"]["loc"]){
 			$loc = $r["filter"]["loc"];
 		}
 
-		$person = null;
-		if(preg_match("/^[^'\"]+$/", $r["filter"]["person"])){
+		$person = [];
+		if($r["filter"]["person"]){
 			$person = $r["filter"]["person"];
 		}
 
@@ -319,14 +319,14 @@ class Post
 			"FROM `posts` ".
 			"WHERE ".
 				(!User::is_logged_in() ? (User::is_visitor() ? "`privacy` IN ('public', 'friends') AND " : "`privacy` = 'public' AND ") : "").
-				($until ? "`posts`.`datetime` < DATE_ADD('{$until}', INTERVAL +1 MONTH) AND " : "").
-				($id ? "`id` = {$id} AND " : "").
-				($tag ? "`plain_text` LIKE '%{$tag}%' AND " : "").
-				($loc ? "`location` LIKE '%{$loc}%' AND " : "").
-				($person ? "`persons` LIKE '%{$person}%' AND " : "").
+				($until ? "`posts`.`datetime` < DATE_ADD(?, INTERVAL +1 MONTH) AND " : "").
+				($id ? "`id` = ? AND " : "").
+				($tag ? "`plain_text` LIKE CONCAT('%', ?, '%') AND " : "").
+				($loc ? "`location` LIKE CONCAT('%', ?, '%') AND " : "").
+				($person ? "`persons` LIKE CONCAT('%', ?, '%') AND " : "").
 				"`status` = 1 ".
 			"ORDER BY `posts`.`datetime` DESC ".
-			"LIMIT ? OFFSET ?", $r["limit"], $r["offset"]
+			"LIMIT ? OFFSET ?", $until, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
 		)->all();
 	}
 	
