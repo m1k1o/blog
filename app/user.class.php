@@ -17,7 +17,7 @@ class user
 			return true;
 		}
 		
-		return !empty($_SESSION[User::SESSION_NAME]) && $_SESSION[User::SESSION_NAME] === md5(Config::get("nick").Config::get_safe("pass", ""));
+		return !empty($_SESSION[User::SESSION_NAME]) && $_SESSION[User::SESSION_NAME] === hash("crc32", Config::get("nick").Config::get_safe("pass", ""), false);
 	}
 	
 	public static function login($nick, $pass){
@@ -30,7 +30,7 @@ class user
 		}
 		
 		if(Config::get("nick") === $nick && Config::get_safe("pass", "") === $pass){
-			$_SESSION[User::SESSION_NAME] = md5($nick.$pass);
+			$_SESSION[User::SESSION_NAME] = hash("crc32", $nick.$pass, false);
 			return ["logged_in" => true, "is_visitor" => false];
 		}
 
