@@ -12,7 +12,7 @@ class DB
 	
 	// Handle instances
 	public final static function get_instance(){
-		if(self::$_instance == null){
+		if(self::$_instance === null){
 			self::$_instance = new static();
 		}
 		

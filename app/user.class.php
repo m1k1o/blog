@@ -9,7 +9,7 @@ class user
 			return true;
 		}
 		
-		return !empty($_SESSION[User::SESSION_NAME]) && $_SESSION[User::SESSION_NAME] == 'visitor';
+		return !empty($_SESSION[User::SESSION_NAME]) && $_SESSION[User::SESSION_NAME] === 'visitor';
 	}
 
 	public static function is_logged_in(){
@@ -17,7 +17,7 @@ class user
 			return true;
 		}
 		
-		return !empty($_SESSION[User::SESSION_NAME]) && $_SESSION[User::SESSION_NAME] == md5(Config::get("nick").Config::get_safe("pass", ""));
+		return !empty($_SESSION[User::SESSION_NAME]) && $_SESSION[User::SESSION_NAME] === md5(Config::get("nick").Config::get_safe("pass", ""));
 	}
 	
 	public static function login($nick, $pass){
@@ -29,12 +29,13 @@ class user
 			throw new Exception(__("You are already logged in."));
 		}
 		
-		if(Config::get("nick") == $nick && Config::get_safe("pass", "") == $pass){
+		if(Config::get("nick") === $nick && Config::get_safe("pass", "") === $pass){
 			$_SESSION[User::SESSION_NAME] = md5($nick.$pass);
 			return ["logged_in" => true, "is_visitor" => false];
 		}
 
-		if(($visitors = Config::get_safe("visitor", [])) && !empty($visitors) && isset($visitors[$nick]) && $visitors[$nick] === $pass){
+		$visitors = Config::get_safe("visitor", []);
+		if(!empty($visitors) && isset($visitors[$nick]) && $visitors[$nick] === $pass){
 			$_SESSION[User::SESSION_NAME] = 'visitor';
 			return ["logged_in" => false, "is_visitor" => true];
 		}
