@@ -28,7 +28,6 @@ class SimpleEvaluationTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($html, $this->defaultParse($bbcode));
     }
 
-
     public function testEmptyString()
     {
         $this->assertProduces('', '');

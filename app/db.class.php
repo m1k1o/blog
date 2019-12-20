@@ -4,30 +4,30 @@
 class DB
 {
 	private static $_instance = null;
-	
+
 	private $_PDO;
 	private $_query;
-	
+
 	private $_query_counter;
-	
+
 	// Handle instances
 	public final static function get_instance(){
 		if(self::$_instance === null){
 			self::$_instance = new static();
 		}
-		
+
 		return self::$_instance;
 	}
-	
+
 	// Initialise PDO object
 	private final function __construct(){
 		$host = Config::get_safe('mysql_host', false);
 		$socket = Config::get_safe('mysql_socket', false);
-		
+
 		if($socket === false && $host === false){
 			throw new DBException("Mysql host or socket must be defined");
 		}
-		
+
 		// Try to connect
 		try {
 			$this->_PDO = new \PDO(
@@ -46,29 +46,29 @@ class DB
 		} catch (PDOException $e) {
 			throw new DBException($e->getMessage());
 		}
-		
+
 		// When is this not set, chat does dot work, odd behavior
 		$this->_PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
-		
+
 		// Throwing exceptions
 		$this->_PDO->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		//$this->_PDO->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
 	}
-	
+
 	// Just flattern array to be binded : [key1, key2, [key3, [key4]]] => [key1, key2, key3, key4]
 	private final function bind_value($key, $value){
 		if(is_array($value)){
 			foreach($value as $one_value){
 				$key = $this->bind_value($key, $one_value);
 			}
-			
+
 			return $key;
 		}
-		
+
 		$this->_query->bindValue($key, $value);
 		return ++$key;
 	}
-	
+
 	// Process Query
 	// query ($sql)
 	// query ($sql, $bind_param_01, $bind_param_02, ...)
@@ -76,49 +76,49 @@ class DB
 	public final function query(){
 		// Second parm is binded values
 		$params = func_get_args();
-		
+
 		// First parameter is sql
 		$sql = $params[0];
 		unset($params[0]);
-		
+
 		// Debug mode
 		if(Config::get_safe('debug', false)){
 			echo "<!-- ".$sql." + ".json_encode($params)." -->\n";
 		}
-		
+
 		// Try to prepare MySQL statement
 		try {
 			// Prepare PDO statement
 			$this->_query = $this->_PDO->prepare($sql);
-			
+
 			// Bind values
 			$this->bind_value(1, $params);
-			
+
 			// Execute
 			$this->_query->execute();
 		} catch (PDOException $e) {
 			throw new DBException($e->getMessage());
 		}
-		
+
 		$this->_query_counter++;
 		return $this;
 	}
-	
+
 	// Insert into table
 	public final function insert($table_name, $fields = null){
 		// If empty line
 		if(empty($fields)){
 			return $this->query("INSERT INTO `{$table_name}` () VALUES ()");
 		}
-		
+
 		// If multiple
 		if(isset($fields[0])){
 			// Turn array into PDO prepered statement format
 			$keys = array_keys($fields[0]);
-			
+
 			// Build query
 			$query = "INSERT INTO `{$table_name}` (`".implode('`, `', $keys)."`) VALUES ";
-			
+
 			// Insert values
 			$first = true;
 			$prepared_data = array();
@@ -128,10 +128,10 @@ class DB
 				} else {
 					$query .= ',';
 				}
-				
+
 				end($field);
 				$last_key = key($field);
-				
+
 				$query .= '(';
 				foreach($field as $key => $value){
 					if($value === "NOW()"){
@@ -140,22 +140,22 @@ class DB
 						$query .= '?';
 						$prepared_data[] = $value;
 					}
-					
+
 					if($last_key != $key){
 						$query .= ',';
 					}
 				}
 				$query .= ')';
 			}
-			
+
 			// Execute query
 			return $this->query($query, $prepared_data);
 		}
-		
+
 		// If only single
 		return $this->insert($table_name, array($fields));
 	}
-	
+
 	// Update table
 	// update ($table_name, $fields)
 	// update ($table_name, $fields, $sql)
@@ -164,27 +164,27 @@ class DB
 	public final function update(){
 		// Fourt param is binded values
 		$params = func_get_args();
-		
+
 		// First is table_name
 		$table_name = $params[0];
 		unset($params[0]);
-		
+
 		// Second is fields
 		$fields = $params[1];
 		unset($params[1]);
-		
+
 		// Third is sql
 		$sql = $params[2];
 		unset($params[2]);
-		
+
 		// If fields are not array, do nothing
 		if(!is_array($fields)){
 			return $this;
 		}
-		
+
 		end($fields);
 		$last_key = key($fields);
-		
+
 		// Support for NOW()
 		$prepared_data = array();
 		$set_data = null;
@@ -195,61 +195,61 @@ class DB
 				$set_data .= "`{$key}` = ?";
 				$prepared_data[] = $value;
 			}
-			
+
 			if($last_key != $key){
 				$set_data .= ',';
 			}
 		}
-		
+
 		// If params are not array, make it
 		if(!is_array($params)){
 			$params = array($params);
 		}
-		
+
 		// Merge fields array and additional SQL data
 		foreach($params as $param){
 			$prepared_data[] = $param;
 		}
-		
+
 		// Build query
 		$query = "UPDATE `{$table_name}` SET {$set_data} ".$sql;
-		
+
 		// Execute query
 		return $this->query($query, $prepared_data);
 	}
-	
+
 	// Alias for all
 	public final function results(){
 		trigger_error("Using deprecated method <strong>DB::results();</strong>. Use <strong>DB::all();</strong> instead.");
 		return $this->all();
 	}
-	
+
 	// Get all rows
 	public final function all($type = \PDO::FETCH_ASSOC){
 		return $this->_query->fetchAll($type);
 	}
-	
+
 	// Get all values to one dimensional array
 	public final function columns($column = 0){
 		return $this->_query->fetchAll(\PDO::FETCH_COLUMN, $column);
 	}
-	
+
 	// Get first row from result
 	public final function first($key = null){
 		$results = $this->all();
-		
+
 		if($key !== null){
 			return @$results[0][$key];
 		}
-		
+
 		return @$results[0];
 	}
-	
+
 	// Get last inserted ID
 	public final function last_id(){
 		return $this->_PDO->lastInsertId();
 	}
-	
+
 	// Exec
 	public final function exec($sql){
 		// Try to execute MySQL
@@ -258,10 +258,10 @@ class DB
 		} catch (PDOException $e) {
 			throw new DBException($e->getMessage());
 		}
-		
+
 		return $this;
 	}
-	
+
 	public final function total_queries(){
 		return $this->_query_counter;
 	}

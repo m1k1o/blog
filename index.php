@@ -50,7 +50,7 @@ if(!empty($scripts)){
 	if(!is_array($styles)){
 		$styles = [$styles];
 	}
-	
+
 	$scripts = array_unique($scripts);
 	$scripts_html = '<script src="'.implode('" type="text/javascript"></script>'.PHP_EOL.'<script src="', $scripts).'" type="text/javascript"></script>'.PHP_EOL;
 }
@@ -65,10 +65,10 @@ if(!empty($scripts)){
 
 	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	
+
 	<link href="static/styles/main.css?v=<?php echo Config::get("version"); ?>" rel="stylesheet" type="text/css" />
 	<link href="static/styles/design.css?v=<?php echo Config::get("version"); ?>" rel="stylesheet" type="text/css" />
-	
+
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans&amp;subset=all" rel="stylesheet">
 
 	<link href="static/styles/lightbox.css" rel="stylesheet" type="text/css" />
@@ -84,10 +84,10 @@ if(!empty($scripts)){
 
 		<!-- Login Button -->
 		<button type="button" class="button blue login_btn"><?php echo __("Login"); ?></button>
-		
+
 		<!-- Logout Button -->
 		<button type="button" class="button gray logout_btn"><?php echo __("Logout"); ?></button>
-		
+
 		<!-- Login Modal -->
 		<div class="modal login_modal">
 			<div class="modal-dialog" style="max-width: 350px;">
@@ -112,7 +112,7 @@ if(!empty($scripts)){
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- Post Link -->
 		<a class="b_link" target="_blank">
 			<div class="thumb">
@@ -125,7 +125,7 @@ if(!empty($scripts)){
 				<div class="host"></div>
 			</div>
 		</a>
-		
+
 		<!-- Post Image Link -->
 		<a class="b_imglink">
 			<img>
@@ -135,10 +135,10 @@ if(!empty($scripts)){
 				<div class="desc"></div>
 			</div>
 		</a>
-		
+
 		<!-- Post Image -->
 		<a class="b_img"><img></a>
-		
+
 		<!-- New Post -->
 		<div class="b_post new_post">
 			<div class="modal-header">
@@ -146,7 +146,7 @@ if(!empty($scripts)){
 			</div>
 			<div class="edit-form"></div>
 		</div>
-		
+
 		<!-- Post Tools -->
 		<ul class="b_dropdown post_tools">
 			<li><a class="edit_post"><?php echo __("Edit Post"); ?></a></li>
@@ -154,7 +154,7 @@ if(!empty($scripts)){
 			<li><a class="hide"><?php echo __("Hide from Timeline"); ?></a></li>
 			<li><a class="delete_post"><?php echo __("Delete Post"); ?></a></li>
 		</ul>
-		
+
 		<!-- Edit Modal -->
 		<div class="modal edit_modal">
 			<div class="modal-dialog">
@@ -198,7 +198,7 @@ if(!empty($scripts)){
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- Edit Date Modal -->
 		<div class="modal edit_date_modal">
 			<div class="modal-dialog small">
@@ -248,7 +248,7 @@ if(!empty($scripts)){
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- Delete Modal -->
 		<div class="modal delete_modal">
 			<div class="modal-dialog small">
@@ -267,7 +267,7 @@ if(!empty($scripts)){
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- Post Row -->
 		<div class="b_post post_row">
 			<div class="b_header">
@@ -284,7 +284,7 @@ if(!empty($scripts)){
 			<div class="b_text"></div>
 			<div class="b_content"></div>
 		</div>
-		
+
 		<!-- Pirvacy Settings -->
 		<ul class="b_dropdown privacy_settings">
 			<li><a class="set" data-val="public"><i class="public"></i><?php echo __("Public"); ?></a></li>
@@ -292,11 +292,11 @@ if(!empty($scripts)){
 			<li><a class="set" data-val="private"><i class="private"></i><?php echo __("Only me"); ?></a></li>
 		</ul>
 	</div>
-	
+
 	<div class="bluebar">
 		<h1><?php echo Config::get("title"); ?></h1>
 	</div>
-	
+
 	<div class="headbar">
 		<div class="cover">
 			<?php echo $header; ?>
@@ -309,14 +309,14 @@ if(!empty($scripts)){
 		</div>
 		<div id="headline"></div>
 	</div>
-	
+
 	<div id="b_feed">
 		<div class="more_posts">
 			<a href="#" class="button"><?php echo __("Show all posts"); ?></a>
 		</div>
 		<div id="posts"></div>
 	</div>
-	
+
 	<div id="eof_feed">
 		<img src="static/images/zpEYXu5Wdu6.png">
 		<p><?php echo Config::get("version"); ?> &copy; 2016-2019 <br>Miroslav Šedivý</p>

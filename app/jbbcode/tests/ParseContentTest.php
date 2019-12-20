@@ -32,7 +32,7 @@ class ParseContentTest extends PHPUnit_Framework_TestCase
 
     public function testNoParsingWithBufferText()
     {
-        
+
         $parser = new JBBCode\Parser();
         $parser->addCodeDefinitionSet(new JBBCode\DefaultCodeDefinitionSet());
         $parser->addBBCode('verbatim', '{param}', false, false);
@@ -48,7 +48,7 @@ class ParseContentTest extends PHPUnit_Framework_TestCase
      */
     public function testUnclosedTag()
     {
-    
+
         $parser = new JBBCode\Parser();
         $parser->addCodeDefinitionSet(new JBBCode\DefaultCodeDefinitionSet());
         $parser->addBBCode('verbatim', '{param}', false, false);

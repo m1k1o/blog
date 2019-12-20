@@ -24,7 +24,7 @@ class HTMLSafeTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($html, $parser->getAsHtml());
     }
-	
+
     /**
      * Tests escaping quotes and ampersands in simple text
      */

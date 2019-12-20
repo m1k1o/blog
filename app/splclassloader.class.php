@@ -22,7 +22,7 @@ class SplClassLoader
 	private $_includePath;
 	private $_namespaceSeparator = '\\';
 	private $_excludeNs;
-	
+
 	/**
 	 * Creates a new <tt>SplClassLoader</tt> that loads classes of the
 	 * specified namespace.
@@ -33,7 +33,7 @@ class SplClassLoader
 		$this->_namespace = $ns;
 		$this->_includePath = $includePath;
 	}
-	
+
 	/**
 	 * Sets the namespace separator used by classes in the namespace of this class loader.
 	 * 
@@ -42,11 +42,11 @@ class SplClassLoader
 	public function setNamespaceSeparator($sep) {
 		$this->_namespaceSeparator = $sep;
 	}
-	
+
 	public function setExcludeNs($exclude) {
 		$this->_excludeNs = $exclude;
 	}
-	
+
 	/**
 	 * Gets the namespace seperator used by classes in the namespace of this class loader.
 	 *
@@ -55,7 +55,7 @@ class SplClassLoader
 	public function getNamespaceSeparator() {
 		return $this->_namespaceSeparator;
 	}
-	
+
 	/**
 	 * Sets the base include path for all class files in the namespace of this class loader.
 	 * 
@@ -64,7 +64,7 @@ class SplClassLoader
 	public function setIncludePath($includePath) {
 		$this->_includePath = $includePath;
 	}
-	
+
 	/**
 	 * Gets the base include path for all class files in the namespace of this class loader.
 	 *
@@ -73,7 +73,7 @@ class SplClassLoader
 	public function getIncludePath() {
 		return $this->_includePath;
 	}
-	
+
 	/**
 	 * Sets the file extension of class files in the namespace of this class loader.
 	 * 
@@ -82,7 +82,7 @@ class SplClassLoader
 	public function setFileExtension($fileExtension) {
 		$this->_fileExtension = $fileExtension;
 	}
-	
+
 	/**
 	 * Gets the file extension of class files in the namespace of this class loader.
 	 *
@@ -91,21 +91,21 @@ class SplClassLoader
 	public function getFileExtension() {
 		return $this->_fileExtension;
 	}
-	
+
 	/**
 	 * Installs this class loader on the SPL autoload stack.
 	 */
 	public function register() {
 		spl_autoload_register(array($this, 'loadClass'));
 	}
-	
+
 	/**
 	 * Uninstalls this class loader from the SPL autoloader stack.
 	 */
 	public function unregister() {
 		spl_autoload_unregister(array($this, 'loadClass'));
 	}
-	
+
 	/**
 	 * Loads the given class or interface.
 	 *
@@ -116,27 +116,27 @@ class SplClassLoader
 		if (!empty($this->_excludeNs)) {
 			$className = str_replace($this->_excludeNs, '', $className);
 		}
-		
+
 		if (null === $this->_namespace || $this->_namespace.$this->_namespaceSeparator === substr($className, 0, strlen($this->_namespace.$this->_namespaceSeparator))) {
 			$fileName = '';
 			$namespace = '';
-			
+
 			if (false !== ($lastNsPos = strripos($className, $this->_namespaceSeparator))) {
 				$namespace = substr($className, 0, $lastNsPos);
 				$className = substr($className, $lastNsPos + 1);
 				$fileName = str_replace($this->_namespaceSeparator, DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
 			}
-			
+
 			$fileName .= str_replace('_', DIRECTORY_SEPARATOR, $className) . $this->_fileExtension;
-			
+
 			$fileName = strtolower($fileName);
-			
+
 			$full = ($this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '') . $fileName;
-			
+
 			if (!file_exists($full)) {
 				throw new Exception("Class file for '".$className."' not found");
 			}
-			
+
 			require $full;
 		}
 	}

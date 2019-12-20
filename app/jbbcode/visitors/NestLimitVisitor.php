@@ -37,7 +37,7 @@ class NestLimitVisitor implements \JBBCode\NodeVisitor
     public function visitElementNode(\JBBCode\ElementNode $elementNode)
     {
         $tagName = strtolower($elementNode->getTagName());
-        
+
         /* Update the current depth for this tag name. */
         if (isset($this->depth[$tagName])) {
             $this->depth[$tagName]++;
