@@ -88,7 +88,6 @@ var posts = {
 				$(posts_data).each(function(i, data){
 					// Create empty post
 					var post = $('#prepared .post_row').clone();
-					post.find(".b_date").html(data.datetime);
 
 					// Update post data and apply scripts
 					post.post_fill(data);
@@ -126,9 +125,9 @@ var cnt_funcs = {
 		}
 
 		obj.attr("href", data.link);
-		obj.find(".title").html(data.title);
-		obj.find(".desc").html(data.desc);
-		obj.find(".host").html(data.host);
+		obj.find(".title").text(data.title);
+		obj.find(".desc").text(data.desc);
+		obj.find(".host").text(data.host);
 
 		return obj;
 	},
@@ -136,7 +135,7 @@ var cnt_funcs = {
 		var obj = $("#prepared .b_imglink").clone();
 		obj.attr("href", data.src);
 		obj.find("img").attr("src", data.src);
-		obj.find(".host").html(data.host);
+		obj.find(".host").text(data.host);
 
 		return obj;
 	},
@@ -338,7 +337,6 @@ var new_post = {
 
 					// Create empty post
 					var post = $('#prepared .post_row').clone();
-					post.find(".b_date").html(data.datetime);
 
 					// Update post data and apply scripts
 					post.post_fill(data);
@@ -381,7 +379,7 @@ $.fn.error_msg = function(msg){
 	err_msg.active = true;
 	err_msg.obj = $("<div></div>");
 	err_msg.obj.addClass("error");
-	err_msg.obj.html(msg);
+	err_msg.obj.text(msg);
 
 	var clear = $("<button></button>");
 	clear.addClass("clear");
@@ -480,7 +478,7 @@ $.fn.apply_edit = function(data){
 		};
 
 		// Set data and key listeners for text div
-		//modal.find(".e_text").html(data.plain_text)
+		//modal.find(".e_text").text(data.plain_text)
 		modal.find(".e_text").val(data.plain_text)
 		/*.keydown(function(e) {
 			if(e.keyCode === 13){
@@ -643,6 +641,9 @@ $.fn.post_fill = function(data){
 		location.hash = 'tag\='+tag;
 	});
 
+	if(data.datetime)
+		post.find(".b_date").text(data.datetime);
+
 	post.find(".b_date").attr("href", "#id="+data.id);
 
 	/*
@@ -681,9 +682,9 @@ $.fn.post_fill = function(data){
 		});
 	}
 
-	post.find(".b_feeling").html(data.feeling);
-	post.find(".b_persons").html(data.persons);
-	post.find(".b_location").html(data.location).click(function(){
+	post.find(".b_feeling").text(data.feeling);
+	post.find(".b_persons").text(data.persons);
+	post.find(".b_location").text(data.location).click(function(){
 		location.hash = 'loc\='+$(this).text();
 	});
 
@@ -869,7 +870,7 @@ $.fn.apply_post = function(){
 										return ;
 									}
 
-									post.find(".b_date").html(data.datetime);
+									post.find(".b_date").text(data.datetime);
 									modal.close();
 								}
 							});
