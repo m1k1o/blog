@@ -2,6 +2,9 @@
 
 class Image
 {
+	const IMAGES = 'i/';
+	const THUMBS = 't/';
+
 	private static function random_str($len = 10){
 		$chr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 		$chr_len = strlen($chr);
@@ -115,24 +118,22 @@ class Image
 		$id = DB::get_instance()->query(
 			"INSERT INTO `images` ".
 			"(`id`, `name`, `path`, `thumb`, `type`, `md5`, `datetime`, `status`) ".
-			"VALUES (NULL, ?, NULL, NULL, ?, ?, NOW(), 1);",
+			"VALUES (NULL, ?, NULL, NULL, ?, ?, NOW(), 0);",
 			$name, $ext, $md5
 		)->last_id();
 
 		// Create path name
 		$name = dechex($id).self::random_str(3).".".$ext;
-		$path = 'i/'.$name;
-		$thumb = 't/'.$name;
+		$path = self::IMAGES.$name;
+		$thumb = self::THUMBS.$name;
 
 		// Save path
 		if(!move_uploaded_file($_FILES['file']['tmp_name'], $path)){
-			DB::get_instance()->query("UPDATE `images` SET `status` = 0 WHERE `id` = ?", $id);
 			throw new Exception("Can't write to image folders `i` and `t`.");
 		}
 
 		// Create thumb
 		if(!self::thumb($path, $thumb)){
-			DB::get_instance()->query("UPDATE `images` SET `status` = 0 WHERE `id` = ?", $id);
 			unlink($path);
 			unlink($thumb);
 			throw new Exception("File is not image.");

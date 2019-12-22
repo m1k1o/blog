@@ -2,10 +2,12 @@
 
 class Lang
 {
+	const PATH = 'lang/';
+
 	private static $_dictionary = null;
 
 	public static function load($lang = 'en'){
-		$lang_file = APP_PATH.'lang/'.$lang.'.ini';
+		$lang_file = APP_PATH.self::PATH.$lang.'.ini';
 		if(preg_match('/^[a-z]+$/', $lang) && is_readable($lang_file)){
 			self::$_dictionary = parse_ini_file($lang_file);
 		}
