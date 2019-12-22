@@ -21,4 +21,5 @@ if(Config::get_safe('debug', false)){
 Lang::load(empty($_GET["hl"]) ? Config::get("lang") : $_GET["hl"]);
 
 // Start session
+ini_set('session.cookie_httponly', 1);
 session_start();
