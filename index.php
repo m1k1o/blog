@@ -3,8 +3,8 @@ include 'common.php';
 
 // Create token
 if(empty($_SESSION['token'])){
-	if(function_exists('mcrypt_create_iv')){
-		$_SESSION['token'] = bin2hex(mcrypt_create_iv(5, MCRYPT_DEV_URANDOM));
+	if(function_exists('random_bytes')){
+		$_SESSION['token'] = bin2hex(random_bytes(5));
 	} else {
 		$_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(5));
 	}
