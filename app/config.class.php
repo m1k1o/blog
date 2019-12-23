@@ -12,7 +12,7 @@ class Config
 		$config_file = PROJECT_PATH.self::CONFIG;
 
 		if(!is_readable($config_file)){
-			throw new ConfigException('Cannot read config file');
+			throw new ConfigException('Cannot read config file.');
 		}
 
 		self::$_settings = parse_ini_file($config_file);

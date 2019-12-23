@@ -130,7 +130,7 @@ class Image
 
 		// Save path
 		if(!move_uploaded_file($_FILES['file']['tmp_name'], $path)){
-			throw new Exception("Can't write to image folders `i` and `t`.");
+			throw new Exception("File cannot be written to image folders.");
 		}
 
 		// Create thumb

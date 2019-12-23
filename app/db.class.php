@@ -26,7 +26,7 @@ class DB
 		$socket = Config::get_safe('mysql_socket', false);
 
 		if($socket === false && $host === false){
-			throw new DBException("Mysql host or socket must be defined");
+			throw new DBException("Mysql host or socket must be defined.");
 		}
 
 		// Try to connect

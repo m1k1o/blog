@@ -136,7 +136,7 @@ class SplClassLoader
 			$full = ($this->_includePath !== null ? $this->_includePath . DIRECTORY_SEPARATOR : '') . $fileName;
 
 			if (!file_exists($full)) {
-				throw new Exception("Class file for '".$className."' not found.");
+				throw new Exception(sprintf('Class file for "%s" not found.', $className));
 			}
 
 			require $full;
