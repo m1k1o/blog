@@ -6,6 +6,9 @@ class Image
 	const IMAGES = 'i/';
 	const THUMBS = 't/';
 
+	const THUMB_W = 476;
+	const THUMB_H = 476;
+
 	private static function random_str($len = 10){
 		$chr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 		$chr_len = strlen($chr);
@@ -51,35 +54,47 @@ class Image
 	private static function thumb($source_path, $thumb_path){
 		ini_set('memory_limit', '128M');
 
-		$thumb_w = 476;
-		$thumb_h = 476;
-
 		$source_details = getimagesize($source_path);
 		$source_w = $source_details[0];
 		$source_h = $source_details[1];
 
 		if($source_w > $source_h){
-			$new_w = $thumb_w;
+			$new_w = self::THUMB_W;
 			$new_h = intval($source_h * $new_w / $source_w);
 		} else {
-			$new_h = $thumb_h;
+			$new_h = self::THUMB_H;
 			$new_w = intval($source_w * $new_h / $source_h);
 		}
 
 		switch($source_details[2]){
 			case IMAGETYPE_GIF:
-				$imgt = "ImageGIF";
-				$imgcreatefrom = "ImageCreateFromGIF";
+				$imgt = "imagegif";
+				$imgcreatefrom = "imagecreatefromgif";
 				break;
 
 			case IMAGETYPE_JPEG:
-				$imgt = "ImageJPEG";
-				$imgcreatefrom = "ImageCreateFromJPEG";
+				$imgt = "imagejpeg";
+				$imgcreatefrom = "imagecreatefromjpeg";
 				break;
 
 			case IMAGETYPE_PNG:
-				$imgt = "ImagePNG";
-				$imgcreatefrom = "ImageCreateFromPNG";
+				$imgt = "imagepng";
+				$imgcreatefrom = "imagecreatefrompng";
+				break;
+
+			case IMAGETYPE_WEBP:
+				$imgt = "imagewebp";
+				$imgcreatefrom = "imagecreatefromwebp";
+				break;
+
+			case IMAGETYPE_WBMP:
+				$imgt = "imagewbmp";
+				$imgcreatefrom = "imagecreatefromwbmp";
+				break;
+
+			case IMAGETYPE_BMP:
+				$imgt = "imagebmp";
+				$imgcreatefrom = "imagecreatefrombmp";
 				break;
 
 			default:
