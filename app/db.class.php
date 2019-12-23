@@ -23,6 +23,7 @@ class DB
 	// Initialise PDO object
 	private final function __construct(){
 		$host = Config::get_safe('mysql_host', false);
+		$port = Config::get_safe('mysql_port', false);
 		$socket = Config::get_safe('mysql_socket', false);
 
 		if($socket === false && $host === false){
@@ -33,11 +34,15 @@ class DB
 		try {
 			$this->_PDO = new \PDO(
 				// Server
-				'mysql:'.($socket !== false ? 'unix_socket='.$socket : 'host='.$host).';'.
+				'mysql:'.
+					($socket !== false
+						? 'unix_socket='.$socket
+						: 'host='.$host.($port !== false ? ';port='.$port : '')
+					).
 				// DB
-				'dbname='.Config::get('db_name').';'.
+				';dbname='.Config::get('db_name').
 				// Charset
-				'charset=utf8',
+				';charset=utf8',
 				// Username
 				Config::get('mysql_user'),
 				// Password
