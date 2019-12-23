@@ -1,21 +1,7 @@
 <?php
-
 namespace JBBCode;
 
-require_once 'ElementNode.php';
-require_once 'TextNode.php';
-require_once 'DefaultCodeDefinitionSet.php';
-require_once 'DocumentElement.php';
-require_once 'CodeDefinition.php';
-require_once 'CodeDefinitionBuilder.php';
-require_once 'CodeDefinitionSet.php';
-require_once 'NodeVisitor.php';
-require_once 'ParserException.php';
-require_once 'Tokenizer.php';
-require_once 'visitors/NestLimitVisitor.php';
-require_once 'InputValidator.php';
-
-use JBBCode\CodeDefinition;
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * BBCodeParser is the main parser class that constructs and stores the parse tree. Through this class

@@ -1,6 +1,7 @@
 <?php
-
 namespace JBBCode\visitors;
+
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * This visitor escapes html content of all strings and attributes

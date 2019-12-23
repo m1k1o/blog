@@ -1,6 +1,7 @@
 <?php
-
 namespace JBBCode;
+
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * Defines an interface for a visitor to traverse the node graph.

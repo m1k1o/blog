@@ -1,8 +1,7 @@
 <?php
-
 namespace JBBCode;
 
-require_once 'ElementNode.php';
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * A DocumentElement object represents the root of a document tree. All 

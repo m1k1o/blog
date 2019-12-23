@@ -1,6 +1,7 @@
 <?php
-
 namespace JBBCode;
+
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * Defines an interface for validation filters for bbcode options and

@@ -1,8 +1,7 @@
 <?php
-
 namespace JBBCode;
 
-require_once 'Node.php';
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * An element within the tree. Consists of a tag name which defines the type of the

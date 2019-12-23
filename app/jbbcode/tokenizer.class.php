@@ -1,6 +1,7 @@
 <?php
-
 namespace JBBCode;
+
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * This Tokenizer is used while constructing the parse tree. The tokenizer

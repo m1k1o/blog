@@ -10,8 +10,6 @@ class Post
 	}
 
 	private static function parse_content($c){
-		require_once APP_PATH."jbbcode/Parser.php";
-
 		$parser = new JBBCode\Parser();
 		$parser->addCodeDefinitionSet(new JBBCode\DefaultCodeDefinitionSet());
 

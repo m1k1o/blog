@@ -1,6 +1,7 @@
 <?php
-
 namespace JBBCode\visitors;
+
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * This visitor is an example of how to implement smiley parsing on the JBBCode

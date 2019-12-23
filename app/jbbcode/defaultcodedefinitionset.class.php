@@ -1,12 +1,7 @@
 <?php
-
 namespace JBBCode;
 
-require_once 'CodeDefinition.php';
-require_once 'CodeDefinitionBuilder.php';
-require_once 'CodeDefinitionSet.php';
-require_once 'validators/CssColorValidator.php';
-require_once 'validators/UrlValidator.php';
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * Provides a default set of common bbcode definitions.

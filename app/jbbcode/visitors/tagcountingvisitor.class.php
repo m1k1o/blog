@@ -1,6 +1,7 @@
 <?php
-
 namespace JBBCode\visitors;
+
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * This visitor traverses parse graph, counting the number of times each

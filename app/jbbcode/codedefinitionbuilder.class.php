@@ -1,8 +1,7 @@
 <?php
-
 namespace JBBCode;
 
-require_once "CodeDefinition.php";
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * Implements the builder pattern for the CodeDefinition class. A builder

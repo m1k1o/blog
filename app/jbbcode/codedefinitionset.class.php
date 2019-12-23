@@ -1,10 +1,7 @@
 <?php
-
 namespace JBBCode;
 
-require_once 'CodeDefinition.php';
-
-use JBBCode\CodeDefinition;
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * An interface for sets of code definitons.

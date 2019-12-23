@@ -1,6 +1,7 @@
 <?php
-
 namespace JBBCode;
+
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * This class represents a BBCode Definition. You may construct instances of this class directly,

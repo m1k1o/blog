@@ -1,8 +1,7 @@
 <?php
-
 namespace JBBCode\validators;
 
-require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'InputValidator.php';
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * An InputValidator for urls. This can be used to make [url] bbcodes secure.

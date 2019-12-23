@@ -1,6 +1,7 @@
 <?php
-
 namespace JBBCode;
+
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * A node within the document tree.

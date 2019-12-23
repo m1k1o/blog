@@ -1,8 +1,7 @@
 <?php
-
 namespace JBBCode;
 
-require_once 'Node.php';
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * Represents a piece of text data. TextNodes never have children.

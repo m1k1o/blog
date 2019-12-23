@@ -1,12 +1,7 @@
 <?php
-
 namespace JBBCode\visitors;
 
-require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'CodeDefinition.php';
-require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'DocumentElement.php';
-require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'ElementNode.php';
-require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'NodeVisitor.php';
-require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'TextNode.php';
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 /**
  * This visitor is used by the jBBCode core to enforce nest limits after
