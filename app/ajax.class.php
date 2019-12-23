@@ -35,7 +35,10 @@ class Ajax
 	}
 
 	public function json_response(){
-		ob_clean();
+		if(ob_get_length() > 0) {
+			ob_clean();
+		}
+
 		header('Content-Type: application/json');
 		echo json_encode($this->_response);
 	}
