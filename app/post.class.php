@@ -285,31 +285,31 @@ class Post
 
 	public static function load($r){
 		$until = [];
-		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", $r["filter"]["until"])){
+		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", @$r["filter"]["until"])){
 			$until = $r["filter"]["until"]."-01 00:00";
 		}
 
-		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $r["filter"]["until"])){
+		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", @$r["filter"]["until"])){
 			$until = $r["filter"]["until"]." 23:59";
 		}
 
 		$id = [];
-		if($r["filter"]["id"]){
+		if(@$r["filter"]["id"]){
 			$id = intval($r["filter"]["id"]);
 		}
 
 		$tag = [];
-		if(preg_match("/^[A-Za-z0-9-_]+$/", $r["filter"]["tag"])){
+		if(preg_match("/^[A-Za-z0-9-_]+$/", @$r["filter"]["tag"])){
 			$tag = '#'.$r["filter"]["tag"];
 		}
 
 		$loc = [];
-		if($r["filter"]["loc"]){
+		if(@$r["filter"]["loc"]){
 			$loc = $r["filter"]["loc"];
 		}
 
 		$person = [];
-		if($r["filter"]["person"]){
+		if(@$r["filter"]["person"]){
 			$person = $r["filter"]["person"];
 		}
 
