@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  webserver:
+    build: ./
+    container_name: blog_apache
+    restart: on-failure
+    ports:
+      - ${HOST_MACHINE_UNSECURE_HOST_PORT-3001}:80
+      - ${HOST_MACHINE_SECURE_HOST_PORT-3002}:443
+    volumes: 
+      - ${IMAGES-./i}:/var/www/html/i
+      - ${THUMBS-./t}:/var/www/html/t
+      - ${DATA-./data}:/var/www/html/data
+      - ${CONFIG-./config.ini}:/var/www/html/custom.ini
+  mariadb:
+    image: mariadb:10.1
+    environment:
+      MYSQL_DATABASE: blog
+      MYSQL_ROOT_PASSWORD: root
+    restart: on-failure
+    volumes:
+      - mariadb:/var/lib/mysql
+      - ./app/db:/docker-entrypoint-initdb.d:ro
+volumes:
+  mariadb:
