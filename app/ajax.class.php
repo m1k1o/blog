@@ -15,6 +15,11 @@ class Ajax
 			"msg" => $msg
 		];
 
+		// Incldue debug info
+		if(ob_get_length() > 0 && Config::get_safe('debug', false)){
+			$this->_response["debug"] = ob_get_clean();
+		}
+
 		// Log
 		Log::put("ajax_errors", $msg);
 	}
@@ -40,11 +45,7 @@ class Ajax
 
 	public function json_response(){
 		if(ob_get_length() > 0) {
-			if(Config::get_safe('debug', false)){
-				$this->_response["debug"] = ob_get_clean();
-			} else {
-				ob_clean();
-			}
+			ob_clean();
 		}
 
 		header('Content-Type: application/json');
