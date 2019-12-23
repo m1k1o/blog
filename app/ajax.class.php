@@ -5,6 +5,10 @@ class Ajax
 {
 	private $_response = null;
 
+	public function __construct(){
+		ob_start();
+	}
+
 	public function set_error($msg = null){
 		$this->_response = [
 			"error" => true,
@@ -36,7 +40,11 @@ class Ajax
 
 	public function json_response(){
 		if(ob_get_length() > 0) {
-			ob_clean();
+			if(Config::get_safe('debug', false)){
+				$this->_response["debug"] = ob_get_clean();
+			} else {
+				ob_clean();
+			}
 		}
 
 		header('Content-Type: application/json');
