@@ -1,4 +1,6 @@
 <?php
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
+
 /**
  * SplClassLoader implementation that implements the technical interoperability
  * standards for PHP 5.3 namespaces and class names.

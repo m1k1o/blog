@@ -1,4 +1,5 @@
 <?php
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 // v3.43 (+ query counter)
 class DB

@@ -1,4 +1,5 @@
 <?php
+defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 class Ajax
 {
