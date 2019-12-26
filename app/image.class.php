@@ -3,9 +3,6 @@ defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 class Image
 {
-	const IMAGES = 'i/';
-	const THUMBS = 't/';
-
 	const THUMB_W = 476;
 	const THUMB_H = 476;
 
@@ -126,6 +123,13 @@ class Image
 			return $d;
 		}
 
+		// Ensure, that directories exists
+		$_images_path = Config::get('images_path');
+		$_thumbnails_path = Config::get('thumbnails_path');
+		if((!is_dir($_images_path) && !mkdir($_images_path, 755, true)) || (!is_dir($_thumbnails_path) && !mkdir($_thumbnails_path, 755, true))){
+			throw new Exception("Images or thumbnails directory could not be created.");
+		}
+
 		// Get metadata
 		$name = $_FILES['file']['name'];
 		$ext = pathinfo($name, PATHINFO_EXTENSION);
@@ -140,12 +144,12 @@ class Image
 
 		// Create path name
 		$name = dechex($id).self::random_str(3).".".$ext;
-		$path = self::IMAGES.$name;
-		$thumb = self::THUMBS.$name;
+		$path = $_images_path.$name;
+		$thumb = $_thumbnails_path.$name;
 
 		// Save path
 		if(!move_uploaded_file($_FILES['file']['tmp_name'], $path)){
-			throw new Exception("File cannot be written to image folders.");
+			throw new Exception("File cannot be written to image directory.");
 		}
 
 		// Create thumb
