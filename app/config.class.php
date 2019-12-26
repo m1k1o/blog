@@ -4,23 +4,40 @@ defined('PROJECT_PATH') OR exit('No direct script access allowed');
 class Config
 {
 	const CONFIG = 'config.ini';
-	const CUSTOM = 'custom.ini';
+	const CUSTOM = 'data/config.ini';
+	const CUSTOM_FALLBACK = 'custom.ini';
 
 	private static $_settings = null;
 
 	private static function init(){
 		$config_file = PROJECT_PATH.self::CONFIG;
-
 		if(!is_readable($config_file)){
 			throw new ConfigException('Cannot read config file.');
 		}
 
 		self::$_settings = parse_ini_file($config_file);
-		$custom_config = PROJECT_PATH.self::CUSTOM;
+		if(self::$_settings === false){
+			throw new ConfigException('Cannot parse config file.');
+		}
 
-		if(is_readable($custom_config)){
-			$custom = parse_ini_file($custom_config);
+		$config_file = PROJECT_PATH.self::CUSTOM;
+		if(is_readable($config_file)){
+			$custom = parse_ini_file($config_file);
 			if($custom !== false){
+				self::$_settings = array_merge(self::$_settings, $custom);
+			}
+		}
+
+		// Fallback for legacy versions
+		elseif(is_readable($config_file = PROJECT_PATH.self::CUSTOM_FALLBACK)){
+			$custom = parse_ini_file($config_file);
+			if($custom !== false){
+				// Fallback for old direcotry structure
+				if(!array_key_exists('images_path', $custom) && !array_key_exists('thumbnails_path', $custom)){
+					$custom['images_path'] = 'i/';
+					$custom['thumbnails_path'] = 't/';
+				}
+
 				self::$_settings = array_merge(self::$_settings, $custom);
 			}
 		}
