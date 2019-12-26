@@ -1,14 +1,11 @@
-RewriteEngine on
+Options -Indexes
 
-RewriteRule ^app/?.*$ - [F,L]
-RewriteRule ^data/logs/?.*$ - [F,L]
-
-<Files ~ "\.(ini|sql|yml|md)$">
+<Files ~ "\.(ini|sql|log|class.php)$">
 	Order Allow,Deny
 	Deny from All
 </Files>
 
-<Files ~ "^(\.|Dockerfile)">
+<Files ~ "^(\.|Dockerfile|docker-compose.yml|README.md)">
 	Order Allow,Deny
 	Deny from All
 </Files>
