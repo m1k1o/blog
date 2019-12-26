@@ -13,6 +13,13 @@ RUN docker-php-ext-install curl
 # Install PDO MYSQL
 RUN docker-php-ext-install pdo pdo_mysql
 
+# Install GD
+RUN apt-get -y install zlib1g-dev libpng-dev libjpeg-dev \
+	libwebp-dev libxpm-dev libfreetype6-dev
+RUN docker-php-ext-configure gd --enable-gd --with-jpeg \
+	--with-webp --with-xpm --with-freetype
+RUN docker-php-ext-install gd
+
 COPY . .
 
 VOLUME "data"
