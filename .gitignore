@@ -1,18 +1,9 @@
 custom.ini
 
-# Ignore images content
+# Ignore images & thumbnails directories (legacy)
 i/*
-!i/.gitkeep
-
-# Ignore thumbnails content
 t/*
-!t/.gitkeep
 
-# Ignore all files in data but keep folder itself (and logs subfolder)
+# Ignore all files in data but keep directory itself
 data/*
 !data/.gitkeep
-!data/logs/
-
-# Ignore all logs files but keep folder itself
-data/logs/*
-!data/logs/.gitkeep
