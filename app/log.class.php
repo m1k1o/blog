@@ -3,8 +3,6 @@ defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 class Log
 {
-	const PATH = 'data/logs/';
-
 	private static $_files = [
 		"ajax_access", 
 		"ajax_errors", 
@@ -17,7 +15,12 @@ class Log
 			return ;
 		}
 
-		if(false === file_put_contents(PROJECT_PATH.static::PATH.$_file.".log", self::line($_text), FILE_APPEND) && Config::get_safe('debug', false)){
+		$_logs_path = Config::get('logs_path');
+		if(!is_dir($_logs_path) && !mkdir($_logs_path, 755, true)){
+			die("Logs directory could not be created.");
+		}
+
+		if(false === file_put_contents($_logs_path.$_file.".log", self::line($_text), FILE_APPEND) && Config::get_safe('debug', false)){
 			die(sprintf("Can't write to %s.log file.", $_file));
 		}
 	}
