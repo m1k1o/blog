@@ -126,7 +126,7 @@ class Image
 		// Ensure, that directories exists
 		$_images_path = Config::get('images_path');
 		$_thumbnails_path = Config::get('thumbnails_path');
-		if((!is_dir($_images_path) && !mkdir($_images_path)) || (!is_dir($_thumbnails_path) && !mkdir($_thumbnails_path))){
+		if((!is_dir($_images_path) && !mkdir($_images_path, 755, true)) || (!is_dir($_thumbnails_path) && !mkdir($_thumbnails_path, 755, true))){
 			throw new Exception("Images or thumbnails directory could not be created.");
 		}
 
