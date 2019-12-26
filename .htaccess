@@ -1,4 +1,14 @@
-<Files ~ "\.(ini|sql)$">
+RewriteEngine on
+
+RewriteRule ^app/?.*$ - [F,L]
+RewriteRule ^data/logs/?.*$ - [F,L]
+
+<Files ~ "\.(ini|sql|yml|md)$">
+	Order Allow,Deny
+	Deny from All
+</Files>
+
+<Files ~ "^(\.|Dockerfile)">
 	Order Allow,Deny
 	Deny from All
 </Files>
