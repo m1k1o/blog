@@ -15,6 +15,13 @@ if(Config::get_safe('debug', false)){
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
+
+	// Check extensions
+	$required = ['curl', 'PDO', 'pdo_mysql', 'gd'];
+	$loaded = get_loaded_extensions();
+	if($missing = array_diff($required, $loaded)){
+		die("Missing extensions, please install: ".impode(", ", $missing));
+	}
 }
 
 // Language
@@ -23,3 +30,5 @@ Lang::load(empty($_GET["hl"]) ? Config::get("lang") : $_GET["hl"]);
 // Start session
 ini_set('session.cookie_httponly', 1);
 session_start();
+
+
