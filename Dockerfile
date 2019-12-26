@@ -15,10 +15,7 @@ RUN docker-php-ext-install pdo pdo_mysql
 
 COPY . .
 
-VOLUME "i"
-VOLUME "t"
 VOLUME "data"
-VOLUME "custom.ini"
 
 RUN chown -R www-data:www-data . \
     && a2enmod rewrite
