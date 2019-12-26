@@ -138,6 +138,11 @@ class Image
 			$name, $ext, $md5
 		)->last_id();
 
+		// Ensure, that directories exists
+		if((!is_dir(self::IMAGES) && !mkdir(self::IMAGES)) || (!is_dir(self::THUMBS) && !mkdir(self::THUMBS))){
+			throw new Exception("Images / thumbnails directories could not be created.");
+		}
+
 		// Create path name
 		$name = dechex($id).self::random_str(3).".".$ext;
 		$path = self::IMAGES.$name;
@@ -145,7 +150,7 @@ class Image
 
 		// Save path
 		if(!move_uploaded_file($_FILES['file']['tmp_name'], $path)){
-			throw new Exception("File cannot be written to image folders.");
+			throw new Exception("File cannot be written to image directory.");
 		}
 
 		// Create thumb
