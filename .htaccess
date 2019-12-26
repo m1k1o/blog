@@ -1,11 +1,11 @@
 Options -Indexes
 
-<Files ~ "\.(ini|sql|log|class.php)$">
+<Files ~ "\.(ini|sql|log|class\.php)$">
 	Order Allow,Deny
 	Deny from All
 </Files>
 
-<Files ~ "^(\.|Dockerfile|docker-compose.yml|README.md)">
+<Files ~ "^(\.|Dockerfile|docker-compose\.yml|README\.md)">
 	Order Allow,Deny
 	Deny from All
 </Files>
