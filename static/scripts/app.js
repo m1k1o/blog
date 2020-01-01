@@ -477,43 +477,6 @@ $.fn.apply_edit = function(data){
 			});
 		};
 
-		// Set data and key listeners for text div
-		//modal.find(".e_text").text(data.plain_text)
-		modal.find(".e_text").val(data.plain_text)
-		/*.keydown(function(e) {
-			if(e.keyCode === 13){
-				document.execCommand('insertHTML', false, "\n");
-				return false;
-			}
-		})/*.keyup(function(e){
-			var t = e.currentTarget.innerHTML;
-			parse_link(t);
-		})*/.on('paste', function(e) {
-			//e.preventDefault();
-
-			var text = '';
-			if(e.clipboardData || e.originalEvent.clipboardData){
-				text = (e.originalEvent || e).clipboardData.getData('text/plain');
-			} else if (window.clipboardData) {
-				text = window.clipboardData.getData('Text');
-			}
-
-			// Try to parse link
-			parse_link(text);
-			/*
-			if(document.queryCommandSupported('insertText')){
-				document.execCommand('insertText', false, text);
-			} else {
-				document.execCommand('paste', false, text);
-			}
-			*/
-		});
-
-		// Autoresize textarea
-		setTimeout(function(){
-			autosize($(modal.find(".e_text")));
-		},0);
-
 		var upload_image = function(file) {
 			if(file.type.match(/image/) === null){
 				$("body").error_msg("Only images can be uploaded.");
@@ -544,6 +507,55 @@ $.fn.apply_edit = function(data){
 			});
 		}
 
+		// Set data and key listeners for text div
+		//modal.find(".e_text").text(data.plain_text)
+		modal.find(".e_text").val(data.plain_text)
+		/*.keydown(function(e) {
+			if(e.keyCode === 13){
+				document.execCommand('insertHTML', false, "\n");
+				return false;
+			}
+		})/*.keyup(function(e){
+			var t = e.currentTarget.innerHTML;
+			parse_link(t);
+		})*/.on('paste', function(e) {
+			//e.preventDefault();
+
+			var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+			for(var i in items) {
+				var item = items[i];
+
+				// Try to parse link from plain text
+				if(item.type === 'text/plain'){
+					item.getAsString(function(text) {
+						parse_link(text);
+					});
+					break;
+				}
+
+				// Try to get image from clipboard
+				if(item.type.indexOf('image') !== -1){
+					var file = item.getAsFile();
+					upload_image(file);
+					break;
+				}
+			}
+
+			/*
+			if(document.queryCommandSupported('insertText')){
+				document.execCommand('insertText', false, text);
+			} else {
+				document.execCommand('paste', false, text);
+			}
+			*/
+		});
+
+		// Autoresize textarea
+		setTimeout(function(){
+			autosize($(modal.find(".e_text")));
+		},0);
+
+		// Upload image button
 		var file_data = modal.find(".photo_upload");
 		$(file_data).change(function(){
 			upload_image(file_data[0].files[0]);
