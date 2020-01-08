@@ -65,7 +65,7 @@ class Post
 				$c = htmlentities($c);
 				$c = preg_replace('/\*([^\*]+)\*/i', "<strong>$1</strong>", $c);
 				$c = preg_replace('/(https?\:\/\/[^\" \n]+)/i', "<a href=\"\\0\" target=\"_blank\">\\0</a>", $c);
-				$c = preg_replace('/(\#[A-Za-z0-9-_]+)/i', "<span class=\"tag\">\\0</span>", $c);
+				$c = preg_replace('/(\#[A-Za-z0-9-_]+)(\s|$)/i', "<span class=\"tag\">\\1</span>\\2", $c);
 				$c = nl2br($c);
 				$textNode->setValue($c);
 			}
