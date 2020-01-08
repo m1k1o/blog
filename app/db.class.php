@@ -71,6 +71,12 @@ class DB
 			return $key;
 		}
 
+		// BUG: Force strings to be UTF-8
+		// remove all 4-bytes characters.
+		if(is_string($value)){
+			$value = preg_replace('/[\xF0-\xF7].../s', '', $value);
+		}
+
 		$this->_query->bindValue($key, $value);
 		return ++$key;
 	}
