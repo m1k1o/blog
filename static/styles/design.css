@@ -671,7 +671,25 @@ body {
 .e_loading {
   display: none;
   text-align: center;
-  padding-bottom: 15px;
+}
+
+.e_loading .e_meter {
+  height: 5px;
+  position: relative;
+  margin-top: 15px;
+  box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+}
+
+.e_loading .e_meter > span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background-color: #4267b2;
+  box-shadow:
+    inset 0 2px 9px  rgba(255,255,255,0.3),
+    inset 0 -2px 6px rgba(0,0,0,0.4);
+  position: relative;
+  overflow: hidden;
 }
 
 .e_text {

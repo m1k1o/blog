@@ -399,6 +399,11 @@ $.fn.error_msg = function(msg){
 	}, 5000);
 };
 
+// Attach the event handler to the document
+$(document).ajaxError(function(){
+	$("body").error_msg("Ajax request failed.");
+});
+
 // Apply events on post editing
 $.fn.apply_edit = function(data){
 	// Parse link
@@ -409,10 +414,16 @@ $.fn.apply_edit = function(data){
 
 		var add_content_loading = function(){
 			modal.find(".e_loading").css("display", "block");
+			modal.find(".e_loading .e_meter > span").width(0);
+		};
+
+		var content_loading_progress = function(progress){
+			modal.find(".e_loading .e_meter > span").width((progress * 100) + "%");
 		};
 
 		var remove_content = function(){
 			modal.find(".e_loading").hide();
+			modal.find(".e_loading .e_meter > span").width(0);
 
 			modal.find(".content").empty().hide();
 			modal.find(".i_content_type").val("");
@@ -472,6 +483,10 @@ $.fn.apply_edit = function(data){
 							return ;
 
 						add_content(data.content_type, data.content);
+					},
+					error: function() {
+						$("body").error_msg("Error when communicating with the server.");
+						remove_content();
 					}
 				});
 			});
@@ -489,6 +504,20 @@ $.fn.apply_edit = function(data){
 			add_content_loading();
 
 			$.post({
+				xhr: function(){
+					var xhr = new window.XMLHttpRequest();
+
+					// Upload progress
+					xhr.upload.addEventListener("progress", function(evt){
+						if (evt.lengthComputable) {
+							var percentComplete = evt.loaded / evt.total;
+							//Do something with upload progress
+							content_loading_progress(percentComplete);
+						}
+					}, false);
+
+					return xhr;
+				},
 				dataType: "json",
 				url: "ajax.php?action=upload_image",
 				cache: false,
@@ -503,6 +532,10 @@ $.fn.apply_edit = function(data){
 					}
 
 					add_content("image", data);
+				},
+				error: function() {
+					$("body").error_msg("Error when communicating with the server.");
+					remove_content();
 				}
 			});
 		}
