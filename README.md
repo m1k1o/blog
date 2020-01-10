@@ -107,3 +107,22 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 **DO NOT** edit `./config.ini` file. If you wish to modify the config, simply make a copy to the `./data/config.ini` directory and edit it there.
 
 **But, why?** If there is any change in config file (most likely adding a new feature), you will have problems with merging a new version. Also, if you would fork this repository, you might accidentally push your secrets to the git. We don't want that to happen. Content of the `/data` directory is ignored by the git, so none of your pictures or personal data should ever be published to git.
+
+# Features
+
+* Create own language mutations, available: **English** and **German**.
+* Use BBcode in texts.
+* Make posts available for **everyone**, **only you** or just for **friends**.
+* Extra fields in post: **Feeling**, **With** and **At**.
+* All pasted links will get preview with page title, description and image.
+* Upload images using button *(for mobile)*.
+* Upload images using drag & drop *(drop it into textarea)*.
+* Upload images using CTRL + V *(paste it into textarea)*. 
+* Highlight code in post using `[code]..your code..[/code]`.
+* Highlight your goal using `[goal]Text of your goal.[/goal]`.
+* Use tags in posts (allowed characters `A-Za-z0-9-_` terminated by space or EOL): `#song`
+* Sort posts by hashtags: `http://blog/#tag=songs`
+* Sort posts by time in url using (format YYYY-MM-DD): `http://blog/#until=2017-06-01`.
+* Sort posts by location in url using: `http://blog/#loc=Vienna`.
+
+![screenshot](static/screenshot.png)
