@@ -22,12 +22,11 @@ docker-compose up -d
 
 You can specify these environment variables, otherwise the default ones will be used:
 * **HTTP_PORT=80** - where the blog will be accessible.
-* **HTTPS_PORT=443** - if you want to use with HTTPS.
 * **DATA=./data** - directory to store the user data.
 
 These environment variables can be stored in the `.env` file or passed to the command directly:
 ```
-HTTP_PORT=3001 HTTPS_PORT=3002 DATA=/home/user/blog docker-compose up -d
+HTTP_PORT=3001 DATA=/home/user/blog docker-compose up -d
 ```
 
 ### Step 3: Copy the config

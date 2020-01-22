@@ -12,6 +12,7 @@ services:
       - ${DATA-./data}:/var/www/html/data
   mariadb:
     image: mariadb:10.1
+    container_name: blog_mariadb
     environment:
       MYSQL_DATABASE: blog
       MYSQL_ROOT_PASSWORD: root
