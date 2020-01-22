@@ -49,6 +49,11 @@ var posts = {
 		this.load();
 	},
 
+	add_new: function(post) {
+		$("#posts").prepend(post);
+		this.offset++;
+	},
+
 	load: function(){
 		// If is something loading now or is loading done
 		if(posts.loading || posts.last)
@@ -343,7 +348,7 @@ var new_post = {
 					post.apply_post();
 
 					// Prepend
-					$("#posts").prepend(post);
+					posts.add_new(post);
 				}
 			});
 		});
