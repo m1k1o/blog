@@ -124,4 +124,4 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Sort posts by time in url using (format YYYY-MM-DD): `http://blog/#until=2017-06-01`.
 * Sort posts by location in url using: `http://blog/#loc=Vienna`.
 
-![screenshot](static/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/m1k1o/blog/master/static/screenshot.png)
