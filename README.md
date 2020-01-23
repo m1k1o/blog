@@ -121,7 +121,9 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Highlight your goal using `[goal]Text of your goal.[/goal]`.
 * Use tags in posts (allowed characters `A-Za-z0-9-_` terminated by space or EOL): `#song`
 * Sort posts by hashtags: `http://blog/#tag=songs`
-* Sort posts by time in url using (format YYYY-MM-DD): `http://blog/#until=2017-06-01`.
 * Sort posts by location in url using: `http://blog/#loc=Vienna`.
+* Display posts from chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#from=2017-06`.
+* Display posts to chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#to=2017-06`.
+* Combine parameters in url using `&`, e.g. show posts between dates: `http://blog/#from=2017-06&to=2017-08`.
 
 ![screenshot](https://raw.githubusercontent.com/m1k1o/blog/master/static/screenshot.png)

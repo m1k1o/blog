@@ -14,7 +14,8 @@ var posts = {
 	offset: 0,      // Current offset
 
 	filter: {
-		until: null,    // Show posts until specified date
+		from: null,     // Show posts from specified date
+		to: null,       // Show posts to specified date
 		id: null,       // Show only one post with specified id
 		tag: null,      // Show posts that contains specified tag 
 		loc: null,      // Show posts that location contains specified location 

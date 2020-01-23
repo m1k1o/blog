@@ -284,13 +284,22 @@ class Post
 	}
 
 	public static function load($r){
-		$until = [];
-		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", @$r["filter"]["until"])){
-			$until = $r["filter"]["until"]."-01 00:00";
+		$from = [];
+		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", @$r["filter"]["from"])){
+			$from = $r["filter"]["from"]."-01 00:00";
 		}
 
-		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", @$r["filter"]["until"])){
-			$until = $r["filter"]["until"]." 23:59";
+		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", @$r["filter"]["from"])){
+			$from = $r["filter"]["from"]." 00:00";
+		}
+
+		$to = [];
+		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", @$r["filter"]["to"])){
+			$to = $r["filter"]["to"]."-01 00:00";
+		}
+
+		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", @$r["filter"]["to"])){
+			$to = $r["filter"]["to"]." 00:00";
 		}
 
 		$id = [];
@@ -318,14 +327,15 @@ class Post
 			"FROM `posts` ".
 			"WHERE ".
 				(!User::is_logged_in() ? (User::is_visitor() ? "`privacy` IN ('public', 'friends') AND " : "`privacy` = 'public' AND ") : "").
-				($until ? "`posts`.`datetime` < DATE_ADD(?, INTERVAL +1 MONTH) AND " : "").
+				($from ? "`posts`.`datetime` > ? AND " : "").
+				($to ? "`posts`.`datetime` < ? AND " : "").
 				($id ? "`id` = ? AND " : "").
 				($tag ? "`plain_text` LIKE CONCAT('%', ?, '%') AND " : "").
 				($loc ? "`location` LIKE CONCAT('%', ?, '%') AND " : "").
 				($person ? "`persons` LIKE CONCAT('%', ?, '%') AND " : "").
 				"`status` = 1 ".
 			"ORDER BY `posts`.`datetime` DESC ".
-			"LIMIT ? OFFSET ?", $until, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
+			"LIMIT ? OFFSET ?", $from, $to, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
 		)->all();
 	}
 
