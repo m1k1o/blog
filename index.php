@@ -67,7 +67,7 @@ if(!empty($scripts)){
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
 	<link href="static/styles/main.css?v=<?php echo Config::get("version"); ?>" rel="stylesheet" type="text/css" />
-	<link href="static/styles/theme01.css?v=<?php echo Config::get("version"); ?>" rel="stylesheet" type="text/css" />
+	<link href="static/styles/<?php echo Config::get_safe("theme", "theme01"); ?>.css?v=<?php echo Config::get("version"); ?>" rel="stylesheet" type="text/css" />
 
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans&amp;subset=all" rel="stylesheet">
 
