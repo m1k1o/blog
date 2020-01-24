@@ -648,6 +648,11 @@ body {
   padding: 15px;
 }
 
+.modal-body.content {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .modal-footer {
   min-height: 40px;
   text-align: right;
