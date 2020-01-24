@@ -512,7 +512,7 @@ body {
 }
 
 .modal-header {
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid #393a3b; /*= Primary Border */
   color: #e4e6eb; /*= Primary text */
   text-align: center;
   font-weight: bold;
@@ -577,6 +577,15 @@ body {
 
 .modal-footer .buttons {
   margin: 8px;
+  display: inline-block;
+}
+
+.modal-footer .buttons .button {
+  margin-right: 5px;
+}
+
+.modal-footer .buttons .button:last-child {
+  margin-right: 0;
 }
 
 .modal-footer .buttons .left {
@@ -610,6 +619,7 @@ body {
   cursor: pointer;
   color: #e4e6eb; /*= Primary text */
   border: 1px solid #fff;
+  text-decoration: none;
 }
 
 .button.gray {
@@ -937,6 +947,7 @@ body {
   overflow: hidden;
   vertical-align: middle;
   padding: 4px;
+  z-index: 105;
 }
 
 .content .clear:after {
@@ -952,7 +963,6 @@ body {
 .privacy {
   cursor: pointer;
   padding: 8px 12px;
-  margin-right: 5px;
 }
 
 i.private,
