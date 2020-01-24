@@ -268,6 +268,9 @@ body {
   width: 20px;
   padding: 8px;
   border-radius: 50%;
+  transition-property: background-color;
+  transition-duration: 100ms;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
 }
 
 .b_tools:after {
@@ -315,13 +318,16 @@ body {
   line-height: 20px;
   padding: 8px 16px;
   border-radius: 4px;
+  transition-property: background-color;
+  transition-duration: 100ms;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
 }
 
 .b_dropdown li a:hover,
 .b_dropdown li a:active,
 .b_dropdown li a:focus {
-  background-color: var(--secondary-background);
   cursor: pointer;
+  background-color: var(--secondary-background);
 }
 
 .b_text {
@@ -615,6 +621,9 @@ body {
   border: 0;
   height: 20px;
   width: 20px;
+  transition-property: background-color;
+  transition-duration: 100ms;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
 }
 
 .modal-header .close:after,
@@ -703,6 +712,9 @@ body {
   color: var(--primary-text);
   border: 1px solid var(--primary-border);
   text-decoration: none;
+  transition-property: background-color;
+  transition-duration: 100ms;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
 }
 .button:focus,
 .button:active {
@@ -904,6 +916,9 @@ body {
   border-radius: 50%;
   height: 20px;
   width: 20px;
+  transition-property: background-color;
+  transition-duration: 100ms;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
 }
 
 .options li.kepet a {
@@ -1012,10 +1027,13 @@ body {
   outline: 0;
   margin: 0;
   border-radius: 50%;
+  transition-property: background-color;
+  transition-duration: 100ms;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
 }
 
-.options_content td .clear:hover
-.options_content td .clear:active
+.options_content td .clear:hover,
+.options_content td .clear:active,
 .options_content td .clear:focus {
   background-color: var(--secondary-background);
 }
@@ -1134,6 +1152,9 @@ code {
 .datepicker td {
   color: var(--datepicker-inactive-month);
   padding: 5px;
+  transition-property: background-color;
+  transition-duration: 100ms;
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
 }
 .datepicker td.active {
   color: var(--primary-text);
