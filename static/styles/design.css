@@ -989,16 +989,16 @@ body {
   background: transparent;
 }
 
-.options_content td .clear {
+.options_content td .clear, {
   position: absolute;
   top: 11px;
   right: 11px;
 }
 
-.options_content td .clear {
+.options_content td .clear,
+.error .clear {
   background: url(../images/LiJKvoYFmUK.png) no-repeat;
   /*=retina: gc6VwTsu2qZ.png*/
-  background-color: var(--primary-background);
   display: inline-block;
   width: 16px;
   height: 16px;
@@ -1009,8 +1009,8 @@ body {
   border-radius: 50%;
 }
 
-.options_content td .clear:hover,
-.options_content td .clear:active,
+.options_content td .clear:hover
+.options_content td .clear:active
 .options_content td .clear:focus {
   background-color: var(--secondary-background);
 }
