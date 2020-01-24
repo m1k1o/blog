@@ -963,13 +963,12 @@ i.public {
   height: 16px;
   width: 16px;
   vertical-align: middle;
-  margin-right: 3px;
   bottom: 1px;
   position: relative;
 }
 
 i.private {
-  background: url(../images/8hytOd4Srb5.png) no-repeat;
+  background: url(../images/jcKElmriUSj.png) no-repeat;
 }
 
 i.friends {
@@ -980,7 +979,12 @@ i.public {
   background: url(../images/7wYk0RRj5-g.png) no-repeat;
 }
 
-.privacy_settings a > i{
+.privacy_icon {
+  margin-right: 1px;
+}
+
+.privacy_settings a > i,
+.button .cnt > i {
   margin-right: 8px;
 }
 .privacy_settings a:hover > i{
