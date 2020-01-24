@@ -645,7 +645,7 @@ $.fn.apply_edit = function(data){
 			o_mask = $("#prepared .privacy_settings").clone();
 			$("body").append(o_mask);
 			o_mask.css({
-				top: $(this).offset().top + $(this).height() + 'px',
+				top: $(this).offset().top + $(this).outerHeight() + 5 +  'px',
 				left: $(this).offset().left + $(this).outerWidth() - $(o_mask).outerWidth() + 'px'
 			});
 
@@ -793,7 +793,7 @@ $.fn.apply_post = function(){
 			o_mask = $('#prepared .post_tools').clone();
 			$("body").append(o_mask);
 			o_mask.css({
-				top: $(this).offset().top + $(this).height() + 5 + 'px',
+				top: $(this).offset().top + $(this).outerHeight() + 5 + 'px',
 				left: $(this).offset().left + $(this).outerWidth() - $(o_mask).outerWidth() - 5 + 'px'
 			});
 
