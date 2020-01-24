@@ -645,8 +645,8 @@ $.fn.apply_edit = function(data){
 			o_mask = $("#prepared .privacy_settings").clone();
 			$("body").append(o_mask);
 			o_mask.css({
-				top: $(this).offset().top + $(this).outerHeight() + 5 +  'px',
-				left: $(this).offset().left + $(this).outerWidth() - $(o_mask).outerWidth() + 'px'
+				top: $(this).offset().top - (($(o_mask).outerHeight() - $(this).outerHeight()) / 2) +  'px',
+				left: $(this).offset().left - (($(o_mask).outerWidth() - $(this).outerWidth()) / 2 ) + 'px'
 			});
 
 			// Show mask and dropdown
