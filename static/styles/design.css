@@ -1,27 +1,65 @@
 :root {
-  --primary-text: #e4e6eb;
-  --secondary-text: #b0b3b8;
+  --primary-text: #050505;
+  --secondary-text: #65676b;
 
-  --primary-background: #242526;
-  --secondary-background: #3a3b3c;
-  --secondary-background-hover: #4e4f50;
+  --primary-background: #fff;
+  --secondary-background: #e4e6eb;
+  --secondary-background-hover: #d9dbdf;
 
-  --primary-border: #393a3b;
+  --primary-border: #ced0d4;
 
-  --modal-background: rgba(11, 11, 11, 0.8);
+  --modal-background: rgba(244, 244, 244, 0.8);
 
-  --button-primary-color: #2d88ff;
-  --button-primary-color-hover: #4294ff;
-  --button-primary-color-active: #77a7ff;
+  --button-primary-color: #fff;
+  --button-primary-background: #1877f2;
+  --button-primary-background-hover: #1771e6;
+  --button-primary-background-active: #719ff2;
 
-  --web-wash: #18191a;
-  --blue-link: #4599ff;
+  --web-wash: #f0f2f5;
+  --blue-link: #216fdb;
 
-  --white: #fff;
-  --black: #000;
+  --img-desc: #fff;
+  --thumb-background: #000;
 
-  --error-color: #a94442;
+  --error-color: #fff;
+  --error-background: #a94442;
   --datepicker-inactive-month: #57595d;
+
+  --filter: none;
+  --filter-hover: invert(0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-text: #e4e6eb;
+    --secondary-text: #b0b3b8;
+
+    --primary-background: #242526;
+    --secondary-background: #3a3b3c;
+    --secondary-background-hover: #4e4f50;
+
+    --primary-border: #393a3b;
+
+    --modal-background: rgba(11, 11, 11, 0.8);
+
+    --button-primary-color: var(--primary-text);
+    --button-primary-background: #2d88ff;
+    --button-primary-background-hover: #4294ff;
+    --button-primary-background-active: #77a7ff;
+
+    --web-wash: #18191a;
+    --blue-link: #4599ff;
+
+    --img-desc: #fff;
+    --thumb-background: #000;
+
+    --error-color: #fff;
+    --error-background: #a94442;
+    --datepicker-inactive-month: #57595d;
+
+    --filter: invert(0.62) sepia(0.98) saturate(0.12) hue-rotate(175deg) brightness(0.9) contrast(0.96);
+    --filter-hover: invert(1);
+  }
 }
 
 body {
@@ -100,7 +138,6 @@ body {
   left: 15px;
   position: absolute;
   color: var(--primary-text);
-  text-shadow: 0 0 3px rgba(0,0,0,.8);
   font-weight: bold;
   font-size: 24px;
   line-height: 30px;
@@ -237,7 +274,7 @@ body {
   display: inline-block;
   content: " ";
   background: url(../images/BOCzaD2rwOa.png) center center no-repeat;
-  filter: invert(0.62) sepia(0.98) saturate(0.12) hue-rotate(175deg) brightness(0.9) contrast(0.96);
+  filter: var(--filter);
   height: 20px;
   width: 20px;
 }
@@ -323,7 +360,7 @@ body {
   width: 100%;
   height: 260px;
   position: relative;
-  background: var(--black);
+  background: var(--thumb-background);
   text-align: center;
 }
 
@@ -399,7 +436,7 @@ body {
 .b_imglink .ftr {
   background: url(../images/QijIVO3ZIrO.png) repeat-x 0 0;
   bottom: 0;
-  color: var(--white);
+  color: var(--img-desc);
   font-size: 11px;
   font-weight: bold;
   height: 56px;
@@ -470,7 +507,7 @@ body {
   width: 40px;
   height: 40px;
   background: no-repeat center center;
-  background-color: var(--button-primary-color);
+  background-color: var(--button-primary-background);
   border-radius: 50%;
   line-height: 0;
   margin: 10px auto;
@@ -578,7 +615,7 @@ body {
   content: " ";
   background: url(../images/HxCo9uaZIcB.png) no-repeat;
   background-position: 0px -21px;
-  filter: invert(0.62) sepia(0.98) saturate(0.12) hue-rotate(175deg) brightness(0.9) contrast(0.96);
+  filter: var(--filter);
   height: 20px;
   width: 20px;
 }
@@ -640,7 +677,6 @@ body {
   box-sizing: content-box;
   font-size: 15px;
   line-height: 19px;
-  font-weight: bold;
   padding: 8px 12px;
   position: relative;
   text-align: center;
@@ -668,14 +704,15 @@ body {
 
 .button.blue {
   border: 0;
-  background-color: var(--button-primary-color);
+  color: var(--button-primary-color);
+  background-color: var(--button-primary-background);
 }
 .button.blue:hover {
-  background-color: var(--button-primary-color-hover);
+  background-color: var(--button-primary-background-hover);
 }
 .button.blue:focus,
 .button.blue:active {
-  background-color: var(--button-primary-color-active);
+  background-color: var(--button-primary-background-active);
 }
 
 .login-form input {
@@ -730,8 +767,8 @@ body {
 }
 
 .e_drop {
-  border-color: var(--button-primary-color);
-  color: var(--button-primary-color);
+  border-color: var(--button-primary-background);
+  color: var(--button-primary-background);
 }
 
 .e_loading {
@@ -748,7 +785,7 @@ body {
   animation-iteration-count: infinite;
   animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
 
-  background-color: var(--white);
+  background-color: var(--primary-text);
   border-radius: 4px;
   display: inline-block;
 }
@@ -796,7 +833,7 @@ body {
   display: block;
   width: 0;
   height: 100%;
-  background-color: var(--button-primary-color);
+  background-color: var(--button-primary-background);
   box-shadow:
     inset 0 2px 9px  rgba(255,255,255,.3),
     inset 0 -2px 6px rgba(0,0,0,.4);
@@ -970,7 +1007,7 @@ body {
   top: -7px;
   width: auto;
   height: auto;
-  background: var(--black);
+  background: var(--secondary-background);
   border-radius: 50%;
   cursor: pointer;
   font-size: 0 !important;
@@ -985,7 +1022,7 @@ body {
   content: " ";
   background: url(../images/HxCo9uaZIcB.png) no-repeat;
   background-position: 0px -21px;
-  filter: invert(0.62) sepia(0.98) saturate(0.12) hue-rotate(175deg) brightness(0.9) contrast(0.96);
+  filter: var(--filter);
   height: 20px;
   width: 20px;
 }
@@ -998,7 +1035,7 @@ body {
 i.private,
 i.friends,
 i.public {
-  filter: invert(0.62) sepia(0.98) saturate(0.12) hue-rotate(175deg) brightness(0.9) contrast(0.96);
+  filter: var(--filter);
   display: inline-block;
   height: 16px;
   width: 16px;
@@ -1028,12 +1065,12 @@ i.public {
   margin-right: 8px;
 }
 .privacy_settings a:hover > i{
-  filter: invert(1);
+  filter: var(--filter-hover);
 }
 
 .error {
-  color: var(--white);
-  background-color: var(--error-color);
+  color: var(--error-color);
+  background-color: var(--error-background);
   padding: 15px;
   margin-bottom: 20px;
   border-radius: 4px;
@@ -1115,8 +1152,8 @@ code {
 }
 
 .datepicker td.selected {
-  color: var(--white);
-  background-color: var(--button-primary-color);
+  color: var(--button-primary-color);
+  background-color: var(--button-primary-background);
 }
 
 select {
