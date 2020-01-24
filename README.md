@@ -6,6 +6,25 @@ In this context lightweight means:
 * No pipeline. What you see is pure code without a need to install it.
 * No overhead, essential features, simple usage.
 
+## Screenshots
+<details>
+	<summary>Light theme</summary>
+
+![screenshot](https://raw.githubusercontent.com/m1k1o/blog/master/static/screenshot-theme02-light.png)
+</details>
+
+<details>
+	<summary>Dark theme</summary>
+
+![screenshot](https://raw.githubusercontent.com/m1k1o/blog/master/static/screenshot-theme02-dark.png)
+</details>
+
+<details>
+	<summary>Legacy theme (compatible with older browsers)</summary>
+
+![screenshot](https://raw.githubusercontent.com/m1k1o/blog/master/static/screenshot-theme01.png)
+</details>
+
 ## Install standalone app using `docker-compose`
 You need to install [docker-compose](https://docs.docker.com/compose/install/).
 
@@ -109,6 +128,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 
 # Features
 
+* Dark mode, retina ready, legacy theme available.
 * Create own language mutations, available: **English** and **German**.
 * Use BBcode in texts.
 * Make posts available for **everyone**, **only you** or just for **friends**.
@@ -125,5 +145,3 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Display posts from chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#from=2017-06`.
 * Display posts to chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#to=2017-06`.
 * Combine parameters in url using `&`, e.g. show posts between dates: `http://blog/#from=2017-06&to=2017-08`.
-
-![screenshot](https://raw.githubusercontent.com/m1k1o/blog/master/static/screenshot.png)
