@@ -258,7 +258,7 @@ class Post
 			}
 
 			if($p == 'og:type'){
-				$content["is_video"] = ($c == "video");
+				$content["is_video"] = (preg_match("/video/", $c));
 			}
 
 			if($n == 'twitter:image:src' || $p == 'og:image'){
