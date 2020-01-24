@@ -15,7 +15,7 @@ if(empty($_SESSION['token'])){
 Log::put("visitors");
 
 $hours = '';
-for($h=0;$h<=24;$h++){
+for($h=0;$h<24;$h++){
 	$hours .= sprintf('<option value="%d">%02d</option>', $h, $h);
 }
 
