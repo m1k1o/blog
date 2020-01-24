@@ -673,6 +673,52 @@ body {
   text-align: center;
 }
 
+.e_dots {
+  width:8px;
+  height:8px;
+
+  animation-name: e_dots;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+
+  background-color: black;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.e_dots:nth-child(2) {
+  animation-delay:0.3s;
+}
+
+.e_dots:nth-child(3) {
+  animation-delay:0.6s;
+}
+
+@keyframes e_dots {
+  0% {
+    opacity: .265;
+    transform: scale(.8,.8)
+  }
+
+  5% {
+    opacity: .25
+  }
+
+  50% {
+    transform: scale(1,1)
+  }
+
+  55% {
+    opacity: 1
+  }
+
+  100% {
+    opacity: .265;
+    transform: scale(.8,.8)
+  }
+}
+
 .e_loading .e_meter {
   height: 5px;
   position: relative;
