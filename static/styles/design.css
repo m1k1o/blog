@@ -59,7 +59,6 @@ body {
   border-radius: 50%;
   display: block;
   text-align: center;
-  border: 1px solid rgba(0, 0, 0, .3);
   padding: 5px;
   background-color: #242526; /*= Primary Background */
 }
@@ -122,10 +121,10 @@ body {
   margin-top: -40px;
   display: block;
   text-align: center;
-  background: -moz-linear-gradient(top, rgba(36,37,38,0) 0%, rgba(36,37,38,1) 75%, rgba(36,37,38,1) 100%);
-  background: -webkit-linear-gradient(top, rgba(36,37,38,0) 0%,rgba(36,37,38,1) 75%,rgba(36,37,38,1) 100%);
-  background: linear-gradient(to bottom, rgba(36,37,38,0) 0%,rgba(36,37,38,1) 75%,rgba(36,37,38,1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00242526', endColorstr='#242526',GradientType=0 );
+  background: -moz-linear-gradient(top, rgba(36,37,38,0) 0%, rgba(36,37,38,1) 75%, rgba(36,37,38,1) 100%); /*= Primary Background */
+  background: -webkit-linear-gradient(top, rgba(36,37,38,0) 0%,rgba(36,37,38,1) 75%,rgba(36,37,38,1) 100%); /*= Primary Background */
+  background: linear-gradient(to bottom, rgba(36,37,38,0) 0%,rgba(36,37,38,1) 75%,rgba(36,37,38,1) 100%); /*= Primary Background */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00242526', endColorstr='#242526',GradientType=0 ); /*= Primary Background */
   cursor: pointer;
   vertical-align: bottom;
 }
@@ -215,7 +214,7 @@ body {
 .b_tools:active,
 .b_tools:focus {
   cursor: pointer;
-  background-color: rgba(255,255,255,.1);
+  background-color: rgba(255,255,255,.1); /*= Primary transparent */
 }
 
 .b_dropdown {
@@ -225,9 +224,9 @@ body {
   border: 1px #393a3b; /*= Primary Border */
   border-radius: 8px;
   box-shadow:
-    rgba(0, 0, 0, 0.2) 0px 12px 28px 0px,
-    rgba(0, 0, 0, 0.1) 0px 2px 4px 0px,
-    rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+    rgba(0,0,0,.2) 0px 12px 28px 0px,
+    rgba(0,0,0,.1) 0px 2px 4px 0px,
+    rgba(255,255,255,.05) 0px 0px 0px 1px inset;
   z-index: 105;
   margin: 0;
   position: absolute;
@@ -251,7 +250,7 @@ body {
 .b_dropdown li a:hover,
 .b_dropdown li a:active,
 .b_dropdown li a:focus {
-  background-color: rgba(255,255,255,.1);
+  background-color: rgba(255,255,255,.1); /*= Primary transparent */
   cursor: pointer;
 }
 
@@ -292,7 +291,7 @@ body {
   width: 100%;
   height: 260px;
   position: relative;
-  background: #000;
+  background: #000; /*= Black */
   text-align: center;
 }
 
@@ -350,10 +349,9 @@ body {
 
 .b_imglink {
   display: block;
-  color: #1d2129;
   text-decoration: none;
   margin-top: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .41);
+  box-shadow: 0 1px 3px rgba(0,0,0,.41);
   overflow: hidden;
   position: relative;
   font-size: 0;
@@ -369,7 +367,7 @@ body {
 .b_imglink .ftr {
   background: url(../images/QijIVO3ZIrO.png) repeat-x 0 0;
   bottom: 0;
-  color: #fff;
+  color: #fff; /*= White */
   font-size: 11px;
   -webkit-font-smoothing: antialiased;
   font-weight: bold;
@@ -440,7 +438,8 @@ body {
   display: block;
   width: 40px;
   height: 40px;
-  background: #3578e5 no-repeat center center;
+  background: no-repeat center center;
+  background-color: #2d88ff; /*= Button primary color */
   border-radius: 50%;
   line-height: 0;
   margin: 10px auto;
@@ -505,9 +504,9 @@ body {
   border: 1px solid #393a3b; /*= Primary Border */
   border-radius: 8px;
   box-shadow:
-    rgba(0, 0, 0, 0.2) 0px 12px 28px 0px,
-    rgba(0, 0, 0, 0.1) 0px 2px 4px 0px,
-    rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+    rgba(0,0,0,.2) 0px 12px 28px 0px,
+    rgba(0,0,0,.1) 0px 2px 4px 0px,
+    rgba(255,255,255,.05) 0px 0px 0px 1px inset;
   outline: 0;
 }
 
@@ -539,7 +538,7 @@ body {
 
   padding: 8px;
   border-radius: 50%;
-  background-color: rgba(255,255,255,.1);
+  background-color: rgba(255,255,255,.1); /*= Primary transparent */
   height: 20px;
   width: 20px;
 }
@@ -555,7 +554,7 @@ body {
 .modal-header .close:hover,
 .modal-header .close:active,
 .modal-header .close:focus {
-  background-color: rgba(255,255,255,.2);
+  background-color: rgba(255,255,255,.2); /*= Secondary transparent */
   cursor: pointer;
 }
 
@@ -618,21 +617,22 @@ body {
   vertical-align: middle;
   cursor: pointer;
   color: #e4e6eb; /*= Primary text */
-  border: 1px solid #fff;
+  border: 1px solid #393a3b; /*= Primary Border */
   text-decoration: none;
+}
+.button:focus,
+.button:active {
+  transform: scale(.98);
 }
 
 .button.gray {
   border: 0;
   background-color: #3a3b3c; /*= Link Color */
 }
-.button.gray:hover {
-  background-color: #4e4f50; /*= Link Color - hover */
-}
+.button.gray:hover,
 .button.gray:focus,
 .button.gray:active {
-  background-color: #4e4f50;
-  transform: scale(.98);
+  background-color: #4e4f50; /*= Link Color - hover */
 }
 
 .button.blue {
@@ -640,18 +640,17 @@ body {
   background-color: #2d88ff; /*= Button primary color */
 }
 .button.blue:hover {
-  background-color: #4294ff;
+  background-color: #4294ff; /*= Button primary color hover */
 }
 .button.blue:focus,
 .button.blue:active {
-  background-color: #77a7ff;
-  transform: scale(.98);
+  background-color: #77a7ff; /*= Button primary color active */
 }
 
 .login-form input {
   color: #e4e6eb; /*= Primary text */
   border-radius: 50px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255,255,255,.1); /*= Primary transparent */
 
   height: 44px;
   font-size: 16px;
@@ -669,7 +668,7 @@ body {
 }
 
 .login-form input:hover {
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
 }
 
 .e_profile {
@@ -718,7 +717,7 @@ body {
   animation-iteration-count: infinite;
   animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
 
-  background-color: rgb(255, 255, 255);
+  background-color: #f /*= White */ff;
   border-radius: 4px;
   display: inline-block;
 }
@@ -759,7 +758,7 @@ body {
   height: 5px;
   position: relative;
   margin-top: 15px;
-  box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+  box-shadow: inset 0 -1px 1px rgba(255,255,255,.3);
 }
 
 .e_loading .e_meter > span {
@@ -768,8 +767,8 @@ body {
   height: 100%;
   background-color: #2d88ff; /*= Button primary color */
   box-shadow:
-    inset 0 2px 9px  rgba(255,255,255,0.3),
-    inset 0 -2px 6px rgba(0,0,0,0.4);
+    inset 0 2px 9px  rgba(255,255,255,.3),
+    inset 0 -2px 6px rgba(0,0,0,.4);
   position: relative;
   overflow: hidden;
 }
@@ -867,7 +866,7 @@ body {
 .options li a:active,
 .options li a.active,
 .options li a:focus {
-  background-color: rgba(255,255,255,.1);
+  background-color: rgba(255,255,255,.1); /*= Primary transparent */
 }
 
 .options_content {
@@ -926,7 +925,7 @@ body {
 .clear:hover,
 .clear:active,
 .clear:focus {
-  background-color: rgba(255,255,255,.1);
+  background-color: rgba(255,255,255,.1); /*= Primary transparent */
 }
 
 .content {
@@ -940,7 +939,7 @@ body {
   top: -7px;
   width: auto;
   height: auto;
-  background: #000;
+  background: #000; /*= Black */
   border-radius: 50%;
   cursor: pointer;
   font-size: 0 !important;
@@ -1002,8 +1001,8 @@ i.public {
 }
 
 .error {
-  color: #fff;
-  background-color: #a94442;
+  color: #fff; /*= White */
+  background-color: #a94442; /*= Error color */
   padding: 15px;
   margin-bottom: 20px;
   border-radius: 4px;
@@ -1057,7 +1056,7 @@ code {
 }
 
 .datepicker td {
-  color: #57595d;
+  color: #57595d; /*= Datepicker inactive month */
   padding: 5px;
 }
 .datepicker td.active {
@@ -1080,19 +1079,19 @@ code {
 }
 
 .datepicker td:hover {
-  background-color: rgba(255,255,255,.1);
+  background-color: rgba(255,255,255,.1); /*= Primary transparent */
   cursor: pointer;
 }
 
 .datepicker td.selected {
-  color: white;
+  color: #fff; /*= White */
   background-color: #2d88ff; /*= Button primary color */
 }
 
 select {
   color: #e4e6eb; /*= Primary text */
   border-radius: 50px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255,255,255,.1); /*= Primary transparent */
   border: 0;
   outline: none;
 }
