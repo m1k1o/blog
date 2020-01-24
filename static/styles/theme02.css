@@ -989,7 +989,7 @@ body {
   background: transparent;
 }
 
-.options_content td .clear, {
+.options_content td .clear {
   position: absolute;
   top: 11px;
   right: 11px;
