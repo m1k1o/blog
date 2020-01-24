@@ -119,7 +119,7 @@ if(!empty($scripts)){
 				<img class="thumb_imglink">
 				<div class="play"></div>
 			</div>
-			<div class="info right">
+			<div class="info has_thumb">
 				<div class="title"></div>
 				<div class="desc"></div>
 				<div class="host"></div>
