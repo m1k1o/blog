@@ -125,7 +125,7 @@ var cnt_funcs = {
 
 		if(!data.thumb){
 			obj.find(".thumb").remove();
-			obj.find(".right").removeClass("right");
+			obj.find(".has_thumb").removeClass("has_thumb");
 		} else {
 			obj.find(".thumb img").attr("src", data.thumb);
 		}

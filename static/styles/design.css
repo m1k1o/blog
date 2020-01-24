@@ -704,14 +704,13 @@ body {
   height:8px;
 
   animation-name: e_dots;
-  animation-duration:2s;
-  animation-iteration-count:infinite;
-  animation-timing-function:cubic-bezier(0.5, 0, 0.5, 1);
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
 
-  background-color:rgb(255, 255, 255);
-  border-radius:4px;
-  display:inline-block;
-
+  background-color: rgb(255, 255, 255);
+  border-radius: 4px;
+  display: inline-block;
 }
 
 .e_dots:nth-child(2) {

@@ -119,7 +119,11 @@ if(!empty($scripts)){
 				<img class="thumb_imglink">
 				<div class="play"></div>
 			</div>
+<<<<<<< HEAD
 			<div class="info">
+=======
+			<div class="info has_thumb">
+>>>>>>> master
 				<div class="title"></div>
 				<div class="desc"></div>
 				<div class="host"></div>
