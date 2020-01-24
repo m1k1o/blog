@@ -119,7 +119,7 @@ if(!empty($scripts)){
 				<img class="thumb_imglink">
 				<div class="play"></div>
 			</div>
-			<div class="info right">
+			<div class="info">
 				<div class="title"></div>
 				<div class="desc"></div>
 				<div class="host"></div>
@@ -174,7 +174,9 @@ if(!empty($scripts)){
 							</div>
 						</div>
 						<div class="e_loading">
-							<img src="static/images/loading.gif" />
+							<span class="e_dots"></span>
+							<span class="e_dots"></span>
+							<span class="e_dots"></span>
 							<div class="e_meter"><span></span></div>
 						</div>
 						<input type="hidden" class="i_content_type">
