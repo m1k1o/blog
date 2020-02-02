@@ -684,6 +684,13 @@ $.fn.post_fill = function(data){
 
 	post.data("id", data.id);
 
+	post.find(".b_overlay .button").click(function(){
+		post.find(".b_overlay").hide();
+		setTimeout(function(){
+			post.find(".b_overlay").fadeIn(4000);
+		}, 2500);
+	});
+
 	post.find(".b_text").html(data.text);
 
 	post.find(".b_text").find(".tag").click(function(){

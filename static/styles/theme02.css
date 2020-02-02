@@ -191,6 +191,24 @@ body {
   vertical-align: bottom;
 }
 
+.b_overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 64px;
+  bottom: 12px;
+  z-index: 1;
+  backdrop-filter: blur(25px);
+  background: rgba(0, 0, 0, .25);
+}
+
+.b_overlay .button {
+  background: var(--primary-background);
+}
+
 .b_post {
   border-radius: 8px;
   background-color: var(--primary-background);
