@@ -276,7 +276,7 @@ if(!empty($scripts)){
 		<!-- Post Row -->
 		<div class="b_post post_row">
 			<div class="b_overlay">
-				<a class="button">View</a>
+				<a class="button"><?php echo __("Show hidden content"); ?></a>
 			</div>
 			<div class="b_header">
 				<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="b_profile">
