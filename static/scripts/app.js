@@ -685,10 +685,26 @@ $.fn.post_fill = function(data){
 	post.data("id", data.id);
 
 	post.find(".b_overlay .button").click(function(){
-		post.find(".b_overlay").hide();
-		setTimeout(function(){
-			post.find(".b_overlay").fadeIn(4000);
-		}, 2500);
+		var overlay = post.find(".b_overlay");
+		var elementTop = $(overlay).offset().top;
+		var elementBottom = elementTop + $(overlay).outerHeight();
+		$(overlay).hide();
+
+		var showOverlay = function() {
+			$(overlay).show();
+			$(window).off('scroll', showOnViewport);
+			$(window).off('blur', showOverlay);
+		};
+		var showOnViewport = function() {
+			var viewportTop = $(window).scrollTop();
+			var viewportBottom = viewportTop + $(window).height();
+
+			if ((elementBottom > viewportTop && elementTop > viewportBottom) || (elementBottom < viewportTop && elementTop < viewportBottom)) {
+				showOverlay();
+			}
+		};
+		$(window).on('scroll', showOnViewport);
+		$(window).on('blur', showOverlay);
 	});
 
 	post.find(".b_text").html(data.text);
