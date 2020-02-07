@@ -145,7 +145,7 @@ class Post
 		$data['plain_text'] = $data['text'];
 		$data['text'] = self::parse_content($data['text']);
 
-		DB::get_instance()->update('posts', $data, "WHERE `id` = ? AND `status` = 1", $r["id"]);
+		DB::get_instance()->update('posts', $data, "WHERE `id` = ? AND `status` <> 5", $r["id"]);
 
 		unset($data['plain_text']);
 
@@ -155,27 +155,58 @@ class Post
 	public static function hide($r){
 		self::login_protected();
 
-		DB::get_instance()->query("UPDATE `posts` SET `status` = 4 WHERE `id` = ?", $r["id"]);
+		DB::get_instance()->query("
+			UPDATE `posts`
+			SET `status` = 4
+			WHERE `id` = ?
+			AND `status` <> 5
+		", $r["id"]);
+		return true;
+	}
+
+	public static function show($r){
+		self::login_protected();
+
+		DB::get_instance()->query("
+			UPDATE `posts`
+			SET `status` = 1
+			WHERE `id` = ?
+			AND `status` <> 5
+		", $r["id"]);
 		return true;
 	}
 
 	public static function delete($r){
 		self::login_protected();
 
-		DB::get_instance()->query("UPDATE `posts` SET `status` = 5 WHERE `id` = ?", $r["id"]);
+		DB::get_instance()->query("
+			UPDATE `posts`
+			SET `status` = 5
+			WHERE `id` = ?
+		", $r["id"]);
 		return true;
 	}
 
 	public static function edit_data($r){
 		self::login_protected();
 
-		return DB::get_instance()->query("SELECT `plain_text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content` FROM `posts` WHERE `id` = ? AND `status` = 1", $r["id"])->first();
+		return DB::get_instance()->query("
+			SELECT `plain_text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`
+			FROM `posts`
+			WHERE `id` = ?
+			AND `status` <> 5
+		", $r["id"])->first();
 	}
 
 	public static function get_date($r){
 		self::login_protected();
 
-		$date = DB::get_instance()->query("SELECT DATE_FORMAT(`datetime`,'%Y %c %e %k %i') AS `date_format` FROM `posts` WHERE `id` = ? AND `status` = 1", $r["id"])->first("date_format");
+		$date = DB::get_instance()->query("
+			SELECT DATE_FORMAT(`datetime`,'%Y %c %e %k %i') AS `date_format`
+			FROM `posts`
+			WHERE `id` = ?
+			AND `status` <> 5
+		", $r["id"])->first("date_format");
 		$date = array_map("intval", explode(" ", $date));
 		$date[4]  = floor($date[4]/10)*10;
 		return $date;
@@ -186,7 +217,12 @@ class Post
 
 		$d = $r["date"];
 		$datetime = "{$d[0]}/{$d[1]}/{$d[2]} {$d[3]}:{$d[4]}";
-		DB::get_instance()->query("UPDATE `posts` SET `datetime` = ? WHERE `id` = ? AND `status` = 1", $datetime, $r["id"]);
+		DB::get_instance()->query("
+			UPDATE `posts`
+			SET `datetime` = ?
+			WHERE `id` = ?
+			AND `status` <> 5
+		", $datetime, $r["id"]);
 		return [ "datetime" => date("d M Y H:i", strtotime($datetime)) ];
 	}
 
@@ -322,10 +358,13 @@ class Post
 			$person = $r["filter"]["person"];
 		}
 
-		return DB::get_instance()->query(
-			"SELECT `id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`, DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i') AS `datetime` ".
-			"FROM `posts` ".
-			"WHERE ".
+		return DB::get_instance()->query("
+			SELECT
+				`id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`,
+				DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i') AS `datetime`,
+				(`status` <> 1) AS `is_hidden`
+			FROM `posts`
+			WHERE ".
 				(!User::is_logged_in() ? (User::is_visitor() ? "`privacy` IN ('public', 'friends') AND " : "`privacy` = 'public' AND ") : "").
 				($from ? "`posts`.`datetime` > ? AND " : "").
 				($to ? "`posts`.`datetime` < ? AND " : "").
@@ -333,9 +372,10 @@ class Post
 				($tag ? "`plain_text` LIKE CONCAT('%', ?, '%') AND " : "").
 				($loc ? "`location` LIKE CONCAT('%', ?, '%') AND " : "").
 				($person ? "`persons` LIKE CONCAT('%', ?, '%') AND " : "").
-				"`status` = 1 ".
-			"ORDER BY `posts`.`datetime` DESC ".
-			"LIMIT ? OFFSET ?", $from, $to, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
+				"`status` <> 5
+			ORDER BY `posts`.`datetime` DESC
+			LIMIT ? OFFSET ?
+			", $from, $to, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
 		)->all();
 	}
 
