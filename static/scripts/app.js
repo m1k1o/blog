@@ -684,7 +684,7 @@ $.fn.post_fill = function(data){
 
 	post.data("id", data.id);
 
-	if(data.is_hidden) {
+	if(parseInt(data.is_hidden)) {
 		post.addClass("is_hidden");
 	}
 	post.find(".b_overlay .button").click(function(){
