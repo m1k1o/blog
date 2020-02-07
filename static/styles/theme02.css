@@ -193,8 +193,16 @@ body {
   vertical-align: bottom;
 }
 
+.b_post {
+  border-radius: 8px;
+  background-color: var(--primary-background);
+  margin-bottom: 10px;
+  padding: 12px;
+  position: relative;
+}
+
 .b_overlay {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   position: absolute;
@@ -212,12 +220,12 @@ body {
   background: var(--primary-background);
 }
 
-.b_post {
-  border-radius: 8px;
-  background-color: var(--primary-background);
-  margin-bottom: 10px;
-  padding: 12px;
-  position: relative;
+.b_post.is_hidden {
+  box-shadow: inset 0px 0px 9px -1px var(--primary-text)
+}
+
+.b_post.is_hidden .b_overlay {
+  display: flex;
 }
 
 .b_post.new_post {

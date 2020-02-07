@@ -129,8 +129,18 @@ body {
   vertical-align: bottom;
 }
 
+.b_post {
+  border: 1px solid;
+  border-color: #e5e6e9 #dfe0e4 #d0d1d5;
+  border-radius: 3px;
+  background-color: #fff;
+  margin-bottom: 10px;
+  padding: 12px;
+  position: relative;
+}
+
 .b_overlay {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   position: absolute;
@@ -146,14 +156,12 @@ body {
   background: white;
 }
 
-.b_post {
-  border: 1px solid;
-  border-color: #e5e6e9 #dfe0e4 #d0d1d5;
-  border-radius: 3px;
-  background-color: #fff;
-  margin-bottom: 10px;
-  padding: 12px;
-  position: relative;
+.b_post.is_hidden {
+  border-color: black;
+}
+
+.b_post.is_hidden .b_overlay {
+  display: flex;
 }
 
 .b_post.new_post {
