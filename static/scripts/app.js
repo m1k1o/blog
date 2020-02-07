@@ -684,6 +684,9 @@ $.fn.post_fill = function(data){
 
 	post.data("id", data.id);
 
+	if(data.is_hidden) {
+		post.addClass("is_hidden");
+	}
 	post.find(".b_overlay .button").click(function(){
 		var overlay = post.find(".b_overlay");
 		var elementTop = $(overlay).offset().top;
@@ -691,7 +694,7 @@ $.fn.post_fill = function(data){
 		$(overlay).hide();
 
 		var showOverlay = function() {
-			$(overlay).show();
+			$(overlay).css("display", ""); // .show() would cause display:block;
 			$(window).off('scroll', showOnViewport);
 			$(window).off('blur', showOverlay);
 		};
@@ -957,15 +960,25 @@ $.fn.apply_post = function(){
 			});
 
 			// Hide event
-			$(o_mask).find(".hide").click(function(){
+			if(post.hasClass("is_hidden")) {
+				$(o_mask).find(".hide").hide();
+			} else {
+				$(o_mask).find(".show").hide();
+			}
+			$(o_mask).find(".hide, .show").click(function(){
 				// Hide mask
 				$("#dd_mask").click();
+
+				var action = 'hide';
+				if(post.hasClass("is_hidden")) {
+					action = 'show';
+				}
 
 				$.post({
 					dataType: "json",
 					url: "ajax.php",
 					data: {
-						action: "hide",
+						action: action,
 						id: post_id
 					},
 					success: function(data){
@@ -974,7 +987,11 @@ $.fn.apply_post = function(){
 							return ;
 						}
 
-						post.remove();
+						if(action == 'hide') {
+							post.addClass("is_hidden");
+						} else {
+							post.removeClass("is_hidden");
+						}
 					}
 				});
 			});

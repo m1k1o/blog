@@ -151,7 +151,10 @@ if(!empty($scripts)){
 		<ul class="b_dropdown post_tools">
 			<li><a class="edit_post"><?php echo __("Edit Post"); ?></a></li>
 			<li><a class="edit_date"><?php echo __("Change Date"); ?></a></li>
-			<li><a class="hide"><?php echo __("Hide from Timeline"); ?></a></li>
+			<li>
+				<a class="hide"><?php echo __("Hide from Timeline"); ?></a>
+				<a class="show"><?php echo __("Show on Timeline"); ?></a>
+			</li>
 			<li><a class="delete_post"><?php echo __("Delete Post"); ?></a></li>
 		</ul>
 
