@@ -113,6 +113,7 @@ var posts = {
 	init: function(){
 		posts.hash_update();
 		posts.initialized = true;
+		posts.load();
 	}
 };
 
