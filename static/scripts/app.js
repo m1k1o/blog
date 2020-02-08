@@ -6,12 +6,13 @@ $("#dd_mask").click(function(){
 
 // Posts loading functions
 var posts = {
-	first: false,   // Is first loaded?
-	last: false,    // Is last loaded?
-	loading: false, // Is something loading right now?
+	initialized: false, // Is initialized?
+	first: false,       // Is first loaded?
+	last: false,        // Is last loaded?
+	loading: false,     // Is something loading right now?
 
-	limit: 5,       // Limit posts per load
-	offset: 0,      // Current offset
+	limit: 5,           // Limit posts per load
+	offset: 0,          // Current offset
 
 	filter: {
 		from: null,     // Show posts from specified date
@@ -57,7 +58,7 @@ var posts = {
 
 	load: function(){
 		// If is something loading now or is loading done
-		if(posts.loading || posts.last)
+		if(!posts.initialized || posts.loading || posts.last)
 			return ;
 
 		// Now is
@@ -111,6 +112,7 @@ var posts = {
 
 	init: function(){
 		posts.hash_update();
+		posts.initialized = true;
 	}
 };
 
