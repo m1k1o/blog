@@ -133,6 +133,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Use BBcode in texts.
 * Make posts available for **everyone**, **only you** or just for **friends**.
 * Extra fields in post: **Feeling**, **With** and **At**.
+* Hide posts from timeline so they are visible only when you need them to be.
 * All pasted links will get preview with page title, description and image.
 * Upload images using button *(for mobile)*.
 * Upload images using drag & drop *(drop it into textarea)*.
