@@ -244,25 +244,33 @@ class Post
 		}
 
 		preg_match('/^https?:\/\/(www\.)?([^:\/\s]+)(.*)?$/i', $l, $url);
+		$curl_request_url = $l;
 
 		// Get content
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_URL, $l);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Proxycat/1.1)");
 		curl_setopt($ch, CURLOPT_REFERER, '');
 
 		// Proxy settings
 		if($proxy = Config::get_safe("proxy", false)){
-			curl_setopt($ch, CURLOPT_PROXY, $proxy);
+			$proxytype = Config::get_safe("proxytype", false);
+			$proxyauth = Config::get_safe("proxyauth", false);
+			if($proxytype === 'URL_PREFIX'){
+				$curl_request_url = $proxy.$curl_request_url;
 
-			if($proxyauth = Config::get_safe("proxyauth", false)){
-				curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyauth);
-			}
+				if($proxyauth){
+					curl_setopt($ch, CURLOPT_USERPWD, $proxyauth);
+				}
+			} else {
+				curl_setopt($ch, CURLOPT_PROXY, $proxy);
 
-			if($proxytype = Config::get_safe("proxytype", false)){
+				if($proxyauth){
+					curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyauth);
+				}
+
 				switch ($proxytype) {
 					case 'CURLPROXY_SOCKS4':
 						$proxytype = CURLPROXY_SOCKS4;
@@ -280,6 +288,7 @@ class Post
 			}
 		}
 
+		curl_setopt($ch, CURLOPT_URL, $curl_request_url);
 		$html = curl_exec($ch);
 		curl_close($ch);
 

@@ -134,7 +134,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Make posts available for **everyone**, **only you** or just for **friends**.
 * Extra fields in post: **Feeling**, **With** and **At**.
 * Hide posts from timeline so they are visible only when you need them to be.
-* All pasted links will get preview with page title, description and image.
+* All pasted links will get preview with page title, description and image (can be configured proxy).
 * Upload images using button *(for mobile)*.
 * Upload images using drag & drop *(drop it into textarea)*.
 * Upload images using CTRL + V *(paste it into textarea)*. 
