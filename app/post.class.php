@@ -253,6 +253,33 @@ class Post
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Proxycat/1.1)");
 		curl_setopt($ch, CURLOPT_REFERER, '');
+
+		// Proxy settings
+		if($proxy = Config::get_safe("proxy", false)){
+			curl_setopt($ch, CURLOPT_PROXY, $proxy);
+
+			if($proxyauth = Config::get_safe("proxyauth", false)){
+				curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyauth);
+			}
+
+			if($proxytype = Config::get_safe("proxytype", false)){
+				switch ($proxytype) {
+					case 'CURLPROXY_SOCKS4':
+						$proxytype = CURLPROXY_SOCKS4;
+						break;
+					case 'CURLPROXY_SOCKS5':
+						$proxytype = CURLPROXY_SOCKS5;
+						break;
+					case 'CURLPROXY_HTTP':
+					default:
+						$proxytype = CURLPROXY_HTTP;
+						break;
+				}
+
+				curl_setopt($ch, CURLOPT_PROXYTYPE, $proxytype);
+			}
+		}
+
 		$html = curl_exec($ch);
 		curl_close($ch);
 
