@@ -335,7 +335,22 @@ class Post
 			}
 
 			if($n == 'twitter:image:src' || $p == 'og:image'){
-				$content["thumb"] = $c;
+				// Absolute url
+				if(preg_match("/^(https?:)?\/\//", $c)) {
+					$content["thumb"] = $c;
+				}
+
+				// Relative url from root
+				elseif(preg_match("/^\//", $c)) {
+					preg_match("/^((?:https?:)?\/\/([^\/]+))(\/|$)/", $l, $m);
+					$content["thumb"] = $m[1].'/'.$c;
+				}
+
+				// Relative url from current directory
+				else {
+					preg_match("/^((?:https?:)?\/\/[^\/]+.*?)(\/[^\/]*)?$/", $l, $m);
+					$content["thumb"] = $m[1].'/'.$c;
+				}
 			}
 
 			if($n == 'twitter:domain'){
