@@ -254,6 +254,7 @@ class Post
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Proxycat/1.1)");
 		curl_setopt($ch, CURLOPT_REFERER, '');
+		curl_setopt($ch, CURLOPT_TIMEOUT, 7); // 7sec
 
 		// Proxy settings
 		if($proxy = Config::get_safe("proxy", false)){
