@@ -745,7 +745,7 @@ $.fn.post_fill = function(data){
 	*/
 
 	var height = 200;
-	if(data.text.length > 400){
+	if(data.text.length > 400 && post.find(".show_more").length == 0){
 		post.find(".b_text").css("max-height", height+"px");
 		var show_more = $('#prepared .show_more').clone();
 		show_more.insertAfter(post.find(".b_text"));
@@ -753,6 +753,8 @@ $.fn.post_fill = function(data){
 			$(this).remove();
 			post.find(".b_text").css("max-height", '');
 		});
+	} else if(post.find(".show_more").length != 0) {
+		post.find(".show_more").remove();
 	}
 
 	// Highlight
