@@ -156,10 +156,6 @@ body {
   background: white;
 }
 
-.b_post.is_hidden {
-  border-color: black;
-}
-
 .b_post.is_hidden .b_overlay {
   display: flex;
 }

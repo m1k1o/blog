@@ -28,6 +28,7 @@
   --filter: none;
   --filter-hover: invert(0.25);
   --overlay-background: rgba(0, 0, 0, .25);
+  --overlay-fallback-background: #ccc;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -61,6 +62,7 @@
     --filter: invert(0.62) sepia(0.98) saturate(0.12) hue-rotate(175deg) brightness(0.9) contrast(0.96);
     --filter-hover: invert(1);
     --overlay-background: rgba(255, 255, 255, .25);
+    --overlay-fallback-background: #555;
   }
 }
 
@@ -212,16 +214,18 @@ body {
   height: 100%;
   border-radius: 8px;
   z-index: 1;
-  backdrop-filter: blur(25px);
-  background: var(--overlay-background);
+  background: var(--overlay-fallback-background);
+}
+
+@supports (backdrop-filter: blur(25px)) {
+  .b_overlay {
+    backdrop-filter: blur(25px);
+    background: var(--overlay-background);
+  }
 }
 
 .b_overlay .button {
   background: var(--primary-background);
-}
-
-.b_post.is_hidden {
-  box-shadow: inset 0px 0px 9px -1px var(--primary-text)
 }
 
 .b_post.is_hidden .b_overlay {

@@ -244,15 +244,53 @@ class Post
 		}
 
 		preg_match('/^https?:\/\/(www\.)?([^:\/\s]+)(.*)?$/i', $l, $url);
+		$curl_request_url = $l;
 
 		// Get content
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_ENCODING , "");
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_URL, $l);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Proxycat/1.1)");
 		curl_setopt($ch, CURLOPT_REFERER, '');
+		curl_setopt($ch, CURLOPT_TIMEOUT, 7); // 7sec
+
+		// Proxy settings
+		if($proxy = Config::get_safe("proxy", false)){
+			$proxytype = Config::get_safe("proxytype", false);
+			$proxyauth = Config::get_safe("proxyauth", false);
+			if($proxytype === 'URL_PREFIX'){
+				$curl_request_url = $proxy.$curl_request_url;
+
+				if($proxyauth){
+					curl_setopt($ch, CURLOPT_USERPWD, $proxyauth);
+				}
+			} else {
+				curl_setopt($ch, CURLOPT_PROXY, $proxy);
+
+				if($proxyauth){
+					curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyauth);
+				}
+
+				switch ($proxytype) {
+					case 'CURLPROXY_SOCKS4':
+						$proxytype = CURLPROXY_SOCKS4;
+						break;
+					case 'CURLPROXY_SOCKS5':
+						$proxytype = CURLPROXY_SOCKS5;
+						break;
+					case 'CURLPROXY_HTTP':
+					default:
+						$proxytype = CURLPROXY_HTTP;
+						break;
+				}
+
+				curl_setopt($ch, CURLOPT_PROXYTYPE, $proxytype);
+			}
+		}
+
+		curl_setopt($ch, CURLOPT_URL, $curl_request_url);
 		$html = curl_exec($ch);
 		curl_close($ch);
 
@@ -298,7 +336,22 @@ class Post
 			}
 
 			if($n == 'twitter:image:src' || $p == 'og:image'){
-				$content["thumb"] = $c;
+				// Absolute url
+				if(preg_match("/^(https?:)?\/\//", $c)) {
+					$content["thumb"] = $c;
+				}
+
+				// Relative url from root
+				elseif(preg_match("/^\//", $c)) {
+					preg_match("/^((?:https?:)?\/\/([^\/]+))(\/|$)/", $l, $m);
+					$content["thumb"] = $m[1].'/'.$c;
+				}
+
+				// Relative url from current directory
+				else {
+					preg_match("/^((?:https?:)?\/\/[^\/]+.*?)(\/[^\/]*)?$/", $l, $m);
+					$content["thumb"] = $m[1].'/'.$c;
+				}
 			}
 
 			if($n == 'twitter:domain'){
