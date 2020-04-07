@@ -152,3 +152,4 @@ Feel free to create new PR and add a new language. Specify language in config or
 * en - 🇬🇧 English
 * de - 🇩🇪 German
 * sk - 🇸🇰 Slovak
+* fr - 🇫🇷 French (thanks @Phundrak)
