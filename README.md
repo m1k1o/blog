@@ -129,12 +129,11 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 # Features
 
 * Dark mode, retina ready, legacy theme available.
-* Create own language mutations, available: **English** and **German**.
 * Use BBcode in texts.
 * Make posts available for **everyone**, **only you** or just for **friends**.
 * Extra fields in post: **Feeling**, **With** and **At**.
 * Hide posts from timeline so they are visible only when you need them to be.
-* All pasted links will get preview with page title, description and image.
+* All pasted links will get preview with page title, description and image (can be configured proxy).
 * Upload images using button *(for mobile)*.
 * Upload images using drag & drop *(drop it into textarea)*.
 * Upload images using CTRL + V *(paste it into textarea)*. 
@@ -146,3 +145,11 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Display posts from chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#from=2017-06`.
 * Display posts to chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#to=2017-06`.
 * Combine parameters in url using `&`, e.g. show posts between dates: `http://blog/#from=2017-06&to=2017-08`.
+
+## Language support
+Feel free to create new PR and add a new language. Specify language in config or in url: `http://blog/?hl=sk`.
+
+* en - 🇬🇧 English
+* de - 🇩🇪 German
+* sk - 🇸🇰 Slovak
+* fr - 🇫🇷 French (thanks @Phundrak)

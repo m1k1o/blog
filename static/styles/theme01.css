@@ -85,7 +85,7 @@ body {
     width: 80px;
     height: 80px;
   }
-  
+
   .cover .name {
     left: 121px;
     font-size: 18px;
@@ -154,10 +154,6 @@ body {
 
 .b_overlay .button {
   background: white;
-}
-
-.b_post.is_hidden {
-  border-color: black;
 }
 
 .b_post.is_hidden .b_overlay {
@@ -881,6 +877,7 @@ body {
 
 .options_content th {
   width: 1%;
+  white-space: nowrap;
   font-size: 13px;
   font-weight: normal;
   text-align: left;
