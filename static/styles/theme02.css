@@ -151,7 +151,7 @@ body {
     height: 80px;
     margin-left: -40px;
   }
-  
+
   .cover .name {
     font-size: 18px;
     line-height: 26px;
@@ -1013,6 +1013,7 @@ body {
 
 .options_content th {
   width: 1%;
+  white-space: nowrap;
   font-size: 13px;
   font-weight: normal;
   text-align: left;
