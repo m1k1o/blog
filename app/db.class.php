@@ -48,7 +48,14 @@ class DB
 				// Password
 				Config::get_safe('mysql_pass', '')
 			);
-			$this->_PDO->exec('SET NAMES utf8'); 
+
+			$this->_PDO->exec(
+				// Set charset
+				'SET NAMES utf8;'.
+
+				// Set timezone
+				'SET time_zone="'.date('P').'";'
+			);
 		} catch (PDOException $e) {
 			throw new DBException($e->getMessage());
 		}

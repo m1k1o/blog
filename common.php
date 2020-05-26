@@ -27,8 +27,12 @@ if(Config::get_safe('debug', false)){
 // Language
 Lang::load(empty($_GET["hl"]) ? Config::get("lang") : $_GET["hl"]);
 
+// Timezone
+if(false !== ($TZ = getenv('TZ'))) {
+	date_default_timezone_set($TZ);
+	ini_set('date.timezone', $TZ);
+}
+
 // Start session
 ini_set('session.cookie_httponly', 1);
 session_start();
-
-

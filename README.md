@@ -114,7 +114,7 @@ cp ./config.ini ./data/config.ini
 ```
 
 ## Install
-If you have decied that you don't want to use Docker, you can intall it manually.
+If you have decided that you don't want to use Docker, you can intall it manually.
 
 **Requirements:** Apache 2.0*, PHP 7.4, MariaDB 10.1
 
@@ -153,7 +153,10 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Display posts to chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#to=2017-06`.
 * Combine parameters in url using `&`, e.g. show posts between dates: `http://blog/#from=2017-06&to=2017-08`.
 
-## Language support
+## Localisation
+Timezone can be set using `TZ` environment variable. List of supported values can be found [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+### Language support
 Feel free to create new PR and add a new language. Specify language in config or in url: `http://blog/?hl=sk`.
 
 * en - 🇬🇧 English
