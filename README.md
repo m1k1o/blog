@@ -154,7 +154,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Combine parameters in url using `&`, e.g. show posts between dates: `http://blog/#from=2017-06&to=2017-08`.
 
 ## Localisation
-Timezone can be set using `TZ` environment variable. List of supported values can be found [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+Timezone can be set in config or, for docker users, `TZ` environment variable is supported. List of timezones can be found [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 ### Language support
 Feel free to create new PR and add a new language. Specify language in config or in url: `http://blog/?hl=sk`.

@@ -28,7 +28,7 @@ if(Config::get_safe('debug', false)){
 Lang::load(empty($_GET["hl"]) ? Config::get("lang") : $_GET["hl"]);
 
 // Timezone
-if(false !== ($TZ = getenv('TZ'))) {
+if(false !== ($TZ = Config::get_safe('timezone', getenv('TZ')))) {
 	date_default_timezone_set($TZ);
 	ini_set('date.timezone', $TZ);
 }
