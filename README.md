@@ -37,7 +37,7 @@ You need to install [docker-compose](https://docs.docker.com/compose/install/).
 
 ### Step 1: Download and run `docker-compose.yml`.
 ```
-wget https://github.com/m1k1o/blog/blob/master/docker-compose.yml
+wget https://raw.githubusercontent.com/m1k1o/blog/master/docker-compose.yml
 docker-compose up -d
 ```
 
@@ -55,7 +55,7 @@ Download default config file and copy to your new `./data/` directory.
 
 ```
 mkdir data && cd data
-wget https://github.com/m1k1o/blog/blob/master/config.ini
+wget https://raw.githubusercontent.com/m1k1o/blog/master/config.ini
 ```
 
 Now you can modify your config.
