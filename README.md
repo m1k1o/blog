@@ -35,14 +35,9 @@ Please note, that this demo has very limited computing resources, strict rate li
 ## Install standalone app using `docker-compose`
 You need to install [docker-compose](https://docs.docker.com/compose/install/).
 
-### Step 1: Clone this repository:
+### Step 1: Download and run `docker-compose.yml`.
 ```
-git clone https://github.com/m1k1o/blog
-cd blog
-```
-
-### Step 2: Build & run containers using docker-compose.
-```
+wget https://github.com/m1k1o/blog/blob/master/docker-compose.yml
 docker-compose up -d
 ```
 
@@ -55,11 +50,12 @@ These environment variables can be stored in the `.env` file or passed to the co
 HTTP_PORT=3001 DATA=/home/user/blog docker-compose up -d
 ```
 
-### Step 3: Copy the config
-Copy the config from the root directory to your new `./data/` directory.
+### Step 2: Create `data/` directory and download `config.ini` file.
+Download default config file and copy to your new `./data/` directory.
 
 ```
-cp ./config.ini ./data/config.ini
+mkdir data && cd data
+wget https://github.com/m1k1o/blog/blob/master/config.ini
 ```
 
 Now you can modify your config.
@@ -85,7 +81,7 @@ chmod 777 ./data/
 
 **NOTICE:** You should not use `777`. You are giving access to anyone for this directory. Maybe to some attacker, who can run his exploit here.
 
-## Install using docker
+## Build using docker
 You need to install [docker](https://docs.docker.com/install/).
 
 If you don't want do spawn a new database server, but you want to use your existing `mariadb` or `mysql` server, you can install this blog using Docker.
