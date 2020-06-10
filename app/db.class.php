@@ -20,6 +20,10 @@ class DB
 		return self::$_instance;
 	}
 
+	public static function connection() {
+		return Config::get_safe('db_connection', 'mysql');
+	}
+
 	// Initialise PDO object
 	private final function __construct(){
 		$host = Config::get_safe('mysql_host', false);
@@ -154,7 +158,11 @@ class DB
 				$query .= '(';
 				foreach($field as $key => $value){
 					if($value === "NOW()"){
-						$query .= 'NOW()';
+						if(DB::connection() === 'sqlite') {
+							$query .= "datetime('now', 'localtime')";
+						} else {
+							$query .= "NOW()";
+						}
 					} else {
 						$query .= '?';
 						$prepared_data[] = $value;
@@ -209,7 +217,11 @@ class DB
 		$set_data = null;
 		foreach($fields as $key => $value){
 			if($value === "NOW()"){
-				$set_data .="`{$key}` = NOW()";
+				if(DB::connection() === 'sqlite') {
+					$set_data .="`{$key}` = datetime('now', 'localtime')";
+				} else {
+					$set_data .="`{$key}` = NOW()";
+				}
 			} else {
 				$set_data .= "`{$key}` = ?";
 				$prepared_data[] = $value;
