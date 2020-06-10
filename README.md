@@ -119,7 +119,7 @@ If you have decided that you don't want to use Docker, you can intall it manuall
 * **data/logs/\_ANY_.log** - make sure no sensitive information are located in *.log*.
 
 ### Database Schema
-You can find database schema in the `./app/db/01_schema.sql` file.
+You can find database schema in `./app/db` folder.
 
 ### Debug mode
 To check if your server is set up correctly, turn on a debug mode (in config add `debug = true`) to see the details. In the debug mode, an error may be shown if you are missing some **PHP extensions** needed to be installed on your server.

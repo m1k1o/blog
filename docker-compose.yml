@@ -20,6 +20,6 @@ services:
     restart: unless-stopped
     volumes:
       - mariadb:/var/lib/mysql
-      - ./app/db:/docker-entrypoint-initdb.d:ro
+      - ./app/db/mysql:/docker-entrypoint-initdb.d:ro
 volumes:
   mariadb:
