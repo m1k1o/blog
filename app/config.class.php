@@ -45,7 +45,7 @@ class Config
 
 		// From envs
 		$envs = getenv();
-		$env_prefix_len = strlen(self::ENV_PREFIX)
+		$env_prefix_len = strlen(self::ENV_PREFIX);
 		foreach($envs as $key => $value){
 			if(substr($key, 0, $env_prefix_len) === self::ENV_PREFIX){
 				$key = strtolower(substr($key, $env_prefix_len));
