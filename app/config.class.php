@@ -6,6 +6,7 @@ class Config
 	const CONFIG = 'config.ini';
 	const CUSTOM = 'data/config.ini';
 	const CUSTOM_FALLBACK = 'custom.ini';
+	const ENV_PREFIX = 'BLOG_';
 
 	private static $_settings = null;
 
@@ -44,9 +45,10 @@ class Config
 
 		// From envs
 		$envs = getenv();
+		$env_prefix_len = strlen(self::ENV_PREFIX)
 		foreach($envs as $key => $value){
-			if(substr($key, 0, 5) !== "BLOG_"){
-				$key = strtolower(substr($key, 5));
+			if(substr($key, 0, $env_prefix_len) === self::ENV_PREFIX){
+				$key = strtolower(substr($key, $env_prefix_len));
 
 				if($value === 'true'){
 					$value = true;
