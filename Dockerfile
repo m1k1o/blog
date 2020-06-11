@@ -1,23 +1,32 @@
 FROM php:7.4-apache
 
-WORKDIR /var/www/html
-
 MAINTAINER Miroslav Sedivy
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
+RUN set -eux; apt-get update; \
+	apt-get install -y --no-install-recommends \
+	#
+	# install curl
 	libcurl4-openssl-dev \
+	#
+	# install gd dependencies
 	zlib1g-dev libpng-dev libjpeg-dev \
-	libwebp-dev libxpm-dev libfreetype6-dev \
- && rm -rf /var/lib/apt/lists/*
+	libwebp-dev libxpm-dev libfreetype6-dev; \
+	#
+	# clean up
+	rm -rf /var/lib/apt/lists/*; \
+	#
+	# configure extensions
+	docker-php-ext-configure gd --enable-gd \
+	--with-jpeg --with-webp --with-xpm --with-freetype; \
+	#
+	# install extensions
+	docker-php-ext-install curl gd pdo pdo_mysql; \
+	#
+	# set up environment
+	a2enmod rewrite;
 
-# Install extensions
-RUN docker-php-ext-configure gd --enable-gd \
-	--with-jpeg --with-webp --with-xpm --with-freetype \
- && docker-php-ext-install curl gd pdo pdo_mysql \
- && a2enmod rewrite
+#
+# copy files
+COPY --chown=33:33 . /var/www/html
 
-# Copy app files
-COPY . .
-
-VOLUME "/var/www/html/data"
+VOLUME /var/www/html/data
