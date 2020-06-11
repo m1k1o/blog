@@ -35,13 +35,13 @@ Please note, that this demo has very limited computing resources, strict rate li
 ## Zero configuration setup
 Container will run without any initial configuration needed using SQLite as database provider. For better performance consider using MySQL.
 
-```
-docker run -p 80:80 -v $PWD/data:/var/www/html/data m1k1o/blog
+```sh
+docker run -d -p 80:80 -v $PWD/data:/var/www/html/data m1k1o/blog
 ```
 
 You can set environment variables, prefixed with `BLOG_` and uppercase. They can be found in `config.ini`.
-```
-docker run \
+```sh
+docker run -d \
   -p 80:80 \
   -e "TZ=Europe/Vienna" \
   -e "BLOG_TITLE=Blog" \
@@ -54,7 +54,7 @@ docker run \
 ```
 
 Or in docker-compose format:
-```
+```yml
 version: "3"
 services:
   blog:
@@ -77,7 +77,7 @@ services:
 You need to install [docker-compose](https://docs.docker.com/compose/install/).
 
 ### Step 1: Download and run `docker-compose.yml`.
-```
+```sh
 wget https://raw.githubusercontent.com/m1k1o/blog/master/docker-compose.yml
 docker-compose up -d
 ```
@@ -87,14 +87,14 @@ You can specify these environment variables, otherwise the default ones will be 
 * **DATA=./data** - directory to store the user data.
 
 These environment variables can be stored in the `.env` file or passed to the command directly:
-```
+```sh
 HTTP_PORT=3001 DATA=/home/user/blog docker-compose up -d
 ```
 
 ### Step 2: Create `data/` directory and download `config.ini` file.
 Download default config file and copy to your new `./data/` directory.
 
-```
+```sh
 mkdir data && cd data
 wget https://raw.githubusercontent.com/m1k1o/blog/master/config.ini
 ```
@@ -107,7 +107,7 @@ Make sure your `./data/` directory has correct permissions. Apache is running as
 #### Prefered solution
 Change the directory owner to the `www-data` user:
 
-```
+```sh
 chown 33:33 ./data/
 ```
 
@@ -116,7 +116,7 @@ Alternatively, add the `www-data` user to the user group that owns the `./data/`
 #### Bad solution (but it works)
 Set `777` permission for your `./data/`, so everyone can read, write, and execute:
 
-```
+```sh
 chmod 777 ./data/
 ```
 
