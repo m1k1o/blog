@@ -2,7 +2,7 @@ version: "3"
 
 services:
   webserver:
-    image: m1k1o/blog
+    image: m1k1o/blog:latest
     container_name: blog_apache
     environment:
       TZ: Europe/Vienna

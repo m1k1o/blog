@@ -36,7 +36,7 @@ Please note, that this demo has very limited computing resources, strict rate li
 Container will run without any initial configuration needed using SQLite as database provider. For better performance consider using MySQL.
 
 ```sh
-docker run -d -p 80:80 -v $PWD/data:/var/www/html/data m1k1o/blog
+docker run -d -p 80:80 -v $PWD/data:/var/www/html/data m1k1o/blog:latest
 ```
 
 You can set environment variables, prefixed with `BLOG_` and uppercase. They can be found in `config.ini`.
