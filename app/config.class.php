@@ -41,6 +41,23 @@ class Config
 				self::$_settings = array_merge(self::$_settings, $custom);
 			}
 		}
+
+		// From envs
+		$envs = getenv();
+		foreach($envs as $key => $value){
+			if(substr($key, 0, 5) !== "BLOG_"){
+				$key = strtolower(substr($key, 5));
+
+				if($value === 'true'){
+					$value = true;
+				}
+				elseif($value === 'false'){
+					$value = false;
+				}
+
+				self::$_settings[$key] = $value;
+			}
+		}
 	}
 
 	public static function get($key){
