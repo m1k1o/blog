@@ -2,6 +2,8 @@ FROM php:7.4-apache
 
 MAINTAINER Miroslav Sedivy
 
+ARG LDAP=false
+
 RUN set -eux; apt-get update; \
 	apt-get install -y --no-install-recommends \
 	#
@@ -12,9 +14,6 @@ RUN set -eux; apt-get update; \
 	zlib1g-dev libpng-dev libjpeg-dev \
 	libwebp-dev libxpm-dev libfreetype6-dev; \
 	#
-	# clean up
-	rm -rf /var/lib/apt/lists/*; \
-	#
 	# configure extensions
 	docker-php-ext-configure gd --enable-gd \
 	--with-jpeg --with-webp --with-xpm --with-freetype; \
@@ -22,8 +21,17 @@ RUN set -eux; apt-get update; \
 	# install extensions
 	docker-php-ext-install curl gd pdo pdo_mysql; \
 	#
+	# LDAP support
+	if [ -n "$LDAP" ] && [ "$LDAP" = "true" ]; then \
+		apt-get install -y --no-install-recommends libldb-dev libldap2-dev; \
+		docker-php-ext-install ldap; \
+	fi; \
+	#
 	# set up environment
-	a2enmod rewrite;
+	a2enmod rewrite; \
+	#
+	# clean up
+	rm -rf /var/lib/apt/lists/*;
 
 #
 # copy files
