@@ -135,12 +135,13 @@ class Image
 		$ext = pathinfo($name, PATHINFO_EXTENSION);
 
 		// Save to DB
-		$id = DB::get_instance()->query(
-			"INSERT INTO `images` ".
-			"(`id`, `name`, `path`, `thumb`, `type`, `md5`, `datetime`, `status`) ".
-			"VALUES (NULL, ?, NULL, NULL, ?, ?, NOW(), 0);",
-			$name, $ext, $md5
-		)->last_id();
+		$id = DB::get_instance()->insert('images', [
+			'name' => $name,
+			'type' => $ext,
+			'md5' => $md5,
+			'datetime' => 'NOW()',
+			'status' => 0,
+		])->last_id();
 
 		// Create path name
 		$name = dechex($id).self::random_str(3).".".$ext;
@@ -160,7 +161,12 @@ class Image
 		}
 
 		// Save to DB
-		DB::get_instance()->query("UPDATE `images` SET `path` = ?, `thumb` = ?, `status` = 1 WHERE `id` = ?", $path, $thumb, $id);
+		DB::get_instance()->update('images', [
+			'path' => $path,
+			'thumb' => $thumb,
+			'status' => 1,
+		], "WHERE `id` = ?", $id);
+
 		return [
 			"path" => $path,
 			"thumb" => $thumb
