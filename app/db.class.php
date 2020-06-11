@@ -26,6 +26,17 @@ class DB
 
 	// Initialise PDO object
 	private final function __construct(){
+		switch(DB::connection()) {
+			case 'mysql':
+				$this->mysql_connect();
+				break;
+			case 'sqlite':
+				$this->sqlite_connect();
+				break;
+		}
+	}
+
+	private final function mysql_connect(){
 		$host = Config::get_safe('mysql_host', false);
 		$port = Config::get_safe('mysql_port', false);
 		$socket = Config::get_safe('mysql_socket', false);
@@ -65,6 +76,47 @@ class DB
 				// Set timezone
 				'SET time_zone="'.date('P').'";'
 			);
+		} catch (PDOException $e) {
+			throw new DBException($e->getMessage());
+		}
+	}
+
+	private final function sqlite_connect(){
+		$sqlite_db = PROJECT_PATH.Config::get_safe('sqlite_db', "data/sqlite.db");
+
+		// First run of sqlite
+		if(!file_exists($sqlite_db)) {
+			if(!is_writable(dirname($sqlite_db))) {
+				throw new DBException("Sqlite database directory must me writable.");
+			}
+
+			if(!touch($sqlite_db)) {
+				throw new DBException("Cannot create sqlite database file.");
+			}
+
+			// Inilialize SQL schema
+			$sql_schema = file_get_contents(APP_PATH."db/sqlite/01_schema.sql");
+
+			try {
+				$this->_PDO = new \PDO("sqlite:".$sqlite_db, null, null, [
+					\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+				]);
+				$this->_PDO->exec($sql_schema);
+			} catch (PDOException $e) {
+				$this->_PDO = null;
+				unlink($sqlite_db);
+
+				throw new DBException($e->getMessage());
+			}
+
+			return ;
+		}
+
+		// Try to connect
+		try {
+			$this->_PDO = new \PDO("sqlite:".$sqlite_db, null, null, [
+				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+			]);
 		} catch (PDOException $e) {
 			throw new DBException($e->getMessage());
 		}
