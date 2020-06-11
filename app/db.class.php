@@ -21,7 +21,7 @@ class DB
 	}
 
 	public static function connection() {
-		return Config::get_safe('db_connection', 'mysql');
+		return Config::get_safe('db_connection', 'sqlite');
 	}
 
 	// Initialise PDO object

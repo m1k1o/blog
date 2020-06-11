@@ -16,16 +16,16 @@ class Config
 			throw new ConfigException('Cannot read config file.');
 		}
 
-		self::$_settings = parse_ini_file($config_file);
-		if(self::$_settings === false){
+		$default_settings = parse_ini_file($config_file);
+		if($default_settings === false){
 			throw new ConfigException('Cannot parse config file.');
 		}
 
-		$config_file = PROJECT_PATH.self::CUSTOM;
-		if(is_readable($config_file)){
+		$custom_settings = [];
+		if(is_readable($config_file = PROJECT_PATH.self::CUSTOM)){
 			$custom = parse_ini_file($config_file);
 			if($custom !== false){
-				self::$_settings = array_merge(self::$_settings, $custom);
+				$custom_settings = $custom;
 			}
 		}
 
@@ -39,9 +39,18 @@ class Config
 					$custom['thumbnails_path'] = 't/';
 				}
 
-				self::$_settings = array_merge(self::$_settings, $custom);
+				$custom_settings = array_merge($custom_settings, $custom);
 			}
 		}
+
+		// Fallback for versions, where mysql was default
+		if(!array_key_exists('db_connection', $custom_settings) && array_key_exists('mysql_user', $custom_settings) &&
+			(array_key_exists('mysql_socket', $custom_settings) || array_key_exists('mysql_host', $custom_settings))) {
+			$custom_settings['db_connection'] = 'mysql';
+		}
+
+		// Merge default and custom settings
+		self::$_settings = array_merge($default_settings, $custom_settings);
 
 		// From envs
 		$envs = getenv();
