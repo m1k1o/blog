@@ -1,6 +1,6 @@
 Options -Indexes
 
-<Files ~ "\.(ini|sql|log|class\.php)$">
+<Files ~ "\.(db|ini|sql|log|class\.php)$">
 	Order Allow,Deny
 	Deny from All
 </Files>

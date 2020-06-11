@@ -201,8 +201,14 @@ class Post
 	public static function get_date($r){
 		self::login_protected();
 
+		if (DB::connection() === 'sqlite') {
+			$datetime = "strftime('%Y %m %d %H %M', `posts`.`datetime`)";
+		} else {
+			$datetime = "DATE_FORMAT(`datetime`,'%Y %c %e %k %i')";
+		}
+
 		$date = DB::get_instance()->query("
-			SELECT DATE_FORMAT(`datetime`,'%Y %c %e %k %i') AS `date_format`
+			SELECT $datetime AS `date_format`
 			FROM `posts`
 			WHERE `id` = ?
 			AND `status` <> 5
@@ -216,7 +222,12 @@ class Post
 		self::login_protected();
 
 		$d = $r["date"];
-		$datetime = "{$d[0]}/{$d[1]}/{$d[2]} {$d[3]}:{$d[4]}";
+		if (DB::connection() === 'sqlite') {
+			$datetime = vsprintf("%04d-%02d-%02d %02d:%02d", $d);
+		} else {
+			$datetime = vsprintf("%04d/%02d/%02d %02d:%02d", $d);
+		}
+
 		DB::get_instance()->query("
 			UPDATE `posts`
 			SET `datetime` = ?
@@ -411,11 +422,16 @@ class Post
 			$person = $r["filter"]["person"];
 		}
 
+		if (DB::connection() === 'sqlite') {
+			$datetime = "strftime('%d %m %Y %H:%M', `posts`.`datetime`)";
+		} else {
+			$datetime = "DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i')";
+		}
+
 		return DB::get_instance()->query("
 			SELECT
 				`id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`,
-				DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i') AS `datetime`,
-				(`status` <> 1) AS `is_hidden`
+				$datetime AS `datetime`, (`status` <> 1) AS `is_hidden`
 			FROM `posts`
 			WHERE ".
 				(!User::is_logged_in() ? (User::is_visitor() ? "`privacy` IN ('public', 'friends') AND " : "`privacy` = 'public' AND ") : "").

@@ -32,7 +32,48 @@ Please note, that this demo has very limited computing resources, strict rate li
 ![screenshot](https://raw.githubusercontent.com/m1k1o/blog/master/static/screenshot-theme01.png)
 </details>
 
-## Install standalone app using `docker-compose`
+## Zero configuration setup
+Container will run without any initial configuration needed using SQLite as database provider. For better performance consider using MySQL.
+
+```
+docker run -p 80:80 -v $PWD/data:/var/www/html/data m1k1o/blog
+```
+
+You can set environment variables, prefixed with `BLOG_` and uppercase. They can be found in `config.ini`.
+```
+docker run \
+  -p 80:80 \
+  -e "TZ=Europe/Vienna" \
+  -e "BLOG_TITLE=Blog" \
+  -e "BLOG_NAME=Max Musermann" \
+  -e "BLOG_NICK=username" \
+  -e "BLOG_PASS=password" \
+  -e "BLOG_LANG=en" \
+  -v $PWD/data:/var/www/html/data \
+  m1k1o/blog:latest
+```
+
+Or in docker-compose format:
+```
+version: "3"
+services:
+  blog:
+    image: m1k1o/blog:latest
+    restart: unless-stopped
+    environment:
+        TZ: Europe/Vienna
+        BLOG_TITLE: Blog
+        BLOG_NAME: Max Musermann
+        BLOG_NICK: username
+        BLOG_PASS: password
+        BLOG_LANG: en
+    ports:
+      - 80:80
+    volumes:
+      - ./data:/var/www/html/data
+```
+
+## Install standalone app using `docker-compose` with mysql
 You need to install [docker-compose](https://docs.docker.com/compose/install/).
 
 ### Step 1: Download and run `docker-compose.yml`.
@@ -58,7 +99,7 @@ mkdir data && cd data
 wget https://raw.githubusercontent.com/m1k1o/blog/master/config.ini
 ```
 
-Now you can modify your config.
+Now you can modify your config. Or you can set environment variables, in uppercase, starting with `BLOG_`, e.g. `BLOG_NAME: Max's blog`.
 
 ### Correct permissions
 Make sure your `./data/` directory has correct permissions. Apache is running as a `www-data` user, which needs to have write access to the `./data/` directory (for uploading images).
@@ -81,45 +122,17 @@ chmod 777 ./data/
 
 **NOTICE:** You should not use `777`. You are giving access to anyone for this directory. Maybe to some attacker, who can run his exploit here.
 
-## Build using docker
-You need to install [docker](https://docs.docker.com/install/).
-
-If you don't want do spawn a new database server, but you want to use your existing `mariadb` or `mysql` server, you can install this blog using Docker.
-
-### Build image
-After you have cloned and accessed the repository, you need to run this command. It will build a docker image with a tag `blog`.
-```
-docker build --tag blog .
-```
-
-### Run container
-After you have built the image, you can run it as the following:
-
-```
-docker run \
-  -p 80:80 \
-  -p 443:443 \
-  -v ./data:/var/www/html/data \
-  blog
-```
-
-Now you can copy the config to your new `./data` directory and set up the database connection settings.
-
-```
-cp ./config.ini ./data/config.ini
-```
-
 ## Install
 If you have decided that you don't want to use Docker, you can intall it manually.
 
-**Requirements:** Apache 2.0*, PHP 7.4, MariaDB 10.1
+**Requirements:** Apache 2.0*, PHP 7.4, (MariaDB 10.1 or SQLite 3)
 
 **NOTICE:** If you would like to use Nginx or another web server, make sure that the sensitive data are not exposed to the public. Since `.htaccess` is protecting those files in Apache, that could not be the case in a different environment. Take care of:
 * **config.ini** - disallow access to all *.ini* files for the public.
 * **data/logs/\_ANY_.log** - make sure no sensitive information are located in *.log*.
 
 ### Database Schema
-You can find database schema in the `./app/db/01_schema.sql` file.
+You can find database schema in `./app/db` folder.
 
 ### Debug mode
 To check if your server is set up correctly, turn on a debug mode (in config add `debug = true`) to see the details. In the debug mode, an error may be shown if you are missing some **PHP extensions** needed to be installed on your server.
