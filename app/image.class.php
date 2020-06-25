@@ -6,6 +6,17 @@ class Image
 	const THUMB_W = 476;
 	const THUMB_H = 476;
 
+	const PHP_FILE_UPLOAD_ERRORS = [
+		0 => 'There is no error, the file uploaded with success.',
+		1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
+		2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
+		3 => 'The uploaded file was only partially uploaded.',
+		4 => 'No file was uploaded.',
+		6 => 'Missing a temporary folder.',
+		7 => 'Failed to write file to disk.',
+		8 => 'A PHP extension stopped the file upload.',
+	];
+
 	private static function random_str($len = 10){
 		$chr = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 		$chr_len = strlen($chr);
@@ -126,7 +137,10 @@ class Image
 		// Ensure, that directories exists
 		$_images_path = Config::get('images_path');
 		$_thumbnails_path = Config::get('thumbnails_path');
-		if((!is_dir($_images_path) && !mkdir($_images_path, 755, true)) || (!is_dir($_thumbnails_path) && !mkdir($_thumbnails_path, 755, true))){
+		if(
+			(!is_dir($_images_path) && !mkdir($_images_path, 0755, true)) ||
+			(!is_dir($_thumbnails_path) && !mkdir($_thumbnails_path, 0755, true))
+		){
 			throw new Exception("Images or thumbnails directory could not be created.");
 		}
 
@@ -150,14 +164,14 @@ class Image
 
 		// Save path
 		if(!move_uploaded_file($_FILES['file']['tmp_name'], $path)){
-			throw new Exception("File cannot be written to image directory.");
+			throw new Exception(self::PHP_FILE_UPLOAD_ERRORS[$_FILES['file']['error']]);
 		}
 
 		// Create thumb
 		if(!self::thumb($path, $thumb)){
 			unlink($path);
 			unlink($thumb);
-			throw new Exception("File is not image.");
+			throw new Exception("File is not valid image.");
 		}
 
 		// Save to DB

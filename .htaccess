@@ -9,3 +9,7 @@ Options -Indexes
 	Order Allow,Deny
 	Deny from All
 </Files>
+
+# Allow uploading large images
+php_value upload_max_filesize 32M
+php_value post_max_size 32M
