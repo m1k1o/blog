@@ -162,6 +162,48 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Display posts to chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#to=2017-06`.
 * Combine parameters in url using `&`, e.g. show posts between dates: `http://blog/#from=2017-06&to=2017-08`.
 
+## Access control
+
+This blog is using Mandatory Access Control (MAC), with 3 types of access levels:
+
+* **Private** posts are visible only to your single account specified in `nick` and `pass`.
+* You can specify group of your **friends** and share posts only for them.
+* **Public** posts are visible to everyone, without login.
+
+In `docker-compose.yml` file, specify your credentials and friends like this:
+
+```yml
+version: "3"
+services:
+  blog:
+    image: m1k1o/blog:latest
+    restart: unless-stopped
+    environment:
+        TZ: Europe/Vienna
+        BLOG_NICK: admin_username
+        BLOG_PASS: admin_password
+        BLOG_FRIENDS: |
+          jane:mysecretpass
+          thomas:anotherpass
+    ports:
+      - 80:80
+    volumes:
+      - ./data:/var/www/html/data
+```
+
+You can specify your credentials and friends in your `config.ini` file e.g.:
+
+```ini
+[admin]
+force_login = true
+nick = admin_username
+pass = admin_password
+
+[friends] 
+friends[jane] = mysecretpass
+friends[thomas] = anotherpass
+```
+
 ## Localisation
 Timezone can be set in config or, for docker users, `TZ` environment variable is supported. List of timezones can be found [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
