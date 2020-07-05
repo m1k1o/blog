@@ -66,6 +66,11 @@ class Config
 					$value = false;
 				}
 
+				// Associative arrays in environment variables
+				if($key === 'visitor' || $key === 'friends'){
+					$value = self::parse_env_assoc($value);
+				}
+
 				self::$_settings[$key] = $value;
 			}
 		}
@@ -91,6 +96,22 @@ class Config
 		}
 
 		return $value;
+	}
+
+	// Parse associative array from string in format key:value
+	private static function parse_env_assoc($data){
+		if(!preg_match_all("/([^\s]+):([^\s]+)/s", $data, $matches)){
+			return [];
+		}
+
+		list($_, $keys, $values) = $matches;
+
+		$array = [];
+		foreach ($values as $key => $value) {
+			$array[$keys[$key]] = $value;
+		}
+
+		return $array;
 	}
 }
 

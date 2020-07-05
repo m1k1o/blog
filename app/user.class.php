@@ -35,7 +35,11 @@ class user
 			return ["logged_in" => true, "is_visitor" => false];
 		}
 
-		$visitors = Config::get_safe("visitor", []);
+		// Legacy: Visitors and Friends.
+		$visitors = array_merge(
+			Config::get_safe("friends", []),
+			Config::get_safe("visitor", [])
+		);
 		if(!empty($visitors) && isset($visitors[$nick]) && $visitors[$nick] === $pass){
 			$_SESSION[User::SESSION_NAME] = 'visitor';
 			return ["logged_in" => false, "is_visitor" => true];
