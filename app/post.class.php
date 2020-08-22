@@ -29,7 +29,8 @@ class Post
 
 				public function asHtml(\JBBCode\ElementNode $el){
 					$content = $this->getContent($el);
-					return '<code class="'.$el->getAttribute().'">'.htmlentities($content).'</code>';
+					$class = $el->getAttribute()['code'];
+					return '<code class="'.$class.'">'.htmlentities($content).'</code>';
 				}
 			});
 		}
