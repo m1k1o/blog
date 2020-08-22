@@ -72,7 +72,7 @@ if(!empty($scripts)){
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans&amp;subset=all" rel="stylesheet">
 
 	<link href="static/styles/lightbox.css" rel="stylesheet" type="text/css" />
-	<?php echo Config::get("highlight") ? '<link href="static/styles/highlight.css" rel="stylesheet" type="text/css" />' : ''; ?>
+	<?php echo Config::get("highlight") ? '<link href="static/styles/highlight-monokai-sublime.css" rel="stylesheet" type="text/css" />' : ''; ?>
 
 	<?php echo $styles_html; ?>
 </head>
@@ -338,7 +338,7 @@ if(!empty($scripts)){
 	<script src="static/scripts/lightbox.js"></script>
 	<script src="static/scripts/datepick.js?v=<?php echo Config::get("version"); ?>"></script>
 	<script src="static/scripts/autosize.js"></script>
-	<?php echo Config::get("highlight") ? '<script src="static/scripts/highlight.js"></script><script>hljs.initHighlightingOnLoad();</script>' : ''; ?>
+	<?php echo Config::get("highlight") ? '<script src="static/scripts/highlight-10.1.2.min.js"></script><script>hljs.initHighlightingOnLoad();</script>' : ''; ?>
 	<script src="static/scripts/app.js?v=<?php echo Config::get("version"); ?>"></script>
 
 	<?php echo $scripts_html; ?>
