@@ -15,7 +15,7 @@ class Lang
 	}
 
 	public static function get($key){
-		if(!array_key_exists($key, self::$_dictionary)){
+		if(!@array_key_exists($key, self::$_dictionary)){
 			return $key;
 		}
 
