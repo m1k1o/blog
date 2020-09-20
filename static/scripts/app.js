@@ -682,6 +682,7 @@ $.fn.apply_edit = function(data){
 };
 
 // Fill post data
+var wakeLock = null;
 $.fn.post_fill = function(data){
 	var post = $(this);
 
@@ -696,10 +697,26 @@ $.fn.post_fill = function(data){
 		var elementBottom = elementTop + $(overlay).outerHeight();
 		$(overlay).hide();
 
+		if (!wakeLock && 'wakeLock' in navigator) {
+			navigator.wakeLock.request('screen').then(function(event){
+				event.addEventListener('release', function(){
+					console.log('Screen Wake Lock was released.');
+				});
+
+				console.log('Screen Wake Lock is active.');
+				wakeLock = event;
+			});
+		}
+
 		var showOverlay = function() {
 			$(overlay).css("display", ""); // .show() would cause display:block;
 			$(window).off('scroll', showOnViewport);
 			$(window).off('blur', showOverlay);
+
+			if (wakeLock) {
+				wakeLock.release();
+				wakeLock = null;
+			}
 		};
 		var showOnViewport = function() {
 			var viewportTop = $(window).scrollTop();
