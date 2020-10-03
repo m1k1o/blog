@@ -215,3 +215,4 @@ Feel free to create new PR and add a new language. Specify language in config or
 * sk - 🇸🇰 Slovak
 * fr - 🇫🇷 French (thanks @Phundrak)
 * cz - 🇨🇿 Czech (thanks @djfinch)
+* bs - 🇧🇦 Bosnian (thanks @hajro92)
