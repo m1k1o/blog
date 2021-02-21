@@ -20,7 +20,7 @@ if(Config::get_safe('debug', false)){
 	$required = ['curl', 'PDO', 'pdo_mysql', 'gd'];
 	$loaded = get_loaded_extensions();
 	if($missing = array_diff($required, $loaded)){
-		die("Missing extensions, please install: ".impode(", ", $missing));
+		die("Missing extensions, please install: ".implode(", ", $missing));
 	}
 }
 
