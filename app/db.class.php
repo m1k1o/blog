@@ -24,6 +24,17 @@ class DB
 		return Config::get_safe('db_connection', 'sqlite');
 	}
 
+	// CONCAT() does not exist in SQLite, using || instead
+	public final static function concat(){
+		$values = func_get_args();
+
+		if(DB::connection() === 'sqlite') {
+			return implode(" || ", $values);
+		} else {
+			return 'CONCAT('.implode(", ", $values).')';
+		}
+	}
+
 	// Initialise PDO object
 	private final function __construct(){
 		switch(DB::connection()) {

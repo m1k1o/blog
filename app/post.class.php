@@ -429,6 +429,8 @@ class Post
 			$datetime = "DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i')";
 		}
 
+		$like_match = "LIKE ".DB::concat("'%'", "?", "'%'");
+
 		return DB::get_instance()->query("
 			SELECT
 				`id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`,
@@ -439,9 +441,9 @@ class Post
 				($from ? "`posts`.`datetime` > ? AND " : "").
 				($to ? "`posts`.`datetime` < ? AND " : "").
 				($id ? "`id` = ? AND " : "").
-				($tag ? "`plain_text` LIKE CONCAT('%', ?, '%') AND " : "").
-				($loc ? "`location` LIKE CONCAT('%', ?, '%') AND " : "").
-				($person ? "`persons` LIKE CONCAT('%', ?, '%') AND " : "").
+				($tag ? "`plain_text` $like_match AND " : "").
+				($loc ? "`location` $like_match AND " : "").
+				($person ? "`persons` $like_match AND " : "").
 				"`status` <> 5
 			ORDER BY `posts`.`datetime` DESC
 			LIMIT ? OFFSET ?
