@@ -18,7 +18,13 @@ class user
 			return true;
 		}
 
-		return !empty($_SESSION[User::SESSION_NAME]) && $_SESSION[User::SESSION_NAME] === hash("crc32", Config::get("nick").Config::get_safe("pass", ""), false);
+		if(Config::get_safe("ldap_enabled", false)){
+			return !empty($_SESSION[User::SESSION_NAME]) &&
+				$_SESSION[User::SESSION_NAME] === 'admin';
+		}
+
+		return !empty($_SESSION[User::SESSION_NAME]) &&
+			$_SESSION[User::SESSION_NAME] === hash("crc32", Config::get("nick").Config::get_safe("pass", ""), false);
 	}
 
 	public static function login($nick, $pass){
@@ -30,6 +36,14 @@ class user
 			throw new Exception(__("You are already logged in."));
 		}
 
+		if(Config::get_safe("ldap_enabled", false)){
+			return static::LDAP_login($nick, $pass);
+		} else {
+			return static::config_login($nick, $pass);
+		}
+	}
+
+	private static function config_login($nick, $pass){
 		if(Config::get("nick") === $nick && Config::get_safe("pass", "") === $pass){
 			$_SESSION[User::SESSION_NAME] = hash("crc32", $nick.$pass, false);
 			return ["logged_in" => true, "is_visitor" => false];
@@ -41,6 +55,34 @@ class user
 			Config::get_safe("visitor", [])
 		);
 		if(!empty($visitors) && isset($visitors[$nick]) && $visitors[$nick] === $pass){
+			$_SESSION[User::SESSION_NAME] = 'visitor';
+			return ["logged_in" => false, "is_visitor" => true];
+		}
+
+		Log::put("login_fails", $nick);
+		throw new Exception(__("The nick or password is incorrect."));
+	}
+
+	private static function LDAP_login($nick, $pass){
+		$ldap_host = Config::get("ldap_host");
+		$ldap_port = Config::get_safe("ldap_port", 389);
+		$ldap_admin_dn = Config::get_safe("ldap_admin_dn", false);
+		$ldap_visitor_dn = Config::get_safe("ldap_visitor_dn", false);
+
+		if(!($ds = ldap_connect($ldap_host, $ldap_port))) {
+			throw new Exception(__("Could not connect to LDAP server."));
+		}
+
+		ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+		ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
+		ldap_set_option($ds, LDAP_OPT_NETWORK_TIMEOUT, 10);
+
+		if ($ldap_admin_dn !== false && ldap_bind($ds, "cn=".$nick.",".$ldap_admin_dn, $pass)) {
+			$_SESSION[User::SESSION_NAME] = 'admin';
+			return ["logged_in" => true, "is_visitor" => false];
+		}
+
+		if ($ldap_visitor_dn !== false && ldap_bind($ds, "cn=".$nick.",".$ldap_visitor_dn, $pass)) {
 			$_SESSION[User::SESSION_NAME] = 'visitor';
 			return ["logged_in" => false, "is_visitor" => true];
 		}
