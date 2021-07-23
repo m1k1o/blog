@@ -777,6 +777,8 @@ body {
   min-height: 88px;
   max-width: 100%;
   min-width: 100%;
+  background: transparent;
+  border: 0;
 }
 
 .options {
