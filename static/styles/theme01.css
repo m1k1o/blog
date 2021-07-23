@@ -126,7 +126,6 @@ body {
   background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 75%,rgba(255,255,255,1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 );
   cursor: pointer;
-  vertical-align: bottom;
 }
 
 .b_post {
@@ -585,11 +584,6 @@ body {
 
 .modal-footer .buttons {
   margin: 8px;
-}
-
-.modal-footer .buttons .left {
-  display: inline-block;
-  float: left;
 }
 
 .modal-footer:before,

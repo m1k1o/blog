@@ -103,7 +103,6 @@ if(!empty($scripts)){
 						</div>
 						<div class="modal-footer">
 							<div class="buttons">
-								<!--<div class="left"><a>Register</a> - <a>Forgot Password</a></div>-->
 								<a class="button gray close"><?php echo __("Cancel"); ?></a>
 								<button type="button" class="button blue do_login"><?php echo __("Login"); ?></button>
 							</div>
