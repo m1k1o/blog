@@ -114,6 +114,10 @@ body {
   text-transform: uppercase;
 }
 
+#eof_feed .link {
+  color: #90949c;
+}
+
 .show_more {
   height: 40px;
   line-height: 40px;
