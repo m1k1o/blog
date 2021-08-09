@@ -20,7 +20,7 @@ RUN set -eux; apt-get update; \
 	--with-jpeg --with-webp --with-xpm --with-freetype; \
 	#
 	# install extensions
-	docker-php-ext-install curl gd pdo pdo_mysql; \
+	docker-php-ext-install curl gd pdo pdo_mysql exif; \
 	#
 	# set up environment
 	a2enmod rewrite;

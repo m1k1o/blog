@@ -17,7 +17,7 @@ if(Config::get_safe('debug', false)){
 	error_reporting(E_ALL);
 
 	// Check extensions
-	$required = ['curl', 'PDO', 'pdo_mysql', 'gd'];
+	$required = ['curl', 'PDO', 'pdo_mysql', 'gd', 'exif'];
 	$loaded = get_loaded_extensions();
 	if($missing = array_diff($required, $loaded)){
 		die("Missing extensions, please install: ".implode(", ", $missing));
