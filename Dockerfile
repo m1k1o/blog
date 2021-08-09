@@ -1,7 +1,5 @@
 FROM php:7.4-apache
 
-MAINTAINER Miroslav Sedivy
-
 RUN set -eux; apt-get update; \
 	apt-get install -y --no-install-recommends \
 	#
