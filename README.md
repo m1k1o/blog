@@ -217,3 +217,4 @@ Feel free to create new PR and add a new language. Specify language in config or
 * cz - 🇨🇿 Czech (thanks @djfinch)
 * bs - 🇧🇦 Bosnian (thanks @hajro92)
 * es - 🇪🇸 Spanish (thanks @ManuLinares)
+* ru - 🇷🇺 Russian (thanks @ozzyst)
