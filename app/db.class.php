@@ -130,7 +130,7 @@ class DB
 
 			$this->_PDO->exec(
 				// Set timezone
-				'SET timezone="'.date('P').'";'
+				'SET TIME ZONE "'.date('e').'";'
 			);
 		} catch (PDOException $e) {
 			throw new DBException($e->getMessage());
