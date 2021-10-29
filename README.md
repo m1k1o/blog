@@ -53,27 +53,9 @@ docker run -d \
   m1k1o/blog:latest
 ```
 
-Or in docker-compose format:
-```yml
-version: "3"
-services:
-  blog:
-    image: m1k1o/blog:latest
-    restart: unless-stopped
-    environment:
-        TZ: Europe/Vienna
-        BLOG_TITLE: Blog
-        BLOG_NAME: Max Musermann
-        BLOG_NICK: username
-        BLOG_PASS: password
-        BLOG_LANG: en
-    ports:
-      - 80:80
-    volumes:
-      - ./data:/var/www/html/data
-```
+Or for docker-compose format, see [docker-compose.yml](docker-compose.yml).
 
-## Install standalone app using `docker-compose`
+## Install standalone app using `docker-compose` with external database
 You need to install [docker-compose](https://docs.docker.com/compose/install/).
 
 ### MySQL
@@ -148,6 +130,7 @@ volumes:
 ```
 
 ### Step 1: Run `docker-compose.yml`.
+Select one of configurations above and save it to `docker-compose.yml`. Then run:
 ```sh
 docker-compose up -d
 ```
