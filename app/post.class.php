@@ -204,6 +204,8 @@ class Post
 
 		if (DB::connection() === 'sqlite') {
 			$datetime = "strftime('%Y %m %d %H %M', `posts`.`datetime`)";
+		} else if (DB::connection() === 'postgres') {
+			$datetime = "to_char(datetime,'YYYY MM DD HH24 MI')";
 		} else {
 			$datetime = "DATE_FORMAT(`datetime`,'%Y %c %e %k %i')";
 		}
@@ -425,6 +427,8 @@ class Post
 
 		if (DB::connection() === 'sqlite') {
 			$datetime = "strftime('%d %m %Y %H:%M', `posts`.`datetime`)";
+		} else if (DB::connection() === 'postgres') {
+			$datetime = "to_char(posts.datetime,'DD Mon YYYY HH24:MI')";
 		} else {
 			$datetime = "DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i')";
 		}
