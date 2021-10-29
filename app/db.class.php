@@ -41,6 +41,9 @@ class DB
 			case 'mysql':
 				$this->mysql_connect();
 				break;
+			case 'postgres':
+				$this->postgres_connect();
+				break;
 			case 'sqlite':
 				$this->sqlite_connect();
 				break;
@@ -86,6 +89,48 @@ class DB
 
 				// Set timezone
 				'SET time_zone="'.date('P').'";'
+			);
+		} catch (PDOException $e) {
+			throw new DBException($e->getMessage());
+		}
+	}
+
+	private final function postgres_connect(){
+		$host = Config::get_safe('postgres_host', false);
+		$port = Config::get_safe('postgres_port', false);
+		$socket = Config::get_safe('postgres_socket', false);
+
+		if($socket === false && $host === false){
+			throw new DBException("Postgres host or socket must be defined.");
+		}
+
+		// Try to connect
+		try {
+			$this->_PDO = new \PDO(
+				// Server
+				'pgsql:'.
+					($socket !== false
+						? 'unix_socket='.$socket
+						: 'host='.$host.($port !== false ? ';port='.$port : '')
+					).
+				// DB
+				';dbname='.Config::get('db_name').
+				// Charset
+				';options=\'--client_encoding=UTF8\'',
+				// Username
+				Config::get('postgres_user'),
+				// Password
+				Config::get_safe('postgres_pass', ''),
+				// Set attributes
+				[
+					\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+					\PDO::ATTR_EMULATE_PREPARES => false
+				]
+			);
+
+			$this->_PDO->exec(
+				// Set timezone
+				'SET TIME ZONE "'.date('e').'";'
 			);
 		} catch (PDOException $e) {
 			throw new DBException($e->getMessage());
@@ -164,6 +209,11 @@ class DB
 		// First parameter is sql
 		$sql = $params[0];
 		unset($params[0]);
+
+		// Replace backticks with " for postgres
+		if(DB::connection() === 'postgres') {
+			$sql = str_replace("`", '"', $sql);
+		}
 
 		// Debug mode
 		if(Config::get_safe('debug', false)){

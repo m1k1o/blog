@@ -53,32 +53,85 @@ docker run -d \
   m1k1o/blog:latest
 ```
 
-Or in docker-compose format:
-```yml
-version: "3"
-services:
-  blog:
-    image: m1k1o/blog:latest
-    restart: unless-stopped
-    environment:
-        TZ: Europe/Vienna
-        BLOG_TITLE: Blog
-        BLOG_NAME: Max Musermann
-        BLOG_NICK: username
-        BLOG_PASS: password
-        BLOG_LANG: en
-    ports:
-      - 80:80
-    volumes:
-      - ./data:/var/www/html/data
-```
+Or for docker-compose format, see [docker-compose.yml](docker-compose.yml).
 
-## Install standalone app using `docker-compose` with mysql
+## Install standalone app using `docker-compose` with external database
 You need to install [docker-compose](https://docs.docker.com/compose/install/).
 
-### Step 1: Download and run `docker-compose.yml`.
+### MySQL
+```yaml
+version: "3"
+services:
+  webserver:
+    image: m1k1o/blog:latest
+    container_name: blog_apache
+    environment:
+      TZ: Europe/Vienna
+      BLOG_DB_CONNECTION: mysql
+      BLOG_MYSQL_HOST: mariadb
+      BLOG_MYSQL_PORT: 3306
+      BLOG_MYSQL_USER: blog
+      BLOG_MYSQL_PASS: blog # use secure password
+      BLOG_DB_NAME: blog
+    restart: unless-stopped
+    ports:
+      - ${HTTP_PORT-80}:80
+    volumes: 
+      - ${DATA-./data}:/var/www/html/data
+  mariadb:
+    image: mariadb:10.1
+    container_name: blog_mariadb
+    environment:
+      MYSQL_USER: blog
+      MYSQL_PASSWORD: blog # use secure password
+      MYSQL_DATABASE: blog
+      MYSQL_ROOT_PASSWORD: root # use secure password
+    restart: unless-stopped
+    volumes:
+      - mariadb:/var/lib/mysql
+      - ./app/db/mysql:/docker-entrypoint-initdb.d:ro
+volumes:
+  mariadb:
+```
+
+### Postgres
+```yaml
+version: "3"
+services:
+  webserver:
+    image: m1k1o/blog:latest
+    container_name: blog_apache
+    environment:
+      TZ: Europe/Vienna
+      BLOG_DB_CONNECTION: postgres
+      BLOG_POSTGRES_HOST: postgres
+      BLOG_POSTGRES_PORT: 5432
+      BLOG_POSTGRES_USER: blog
+      BLOG_POSTGRES_PASS: blog # use secure password
+      BLOG_DB_NAME: blog
+    restart: unless-stopped
+    ports:
+      - ${HTTP_PORT-80}:80
+    volumes: 
+      - ${DATA-./data}:/var/www/html/data
+  postgres:
+    image: postgres:14
+    container_name: blog_postgres
+    environment:
+      POSTGRES_USER: blog
+      POSTGRES_PASSWORD: blog # use secure password
+      POSTGRES_DB: blog
+    restart: unless-stopped
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./app/db/postgres:/docker-entrypoint-initdb.d:ro
+volumes:
+  postgres:
+```
+
+### Step 1: Run `docker-compose.yml`.
+Select one of configurations above and save it to `docker-compose.yml`. Then run:
 ```sh
-wget https://raw.githubusercontent.com/m1k1o/blog/master/docker-compose.yml
 docker-compose up -d
 ```
 

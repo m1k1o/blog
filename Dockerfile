@@ -1,7 +1,7 @@
 FROM php:7.4-apache
 
 RUN set -eux; apt-get update; \
-	apt-get install -y --no-install-recommends \
+	apt-get install -y --no-install-recommends libpq-dev \
 	#
 	# install curl
 	libcurl4-openssl-dev \
@@ -18,7 +18,7 @@ RUN set -eux; apt-get update; \
 	--with-jpeg --with-webp --with-xpm --with-freetype; \
 	#
 	# install extensions
-	docker-php-ext-install curl gd pdo pdo_mysql exif; \
+	docker-php-ext-install curl gd pdo pdo_mysql pdo_pgsql exif; \
 	#
 	# set up environment
 	a2enmod rewrite;
