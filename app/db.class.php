@@ -25,10 +25,11 @@ class DB
 	}
 
 	// CONCAT() does not exist in SQLite, using || instead
+	// for postgres, ERROR: could not determine data type of parameter $1
 	public final static function concat(){
 		$values = func_get_args();
 
-		if(DB::connection() === 'sqlite') {
+		if(DB::connection() === 'sqlite' || DB::connection() === 'postgres') {
 			return implode(" || ", $values);
 		} else {
 			return 'CONCAT('.implode(", ", $values).')';
