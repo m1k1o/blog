@@ -329,7 +329,7 @@ if(!empty($scripts)){
 
 	<div id="eof_feed">
 		<img src="static/images/zpEYXu5Wdu6.png">
-		<p><?php echo Config::get("version"); ?> &copy; 2016-2021<br><a href="https://github.com/m1k1o/blog" class="link" title="m1k1o/blog github repository" target="_blank">m1k1o/blog</a></p>
+		<p><?php echo Config::get("version"); ?> &copy; 2016-2021<br><a href="<?php echo Config::get("footer_target"); ?> " class="link" title="<?php echo Config::get("footer_title"); ?> " target="_blank"><?php echo Config::get("footer_text"); ?> </a></p>
 	</div>
 	<script src="static/scripts/jquery.min.js"></script>
 	<script>$["\x61\x6A\x61\x78\x53\x65\x74\x75\x70"]({"\x68\x65\x61\x64\x65\x72\x73":{"\x43\x73\x72\x66-\x54\x6F\x6B\x65\x6E":"<?php echo $_SESSION['token'];?>"}});</script>
