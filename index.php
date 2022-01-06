@@ -47,8 +47,8 @@ if(!empty($styles)){
 $scripts = Config::get_safe("scripts", []);
 $scripts_html = '';
 if(!empty($scripts)){
-	if(!is_array($styles)){
-		$styles = [$styles];
+	if(!is_array($scripts)){
+		$scripts = [$scripts];
 	}
 
 	$scripts = array_unique($scripts);
