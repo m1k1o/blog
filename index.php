@@ -10,6 +10,16 @@ if(empty($_SESSION['token'])){
 	}
 }
 
+function escape($str) {
+	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+}
+function encodeURIComponent($str) {
+	return rawurlencode($str);
+}
+function encodeURI($str) {
+	return implode('/', array_map('rawurlencode', explode('/', $str)));
+}
+
 //$.ajaxSetup({headers:{'Csrf-Token':'token'}});
 
 Log::put("visitors");
@@ -40,6 +50,7 @@ if(!empty($styles)){
 	}
 
 	$styles = array_unique($styles);
+	$styles = array_map('encodeURI', $styles);
 	$styles_html = '<link href="'.implode('" rel="stylesheet" type="text/css"/>'.PHP_EOL.'<link href="', $styles).'" rel="stylesheet" type="text/css"/>'.PHP_EOL;
 }
 
@@ -52,27 +63,34 @@ if(!empty($scripts)){
 	}
 
 	$scripts = array_unique($scripts);
+	$scripts = array_map('encodeURI', $scripts);
 	$scripts_html = '<script src="'.implode('" type="text/javascript"></script>'.PHP_EOL.'<script src="', $scripts).'" type="text/javascript"></script>'.PHP_EOL;
+}
+
+// Use version suffix in URLs to prevent cache
+$versionSuffix = '';
+if (Config::get_safe("version", false)) {
+	$versionSuffix = '?v='.encodeURIComponent(Config::get("version"));
 }
 
 ?><!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
-	<title><?php echo Config::get("title"); ?></title>
+	<title><?php echo escape(Config::get("title")); ?></title>
 
 	<meta name="robots" content="noindex, nofollow">
 
 	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-	<link href="static/styles/main.css?v=<?php echo Config::get("version"); ?>" rel="stylesheet" type="text/css" />
-	<link href="static/styles/<?php echo Config::get_safe("theme", "theme01"); ?>.css?v=<?php echo Config::get("version"); ?>" rel="stylesheet" type="text/css" />
+	<link href="static/styles/main.css<?php echo $versionSuffix?>" rel="stylesheet" type="text/css" />
+	<link href="static/styles/<?php echo encodeURI(Config::get_safe("theme", "theme01")); ?>.css<?php echo $versionSuffix?>" rel="stylesheet" type="text/css" />
 
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans&amp;subset=all" rel="stylesheet">
 
 	<link href="static/styles/lightbox.css" rel="stylesheet" type="text/css" />
-	<?php echo Config::get("highlight") ? '<link href="static/styles/highlight-monokai-sublime.css" rel="stylesheet" type="text/css" />' : ''; ?>
+	<?php echo Config::get_safe("highlight", false) ? '<link href="static/styles/highlight-monokai-sublime.css" rel="stylesheet" type="text/css" />'.PHP_EOL : ''; ?>
 
 	<?php echo $styles_html; ?>
 </head>
@@ -169,7 +187,7 @@ if(!empty($scripts)){
 						<div class="modal-body drop_space">
 							<div class="e_drag"><span><?php echo __("Drag photos here"); ?></span></div>
 							<div class="e_drop"><span><?php echo __("Drop photos here"); ?></span></div>
-							<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="e_profile">
+							<img src="<?php echo encodeURI(Config::get("pic_small")); ?>" width="40" height="40" class="e_profile">
 							<!--<div class="e_text" contenteditable="true"></div>-->
 							<div class="t_area">
 								<textarea class="e_text" placeholder="<?php echo __("What's on your mind?"); ?>"></textarea>
@@ -281,10 +299,10 @@ if(!empty($scripts)){
 				<a class="button"><?php echo __("Show hidden content"); ?></a>
 			</div>
 			<div class="b_header">
-				<img src="<?php echo Config::get("pic_small"); ?>" width="40" height="40" class="b_profile">
+				<img src="<?php echo encodeURI(Config::get("pic_small")); ?>" width="40" height="40" class="b_profile">
 				<div class="b_desc">
 					<div class="b_sharer">
-						<span class="b_name"><?php echo Config::get("name"); ?></span><span class="b_options"> - </span><span class="b_feeling"></span><span class="b_with"> <?php echo __("with"); ?> </span><span class="b_persons"></span><span class="b_here"> <?php echo __("here:"); ?> </span><span class="b_location"></span>
+						<span class="b_name"><?php echo escape(Config::get("name")); ?></span><span class="b_options"> - </span><span class="b_feeling"></span><span class="b_with"> <?php echo __("with"); ?> </span><span class="b_persons"></span><span class="b_here"> <?php echo __("here:"); ?> </span><span class="b_location"></span>
 					</div>
 					<i class="privacy_icon"></i>
 					<a class="b_date"></a>
@@ -304,18 +322,18 @@ if(!empty($scripts)){
 	</div>
 
 	<div class="bluebar">
-		<h1><?php echo Config::get("title"); ?></h1>
+		<h1><?php echo escape(Config::get("title")); ?></h1>
 	</div>
 
 	<div class="headbar">
 		<div class="cover">
 			<?php echo $header; ?>
 			<div class="overlay"></div>
-			<?php echo (Config::get_safe("cover", false) ? '<img src="'.Config::get("cover").'">' : (empty($header) ? '<div style="padding-bottom: 37%;"></div>' : '')); ?>
+			<?php echo (Config::get_safe("cover", false) ? '<img src="'.encodeURI(Config::get("cover")).'">' : (empty($header) ? '<div style="padding-bottom: 37%;"></div>' : '')); ?>
 			<div class="profile">
-				<img src="<?php echo Config::get("pic_big"); ?>">
+				<img src="<?php echo encodeURI(Config::get("pic_big")); ?>">
 			</div>
-			<div class="name"><?php echo Config::get("name"); ?></div>
+			<div class="name"><?php echo escape(Config::get("name")); ?></div>
 		</div>
 		<div id="headline"></div>
 	</div>
@@ -329,18 +347,18 @@ if(!empty($scripts)){
 
 	<div id="eof_feed">
 		<img src="static/images/zpEYXu5Wdu6.png">
-		<p><?php echo Config::get("version"); ?> &copy; 2016-2021<br>
-		<?php echo Config::get_safe("footer", '<a href="https://github.com/m1k1o/blog" class="link" title="m1k1o/blog github repository" target="_blank">m1k1o/blog</a>'); ?>
+		<p><?php echo escape(Config::get("version")); ?> &copy; 2016-2022<br>
+		<?php echo Config::get_safe("footer", false) ? escape(Config::get_safe("footer")) : '<a href="https://github.com/m1k1o/blog" class="link" title="m1k1o/blog github repository" target="_blank">m1k1o/blog</a>'; ?>
 		</p>
 	</div>
 	<script src="static/scripts/jquery.min.js"></script>
 	<script>$["\x61\x6A\x61\x78\x53\x65\x74\x75\x70"]({"\x68\x65\x61\x64\x65\x72\x73":{"\x43\x73\x72\x66-\x54\x6F\x6B\x65\x6E":"<?php echo $_SESSION['token'];?>"}});</script>
 
 	<script src="static/scripts/lightbox.js"></script>
-	<script src="static/scripts/datepick.js?v=<?php echo Config::get("version"); ?>"></script>
+	<script src="static/scripts/datepick.js<?php echo $versionSuffix?>"></script>
 	<script src="static/scripts/autosize.js"></script>
-	<?php echo Config::get("highlight") ? '<script src="static/scripts/highlight-10.1.2.min.js"></script><script>hljs.initHighlightingOnLoad();</script>' : ''; ?>
-	<script src="static/scripts/app.js?v=<?php echo Config::get("version"); ?>"></script>
+	<?php echo Config::get_safe("highlight", false) ? '<script src="static/scripts/highlight-10.1.2.min.js"></script><script>hljs.initHighlightingOnLoad();</script>'.PHP_EOL : ''; ?>
+	<script src="static/scripts/app.js<?php echo $versionSuffix?>"></script>
 
 	<?php echo $scripts_html; ?>
 </body>
