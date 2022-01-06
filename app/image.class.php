@@ -110,15 +110,16 @@ class Image
 		}
 
 		$old_image = $imgcreatefrom($source_path);
+		if ($old_image === false) return false;
+
 		$new_image = imagecreatetruecolor($new_w, $new_h);
 		imagecopyresampled($new_image, $old_image, 0, 0, 0, 0, $new_w, $new_h, $source_w, $source_h);
 
 		$new_image = self::fix_orientation($source_path, $new_image);
 		$old_image = self::fix_orientation($source_path, $old_image);
 
-		$imgt($new_image, $thumb_path);
-		$imgt($old_image, $source_path);
-		return true;
+		return $imgt($new_image, $thumb_path)
+			&& $imgt($old_image, $source_path);
 	}
 
 	public static function upload(){
