@@ -13,12 +13,6 @@ if(empty($_SESSION['token'])){
 function escape($str) {
 	return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }
-function encodeURIComponent($str) {
-	return rawurlencode($str);
-}
-function encodeURI($str) {
-	return implode('/', array_map('rawurlencode', explode('/', $str)));
-}
 
 //$.ajaxSetup({headers:{'Csrf-Token':'token'}});
 
@@ -50,7 +44,7 @@ if(!empty($styles)){
 	}
 
 	$styles = array_unique($styles);
-	$styles = array_map('encodeURI', $styles);
+	$styles = array_map('escape', $styles);
 	$styles_html = '<link href="'.implode('" rel="stylesheet" type="text/css"/>'.PHP_EOL.'<link href="', $styles).'" rel="stylesheet" type="text/css"/>'.PHP_EOL;
 }
 
@@ -63,14 +57,14 @@ if(!empty($scripts)){
 	}
 
 	$scripts = array_unique($scripts);
-	$scripts = array_map('encodeURI', $scripts);
+	$scripts = array_map('escape', $scripts);
 	$scripts_html = '<script src="'.implode('" type="text/javascript"></script>'.PHP_EOL.'<script src="', $scripts).'" type="text/javascript"></script>'.PHP_EOL;
 }
 
 // Use version suffix in URLs to prevent cache
 $versionSuffix = '';
 if (Config::get_safe("version", false)) {
-	$versionSuffix = '?v='.encodeURIComponent(Config::get("version"));
+	$versionSuffix = '?v='.rawurlencode(Config::get("version"));
 }
 
 ?><!DOCTYPE html>
@@ -85,7 +79,7 @@ if (Config::get_safe("version", false)) {
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
 	<link href="static/styles/main.css<?php echo $versionSuffix?>" rel="stylesheet" type="text/css" />
-	<link href="static/styles/<?php echo encodeURI(Config::get_safe("theme", "theme01")); ?>.css<?php echo $versionSuffix?>" rel="stylesheet" type="text/css" />
+	<link href="static/styles/<?php echo rawurlencode(Config::get_safe("theme", "theme01")); ?>.css<?php echo $versionSuffix?>" rel="stylesheet" type="text/css" />
 
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans&amp;subset=all" rel="stylesheet">
 
@@ -187,7 +181,7 @@ if (Config::get_safe("version", false)) {
 						<div class="modal-body drop_space">
 							<div class="e_drag"><span><?php echo __("Drag photos here"); ?></span></div>
 							<div class="e_drop"><span><?php echo __("Drop photos here"); ?></span></div>
-							<img src="<?php echo encodeURI(Config::get("pic_small")); ?>" width="40" height="40" class="e_profile">
+							<img src="<?php echo escape(Config::get("pic_small")); ?>" width="40" height="40" class="e_profile">
 							<!--<div class="e_text" contenteditable="true"></div>-->
 							<div class="t_area">
 								<textarea class="e_text" placeholder="<?php echo __("What's on your mind?"); ?>"></textarea>
@@ -299,7 +293,7 @@ if (Config::get_safe("version", false)) {
 				<a class="button"><?php echo __("Show hidden content"); ?></a>
 			</div>
 			<div class="b_header">
-				<img src="<?php echo encodeURI(Config::get("pic_small")); ?>" width="40" height="40" class="b_profile">
+				<img src="<?php echo escape(Config::get("pic_small")); ?>" width="40" height="40" class="b_profile">
 				<div class="b_desc">
 					<div class="b_sharer">
 						<span class="b_name"><?php echo escape(Config::get("name")); ?></span><span class="b_options"> - </span><span class="b_feeling"></span><span class="b_with"> <?php echo __("with"); ?> </span><span class="b_persons"></span><span class="b_here"> <?php echo __("here:"); ?> </span><span class="b_location"></span>
@@ -329,9 +323,9 @@ if (Config::get_safe("version", false)) {
 		<div class="cover">
 			<?php echo $header; ?>
 			<div class="overlay"></div>
-			<?php echo (Config::get_safe("cover", false) ? '<img src="'.encodeURI(Config::get("cover")).'">' : (empty($header) ? '<div style="padding-bottom: 37%;"></div>' : '')); ?>
+			<?php echo (Config::get_safe("cover", false) ? '<img src="'.escape(Config::get("cover")).'">' : (empty($header) ? '<div style="padding-bottom: 37%;"></div>' : '')); ?>
 			<div class="profile">
-				<img src="<?php echo encodeURI(Config::get("pic_big")); ?>">
+				<img src="<?php echo escape(Config::get("pic_big")); ?>">
 			</div>
 			<div class="name"><?php echo escape(Config::get("name")); ?></div>
 		</div>
