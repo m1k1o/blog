@@ -1173,7 +1173,8 @@ code {
   text-align: center;
 }
 .datepicker table {
-  display: inline-block;
+  width: 100%;
+  margin: 5px 0;
 }
 
 .datepicker th,
@@ -1181,6 +1182,9 @@ code {
   width: 12.5%;
 }
 
+.datepicker th {
+  padding: 5px 0;
+}
 .datepicker td {
   color: var(--datepicker-inactive-month);
   padding: 5px;

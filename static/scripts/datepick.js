@@ -51,9 +51,11 @@ var datepick = function(container) {
 			var thead = $(
 				'<thead>' +
 					'<tr>' +
+						'<th><button type="button" class="button blue prev_y" title="Previous Year">&lt;&lt;</button></th>' +
 						'<th><button type="button" class="button blue prev" title="Previous Month">&lt;</button></th>' +
-						'<th class="month-pick" colspan="5" title="Select Month">'+this.months[this.m]+' '+this.y+'</th>' +
+						'<th class="month-pick" colspan="3" title="Select Month">'+this.months[this.m]+' '+this.y+'</th>' +
 						'<th><button type="button" class="button blue next" title="Next Month">&gt;</button></th>' +
+						'<th><button type="button" class="button blue next_y" title="Next Year">&gt;&gt;</button></th>' +
 					'</tr>' +
 					'<tr>' +
 						'<th>Mo</th>' +
@@ -68,12 +70,22 @@ var datepick = function(container) {
 			);
 
 			var x = this;
+			$(thead).find(".prev_y").click(function(){
+				x.dec_y();
+				x.load_table();
+				$(thead).find(".month-pick").text(x.months[x.m]+' '+x.y);
+			});
 			$(thead).find(".prev").click(function(){
 				x.dec_m();
 				x.load_table();
 				$(thead).find(".month-pick").text(x.months[x.m]+' '+x.y);
 			});
 
+			$(thead).find(".next_y").click(function(){
+				x.inc_y();
+				x.load_table();
+				$(thead).find(".month-pick").text(x.months[x.m]+' '+x.y);
+			});
 			$(thead).find(".next").click(function(){
 				x.inc_m();
 				x.load_table();
