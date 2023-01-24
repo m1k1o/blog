@@ -449,7 +449,7 @@ class Post
 				($loc ? "`location` $like_match AND " : "").
 				($person ? "`persons` $like_match AND " : "").
 				"`status` <> 5
-			ORDER BY `posts`.`datetime` DESC
+			ORDER BY `posts`.`datetime` ".(@$r["sort"] == 'reverse' ? "ASC" : "DESC")."
 			LIMIT ? OFFSET ?
 			", $from, $to, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
 		)->all();

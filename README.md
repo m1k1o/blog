@@ -208,9 +208,10 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Upload images using CTRL + V *(paste it into textarea)*. 
 * Highlight code in post using `[code]..your code..[/code]`.
 * Highlight your goal using `[goal]Text of your goal.[/goal]`.
-* Use tags in posts (allowed characters `A-Za-z0-9-_` terminated by space or EOL): `#song`
-* Sort posts by hashtags: `http://blog/#tag=songs`
-* Sort posts by location in url using: `http://blog/#loc=Vienna`.
+* Use tags in posts (allowed characters `A-Za-z0-9-_` terminated by space or EOL): `#song`.
+* Sort posts in reverse order (oldest first): `http://blog/#sort=reverse`.
+* Filter posts by hashtags: `http://blog/#tag=songs`.
+* Filter posts by location in url using: `http://blog/#loc=Vienna`.
 * Display posts from chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#from=2017-06`.
 * Display posts to chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#to=2017-06`.
 * Combine parameters in url using `&`, e.g. show posts between dates: `http://blog/#from=2017-06&to=2017-08`.

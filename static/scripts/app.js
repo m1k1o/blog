@@ -13,6 +13,7 @@ var posts = {
 
 	limit: 5,           // Limit posts per load
 	offset: 0,          // Current offset
+	sort: "default",    // Default is from newest to oldest posts (use reverse for oldest to newest)
 
 	filter: {
 		from: null,     // Show posts from specified date
@@ -34,6 +35,10 @@ var posts = {
 
 		// Update ID hash
 		location.hash.replace(/([a-z]+)\=([^\&]+)/g, function(_, key, value){
+			if (key == "sort") {
+				posts.sort = decodeURIComponent(value);
+				return;
+			}
 			posts.filter[key] = decodeURIComponent(value);
 			$(".more_posts").show();
 		});
@@ -72,6 +77,7 @@ var posts = {
 				action: "load",
 				limit: posts.limit,
 				offset: posts.offset,
+				sort: posts.sort,
 				filter: posts.filter
 			},
 			success: function(posts_data){
