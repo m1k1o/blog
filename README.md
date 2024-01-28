@@ -6,13 +6,6 @@ In this context lightweight means:
 * No pipeline. What you see is pure code without a need to install it.
 * No overhead, essential features, simple usage.
 
-## Live demo
-Live demo is available here:
-
-https://blog.m1k1o.net/
-
-Please note, that this demo has very limited computing resources, strict rate limiting and can be reset at anytime. Upload of files will not always work, but as simple demo to see this product in action it is enough.
-
 ## Screenshots
 <details>
 	<summary>Light theme</summary>
