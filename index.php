@@ -345,7 +345,7 @@ if (Config::get_safe("version", false)) {
 		<?php echo Config::get_safe("footer", false) ? escape(Config::get_safe("footer")) : '<a href="https://github.com/m1k1o/blog" class="link" title="m1k1o/blog github repository" target="_blank">m1k1o/blog</a>'; ?>
 		</p>
 	</div>
-	<script src="static/scripts/jquery.min.js"></script>
+	<script src="static/scripts/jquery-3.5.0.min.js"></script>
 	<script>$["\x61\x6A\x61\x78\x53\x65\x74\x75\x70"]({"\x68\x65\x61\x64\x65\x72\x73":{"\x43\x73\x72\x66-\x54\x6F\x6B\x65\x6E":"<?php echo $_SESSION['token'];?>"}});</script>
 
 	<script src="static/scripts/lightbox.js"></script>
