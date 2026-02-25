@@ -5,85 +5,87 @@ class Post
 {
 	private static function login_protected(){
 		if(!User::is_logged_in()){
-			throw new Exception(__("You need to be logged in to perform this action."));
+			throw new Exception(__("You need to be logged in"));
 		}
 	}
 
 	private static function parse_content($c){
-		$parser = new JBBCode\Parser();
-		$parser->addCodeDefinitionSet(new JBBCode\DefaultCodeDefinitionSet());
+		// Step 1: Extract and preserve user's HTML tags with unique placeholders
+		$html_tags = [];
+		$placeholder_count = 0;
+		
+		$c = preg_replace_callback('/<([^>]+)>/i', function($matches) use (&$html_tags, &$placeholder_count) {
+			$placeholder = '§§§HTMLTAG' . $placeholder_count . '§§§';
+			$html_tags[$placeholder] = $matches[0];
+			$placeholder_count++;
+			return $placeholder;
+		}, $c);
+		
+		// Normalize line endings
+		$c = str_replace(["\r\n", "\r"], "\n", $c);
 
-		if(Config::get("highlight")){
-			$c = str_replace("\t", "  ", $c);
-			$c = preg_replace("/\[code(?:=([^\[]+))?\]\s*?(?:\n|\r)?/i", '[code=$1]', $c);
-			$c = preg_replace("/\[\/code\]\s*?(?:\n|\r)?/i", '[/code]', $c);
+		// Step 2: Process Markdown syntax
+		
+		// Headers (must be at start of line)
+		$c = preg_replace('/^###\s+(.+)$/m', '<h3>$1</h3>', $c);
+		$c = preg_replace('/^##\s+(.+)$/m', '<h2>$1</h2>', $c);
+		$c = preg_replace('/^#\s+(.+)$/m', '<h1>$1</h1>', $c);
+		
+		// Bold: **text**
+		$c = preg_replace('/\*\*(.+?)\*\*/s', '<strong>$1</strong>', $c);
+		
+		// Italic: *text*
+		$c = preg_replace('/(?<!\*)\*([^*\n]+)\*(?!\*)/s', '<em>$1</em>', $c);
+		
+		// Strikethrough: ~~text~~
+		$c = preg_replace('/~~(.+?)~~/s', '<del>$1</del>', $c);
+		
+		// Links: [text](url)
+		$c = preg_replace_callback('/\[([^\]]+)\]\(([^)]+)\)/s', function($m){
+			$text = $m[1];
+			$url = htmlspecialchars($m[2], ENT_QUOTES, 'UTF-8');
+			return '<a href="'.$url.'" target="_blank">'.$text.'</a>';
+		}, $c);
+		
+		// Images: ![alt](url)
+		$c = preg_replace_callback('/!\[([^\]]*)\]\(([^)]+)\)/s', function($m){
+			$alt = htmlspecialchars($m[1], ENT_QUOTES, 'UTF-8');
+			$src = htmlspecialchars($m[2], ENT_QUOTES, 'UTF-8');
+			return '<img src="'.$src.'" alt="'.$alt.'" style="max-width:100%;">';
+		}, $c);
+		
+		// Code: `code`
+		$c = preg_replace_callback('/`([^`]+)`/u', function($m){
+			return '<code>'.htmlspecialchars($m[1], ENT_QUOTES, 'UTF-8').'</code>';
+		}, $c);
+		
+		// Lists (unordered and ordered)
+		$c = preg_replace('/^[\-\*]\s+(.+)$/m', '<li>$1</li>', $c);
+		$c = preg_replace('/^\d+\.\s+(.+)$/m', '<li>$1</li>', $c);
+		// Wrap consecutive <li> groups into <ul>
+		$c = preg_replace('/(<li>.*?<\/li>\s*)+/s', '<ul>$0</ul>', $c);
+		
+		// Blockquotes
+		$c = preg_replace('/^>\s+(.+)$/m', '<blockquote>$1</blockquote>', $c);
+		
+		// Horizontal rule
+		$c = preg_replace('/^(-{3,}|\*{3,})$/m', '<hr>', $c);
+		
+		// Auto-link plain URLs
+		$c = preg_replace('/(?<!["\'=\/])\b(https?:\/\/[^\s<]+)\b/i', '<a href="$1" target="_blank">$1</a>', $c);
+		
+		// Hashtags
+		$c = preg_replace('/(\#[A-Za-z0-9\-_]+)(\s|$)/u', '<span class="tag">$1</span>$2', $c);
+		
+		// Convert newlines to <br> for remaining text
+		$c = nl2br($c);
 
-			// Add code definiton
-			$parser->addCodeDefinition(new class extends \JBBCode\CodeDefinition {
-				public function __construct(){
-					parent::__construct();
-					$this->setTagName("code");
-					$this->setParseContent(false);
-					$this->setUseOption(true);
-				}
-
-				public function asHtml(\JBBCode\ElementNode $el){
-					$content = $this->getContent($el);
-					$class = $el->getAttribute()['code'];
-					return '<code class="'.$class.'">'.htmlentities($content).'</code>';
-				}
-			});
+		// Step 3: Restore user's original HTML tags
+		foreach ($html_tags as $placeholder => $tag) {
+			$c = str_replace($placeholder, $tag, $c);
 		}
-
-		// Custom tags
-		$builder = new JBBCode\CodeDefinitionBuilder("goal", "<div class=\"b_goal star\">{param}</div>");
-		$parser->addCodeDefinition($builder->build());
-
-		$builder = new JBBCode\CodeDefinitionBuilder("goal", "<div class=\"b_goal {option}\">{param}</div>");
-		$builder->setUseOption(true);
-		$parser->addCodeDefinition($builder->build());
-
-		if(($tags = Config::get_safe("bbtags", [])) && !empty($tags)){
-			foreach($tags as $tag => $content){
-				$builder = new JBBCode\CodeDefinitionBuilder($tag, $content);
-				$parser->addCodeDefinition($builder->build());
-			}
-		}
-
-		$parser->parse($c);
-
-		// Visit every text node
-		$parser->accept(new class implements \JBBCode\NodeVisitor{
-			function visitDocumentElement(\JBBCode\DocumentElement $documentElement){
-				foreach($documentElement->getChildren() as $child) {
-					$child->accept($this);
-				}
-			}
-
-			function visitTextNode(\JBBCode\TextNode $textNode){
-				$c = $textNode->getValue();
-				$c = preg_replace('/\"([^\"]+)\"/i', "„$1\"", $c);
-				$c = htmlentities($c);
-				$c = preg_replace('/\*([^\*]+)\*/i', "<strong>$1</strong>", $c);
-				$c = preg_replace('/(https?\:\/\/[^\" \n]+)/i', "<a href=\"\\0\" target=\"_blank\">\\0</a>", $c);
-				$c = preg_replace('/(\#[A-Za-z0-9-_]+)(\s|$)/i', "<span class=\"tag\">\\1</span>\\2", $c);
-				$c = nl2br($c);
-				$textNode->setValue($c);
-			}
-
-			function visitElementNode(\JBBCode\ElementNode $elementNode){
-				/* We only want to visit text nodes within elements if the element's
-				 * code definition allows for its content to be parsed.
-				 */
-				if ($elementNode->getCodeDefinition()->parseContent()) {
-					foreach ($elementNode->getChildren() as $child) {
-						$child->accept($this);
-					}
-				}
-			}
-		});
-
-		return $parser->getAsHtml();
+		
+		return $c;
 	}
 
 	private static function raw_data($raw_input){
@@ -126,6 +128,79 @@ class Post
 		}
 
 		$data['plain_text'] = $data['text'];
+		$emoji_map = [
+			':grinning:' => '😀',
+			':smiley:' => '😃',
+			':smile:' => '😄',
+			':grin:' => '😁',
+			':laughing:' => '😆',
+			':joy:' => '😂',
+			':rofl:' => '🤣',
+			':blush:' => '😊',
+			':innocent:' => '😇',
+			':heart_eyes:' => '😍',
+			':smiling_face_with_hearts:' => '🥰',
+			':kissing_heart:' => '😘',
+			':kissing:' => '😗',
+			':sunglasses:' => '😎',
+			':star_struck:' => '🤩',
+			':hugging:' => '🤗',
+			':thinking:' => '🤔',
+			':neutral_face:' => '😐',
+			':expressionless:' => '😑',
+			':no_mouth:' => '😶',
+			':eye_roll:' => '🙄',
+			':smirk:' => '😏',
+			':persevere:' => '😣',
+			':disappointed_relieved:' => '😥',
+			':open_mouth:' => '😮',
+			':zipper_mouth:' => '🤐',
+			':hushed:' => '😯',
+			':sleepy:' => '😪',
+			':tired_face:' => '😫',
+			':yawning:' => '🥱',
+			':sleeping:' => '😴',
+			':relieved:' => '😌',
+			':stuck_out_tongue:' => '😛',
+			':stuck_out_tongue_winking_eye:' => '😜',
+			':stuck_out_tongue_closed_eyes:' => '😝',
+			':drooling:' => '🤤',
+			':unamused:' => '😒',
+			':sweat:' => '😓',
+			':pensive:' => '😔',
+			':confused:' => '😕',
+			':upside_down:' => '🙃',
+			':melting:' => '🫠',
+			':money_mouth:' => '🤑',
+			':astonished:' => '😲',
+			':heart:' => '❤️',
+			':broken_heart:' => '💔',
+			':fire:' => '🔥',
+			':star:' => '⭐',
+			':check:' => '✅',
+			':cross:' => '❌',
+			':thumbs_up:' => '👍',
+			':thumbs_down:' => '👎',
+			':clap:' => '👏',
+			':party:' => '🥳',
+			':rocket:' => '🚀',
+			':zap:' => '⚡',
+			':warning:' => '⚠️',
+			':tada:' => '🎉',
+			':coffee:' => '☕',
+			':cake:' => '🍰',
+			':sun:' => '☀️',
+			':moon:' => '🌙',
+			':cloud:' => '☁️',
+			':rainbow:' => '🌈',
+			':flower:' => '🌸',
+			':dog:' => '🐶',
+			':cat:' => '🐱',
+		];
+		foreach($emoji_map as $code => $emoji){
+			$data['text'] = str_replace($code, $emoji, $data['text']);
+		}
+
 		$data['text'] = self::parse_content($data['text']);
 		$data['datetime'] = 'NOW()';
 		$data['status'] = '1';
@@ -144,6 +219,79 @@ class Post
 		$data = self::raw_data($r);
 
 		$data['plain_text'] = $data['text'];
+		$emoji_map = [
+			':grinning:' => '😀',
+			':smiley:' => '😃',
+			':smile:' => '😄',
+			':grin:' => '😁',
+			':laughing:' => '😆',
+			':joy:' => '😂',
+			':rofl:' => '🤣',
+			':blush:' => '😊',
+			':innocent:' => '😇',
+			':heart_eyes:' => '😍',
+			':smiling_face_with_hearts:' => '🥰',
+			':kissing_heart:' => '😘',
+			':kissing:' => '😗',
+			':sunglasses:' => '😎',
+			':star_struck:' => '🤩',
+			':hugging:' => '🤗',
+			':thinking:' => '🤔',
+			':neutral_face:' => '😐',
+			':expressionless:' => '😑',
+			':no_mouth:' => '😶',
+			':eye_roll:' => '🙄',
+			':smirk:' => '😏',
+			':persevere:' => '😣',
+			':disappointed_relieved:' => '😥',
+			':open_mouth:' => '😮',
+			':zipper_mouth:' => '🤐',
+			':hushed:' => '😯',
+			':sleepy:' => '😪',
+			':tired_face:' => '😫',
+			':yawning:' => '🥱',
+			':sleeping:' => '😴',
+			':relieved:' => '😌',
+			':stuck_out_tongue:' => '😛',
+			':stuck_out_tongue_winking_eye:' => '😜',
+			':stuck_out_tongue_closed_eyes:' => '😝',
+			':drooling:' => '🤤',
+			':unamused:' => '😒',
+			':sweat:' => '😓',
+			':pensive:' => '😔',
+			':confused:' => '😕',
+			':upside_down:' => '🙃',
+			':melting:' => '🫠',
+			':money_mouth:' => '🤑',
+			':astonished:' => '😲',
+			':heart:' => '❤️',
+			':broken_heart:' => '💔',
+			':fire:' => '🔥',
+			':star:' => '⭐',
+			':check:' => '✅',
+			':cross:' => '❌',
+			':thumbs_up:' => '👍',
+			':thumbs_down:' => '👎',
+			':clap:' => '👏',
+			':party:' => '🥳',
+			':rocket:' => '🚀',
+			':zap:' => '⚡',
+			':warning:' => '⚠️',
+			':tada:' => '🎉',
+			':coffee:' => '☕',
+			':cake:' => '🍰',
+			':sun:' => '☀️',
+			':moon:' => '🌙',
+			':cloud:' => '☁️',
+			':rainbow:' => '🌈',
+			':flower:' => '🌸',
+			':dog:' => '🐶',
+			':cat:' => '🐱',	
+		];
+		foreach($emoji_map as $code => $emoji){
+			$data['text'] = str_replace($code, $emoji, $data['text']);
+		}
+
 		$data['text'] = self::parse_content($data['text']);
 
 		DB::get_instance()->update('posts', $data, "WHERE `id` = ? AND `status` <> 5", $r["id"]);
@@ -177,15 +325,286 @@ class Post
 		return true;
 	}
 
+	/**
+	 * Helper method to delete media associated with a post (images/files/mixed)
+	 * @param array $post Post data containing content_type and content
+	 */
+	private static function delete_post_images($post){
+		try {
+			$content = json_decode($post['content'], true);
+
+			// single image
+			if ($post['content_type'] === 'image' && isset($content['path'])) {
+				if (isset($content['path']) && file_exists($content['path'])) {
+					@unlink($content['path']);
+				}
+				if (isset($content['thumb']) && file_exists($content['thumb'])) {
+					@unlink($content['thumb']);
+				}
+				if (Config::get_safe('AUTO_CLEANUP_IMAGES', false)) {
+					DB::get_instance()->query("
+						UPDATE `images`
+						SET `status` = 5
+						WHERE `path` = ? OR `thumb` = ?
+					", $content['path'], $content['thumb']);
+				}
+			}
+
+			// multiple images
+			if ($post['content_type'] === 'images' && is_array($content)) {
+				foreach ($content as $image) {
+					if (isset($image['path']) && file_exists($image['path'])) {
+						@unlink($image['path']);
+					}
+					if (isset($image['thumb']) && file_exists($image['thumb'])) {
+						@unlink($image['thumb']);
+					}
+					if (Config::get_safe('AUTO_CLEANUP_IMAGES', false)) {
+						DB::get_instance()->query("
+							UPDATE `images`
+							SET `status` = 5
+							WHERE `path` = ? OR `thumb` = ?
+						", $image['path'], $image['thumb']);
+					}
+				}
+			}
+
+			// files
+			if ($post['content_type'] === 'files' && is_array($content)) {
+				foreach ($content as $file) {
+					if (isset($file['path']) && file_exists($file['path'])) {
+						@unlink($file['path']);
+					}
+					// Optionally update DB file table if present
+				}
+			}
+
+			// mixed: { images: [...], files: [...] }
+			if ($post['content_type'] === 'mixed' && is_array($content)) {
+				if (isset($content['images']) && is_array($content['images'])) {
+					foreach ($content['images'] as $image) {
+						if (isset($image['path']) && file_exists($image['path'])) {
+							@unlink($image['path']);
+						}
+						if (isset($image['thumb']) && file_exists($image['thumb'])) {
+							@unlink($image['thumb']);
+						}
+						if (Config::get_safe('AUTO_CLEANUP_IMAGES', false)) {
+							DB::get_instance()->query("
+								UPDATE `images`
+								SET `status` = 5
+								WHERE `path` = ? OR `thumb` = ?
+							", $image['path'], $image['thumb']);
+						}
+					}
+				}
+				if (isset($content['files']) && is_array($content['files'])) {
+					foreach ($content['files'] as $file) {
+						if (isset($file['path']) && file_exists($file['path'])) {
+							@unlink($file['path']);
+						}
+					}
+				}
+			}
+		} catch (Exception $e) {
+			// Log error but continue with post deletion
+			error_log("Failed to delete media for post: " . $e->getMessage());
+		}
+	}
+
+	/**
+	 * Upload generic file attachment
+	 * Returns JSON metadata: valid, path (server), url (relative), name, size, mime
+	 */
+	public static function upload_file(){
+		self::login_protected();
+
+		if(!isset($_FILES['file'])){
+			return ["error" => true, "msg" => __("No file uploaded.")];
+		}
+
+		$file = $_FILES['file'];
+		if($file['error'] !== UPLOAD_ERR_OK){
+			return ["error" => true, "msg" => __("Upload error code: ") . $file['error']];
+		}
+
+		// Max size default: 5 GB -> 5 * 1024 * 1024 * 1024
+		$maxSize = Config::get_safe('MAX_FILE_UPLOAD', 5 * 1024 * 1024 * 1024);
+		if($file['size'] > $maxSize){
+			return ["error" => true, "msg" => __("File too large. Max ") . ($maxSize/1024/1024/1024) . "GB"];
+		}
+
+		// Mime detection
+		$finfo = finfo_open(FILEINFO_MIME_TYPE);
+		$mime = finfo_file($finfo, $file['tmp_name']);
+		finfo_close($finfo);
+
+		// Optional whitelist (if set in config)
+		$allowed = Config::get_safe('ALLOWED_FILE_TYPES', false);
+		if(is_array($allowed) && count($allowed) > 0 && !in_array($mime, $allowed)){
+			return ["error" => true, "msg" => __("File type not allowed: ") . $mime];
+		}
+
+		$uploadDir = PROJECT_PATH . 'uploads/files/';
+		if(!is_dir($uploadDir)){
+			@mkdir($uploadDir, 0755, true);
+		}
+
+		$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+		$base = bin2hex(random_bytes(8));
+		$destName = $base . ($ext ? '.' . $ext : '');
+		$destPath = $uploadDir . $destName;
+
+		if(!move_uploaded_file($file['tmp_name'], $destPath)){
+			return ["error" => true, "msg" => __("Failed to move uploaded file.")];
+		}
+
+		$relativeUrl = 'uploads/files/' . $destName;
+
+		return [
+			"valid" => true,
+			"path" => $destPath,
+			"url" => $relativeUrl,
+			"name" => $file['name'],
+			"size" => intval($file['size']),
+			"mime" => $mime
+		];
+	}
+
 	public static function delete($r){
+		self::login_protected();
+
+		$soft_delete = Config::get_safe('SOFT_DELETE', true);
+		$hard_delete_files = Config::get_safe('HARD_DELETE_FILES', true);
+		
+		// Get post content before deletion
+		$post = DB::get_instance()->query("
+			SELECT `content_type`, `content`
+			FROM `posts`
+			WHERE `id` = ?
+		", $r["id"])->first();
+
+		if (!$post) {
+			throw new Exception("Post not found.");
+		}
+
+		// SOFT DELETE: Just set status to 5 (trash)
+		if ($soft_delete) {
+			DB::get_instance()->query("
+				UPDATE `posts`
+				SET `status` = 5
+				WHERE `id` = ?
+			", $r["id"]);
+			
+			return [
+				"soft_deleted" => true, 
+				"can_restore" => true,
+				"can_permanent_delete" => $hard_delete_files
+			];
+		}
+
+		// HARD DELETE: Permanently remove from database
+		$should_delete_files = $hard_delete_files || !$soft_delete;
+		
+		if ($should_delete_files && in_array($post['content_type'], ['image', 'images', 'files', 'mixed'])) {
+			self::delete_post_images($post);
+		}
+
+		// Delete post from database (hard delete)
+		DB::get_instance()->query("
+			DELETE FROM `posts`
+			WHERE `id` = ?
+		", $r["id"]);
+
+		return [
+			"hard_deleted" => true, 
+			"files_deleted" => $should_delete_files,
+			"can_restore" => false
+		];
+	}
+
+	public static function permanent_delete($r){
+		self::login_protected();
+
+		$hard_delete_files = Config::get_safe('HARD_DELETE_FILES', true);
+		
+		$post = DB::get_instance()->query("
+			SELECT `content_type`, `content`
+			FROM `posts`
+			WHERE `id` = ?
+			AND `status` = 5
+		", $r["id"])->first();
+
+		if (!$post) {
+			throw new Exception("Post not found in trash.");
+		}
+
+		if ($hard_delete_files && in_array($post['content_type'], ['image', 'images', 'files', 'mixed'])) {
+			self::delete_post_images($post);
+		}
+
+		DB::get_instance()->query("
+			DELETE FROM `posts`
+			WHERE `id` = ?
+			AND `status` = 5
+		", $r["id"]);
+
+		return ["permanently_deleted" => true, "files_deleted" => $hard_delete_files];
+	}
+
+	public static function restore($r){
 		self::login_protected();
 
 		DB::get_instance()->query("
 			UPDATE `posts`
-			SET `status` = 5
+			SET `status` = 1
 			WHERE `id` = ?
+			AND `status` = 5
 		", $r["id"]);
-		return true;
+		
+		return ["restored" => true];
+	}
+
+	public static function list_trash($r){
+		self::login_protected();
+
+		if (DB::connection() === 'sqlite') {
+			$datetime = "strftime('%d %m %Y %H:%M', `posts`.`datetime`)";
+		} else if (DB::connection() === 'postgres') {
+			$datetime = "to_char(posts.datetime,'DD Mon YYYY HH24:MI')";
+		} else {
+			$datetime = "DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i')";
+		}
+
+		return DB::get_instance()->query("
+			SELECT
+				`id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`,
+				$datetime AS `datetime`
+			FROM `posts`
+			WHERE `status` = 5
+			ORDER BY `posts`.`datetime` DESC
+			LIMIT ? OFFSET ?
+		", $r["limit"] ?? 50, $r["offset"] ?? 0)->all();
+	}
+
+	public static function toggle_sticky($r){
+		self::login_protected();
+
+		$current = DB::get_instance()->query("
+			SELECT `is_sticky`
+			FROM `posts`
+			WHERE `id` = ?
+		", $r["id"])->first();
+
+		$new_status = $current['is_sticky'] ? 0 : 1;
+
+		DB::get_instance()->query("
+			UPDATE `posts`
+			SET `is_sticky` = ?
+			WHERE `id` = ?
+		", $new_status, $r["id"]);
+
+		return ["is_sticky" => $new_status];
 	}
 
 	public static function edit_data($r){
@@ -438,7 +857,7 @@ class Post
 		return DB::get_instance()->query("
 			SELECT
 				`id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`,
-				$datetime AS `datetime`, (`status` <> 1) AS `is_hidden`
+				$datetime AS `datetime`, (`status` <> 1) AS `is_hidden`, `is_sticky`
 			FROM `posts`
 			WHERE ".
 				(!User::is_logged_in() ? (User::is_visitor() ? "`privacy` IN ('public', 'friends') AND " : "`privacy` = 'public' AND ") : "").
@@ -449,7 +868,7 @@ class Post
 				($loc ? "`location` $like_match AND " : "").
 				($person ? "`persons` $like_match AND " : "").
 				"`status` <> 5
-			ORDER BY `posts`.`datetime` ".(@$r["sort"] == 'reverse' ? "ASC" : "DESC")."
+			ORDER BY `is_sticky` DESC, `posts`.`datetime` ".(@$r["sort"] == 'reverse' ? "ASC" : "DESC")."
 			LIMIT ? OFFSET ?
 			", $from, $to, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
 		)->all();

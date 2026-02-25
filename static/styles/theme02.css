@@ -73,32 +73,42 @@ body {
 }
 
 .bluebar {
-  background-color: var(--primary-background);
+background-color: #1877f2;
   border-bottom: 1px solid var(--primary-border);
   color: var(--primary-text);
-  height: 42px;
-  line-height: 42px;
+  line-height: 60px;
   position: relative;
   text-align: center;
+  margin: auto;
+  width: 51.5%;
+  padding: 10px;
+  border-radius: 25px;
+  height: 66px;
+  border: 1px solid #000;
+  display:none;
 }
 
 .bluebar h1 {
   margin: 0;
   padding: 0;
-  font-size: 24px;
-  font-weight: 300;
+  font-size: 38px;
+  font-weight: 500;
 }
 
 .cover > img {
-  max-width: 100%;
+max-width: 100%;
   max-height: 100%;
+  border-radius: 20px;
+  padding: 0px;
+
 }
 
 .headbar {
-  max-width: 850px;
+  max-width: 1000px;
   margin: 0 auto;
   border: 1px solid var(--primary-border);
   border-top: none;
+  border-radius: 25px;
 }
 
 .cover {
@@ -161,15 +171,15 @@ body {
 }
 
 #headline {
-  min-height: 21px;
+  min-height: 100px;
   padding: 10px;
   text-align: right;
-  background-color: var(--primary-background);
+  background-color: #ffffff0d;
 }
 
 #b_feed {
   margin: 0 auto;
-  max-width: 502px;
+  max-width: 1000px;
   padding: 20px 0;
 }
 
@@ -186,24 +196,27 @@ body {
 }
 
 .show_more {
-  height: 40px;
-  line-height: 40px;
-  position: relative;
-  margin-top: -40px;
-  display: block;
-  text-align: center;
-  background: -moz-linear-gradient(top, transparent 0%, var(--primary-background) 75%, var(--primary-background) 100%);
-  background: -webkit-linear-gradient(top, transparent 0%,var(--primary-background) 75%,var(--primary-background) 100%);
-  background: linear-gradient(to bottom, transparent 0%,var(--primary-background) 75%,var(--primary-background) 100%);
-  cursor: pointer;
+    height: 61px;
+    line-height: 54px;
+    position: relative;
+    margin-top: 20px; /* FIX: War -55px, jetzt positiv für besseren Abstand */
+    display: block;
+    text-align: center;
+    /* background: -moz-linear-gradient(top, transparent 0%, var(--primary-background) 75%, var(--primary-background) 100%); */
+    /* background: -webkit-linear-gradient(top, transparent 0%, var(--primary-background) 75%, var(--primary-background) 100%); */
+    background: #1877f2;
+    cursor: pointer;
+    border-radius: 25px;
+    max-width: 1000px;
 }
 
 .b_post {
   border-radius: 8px;
   background-color: var(--primary-background);
-  margin-bottom: 10px;
+  margin-bottom: 30px;
   padding: 12px;
   position: relative;
+  border: 1px solid #b9b9b9;
 }
 
 .b_overlay {
@@ -258,6 +271,7 @@ body {
   color: var(--primary-text);
   font-weight: bold;
   margin: 3px 0;
+  font-size: 20px;
 }
 
 .b_options,
@@ -598,7 +612,7 @@ body {
 }
 
 .modal-dialog {
-  max-width: 600px;
+  max-width: 998px;
   margin: 30px auto;
   position: relative;
   width: auto;
@@ -754,7 +768,7 @@ body {
 
 .button.gray {
   border: 0;
-  background-color: var(--secondary-background);
+  background-color: #1877f2;
 }
 .button.gray:hover,
 .button.gray:focus,
@@ -913,6 +927,7 @@ body {
   padding: 0 16px 0 0;
   margin: 0;
   box-sizing: border-box;
+  height: 200px;
 }
 
 .t_area .e_text  {
@@ -1292,4 +1307,19 @@ select {
     background-size: 16px 16px;
     /*original: theme02/7wYk0RRj5-g.png*/
   }
+  /*#emojiPicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+}
+#emojiPicker .emoji {
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: transform 0.1s;
+}
+#emojiPicker .emoji:hover {
+    transform: scale(1.3);
+}
+
 }

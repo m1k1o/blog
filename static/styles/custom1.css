@@ -1,0 +1,656 @@
+/* General layout & existing custom styles (kept from your file) */
+#b_feed {
+  max-width: 1000px;
+}
+.headbar {
+  max-width: 1000px;
+  background-color: #fff;
+}
+/* ============================================
+   COLLAPSE/EXPAND ANIMATION IMPROVEMENTS
+   ============================================ */
+/* Smooth animation for collapse/expand */
+.b_text {
+	transition: max-height 0.3s ease-out;
+	overflow: hidden;
+}
+
+/* Animate button on hover */
+.show_more {
+	transition: all 0.2s ease;
+}
+
+.show_more:hover {
+	transform: scale(1.02);
+	box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3) !important;
+}
+
+/* Optional: Fade effect for text at bottom when collapsed */
+.b_text.collapsed::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 50px;
+	background: linear-gradient(to bottom, transparent, var(--primary-background, #fff));
+	pointer-events: none;
+}
+
+/* Position for fade effect */
+.b_text.collapsed {
+	position: relative;
+}
+
+/* Prevent fade effect when expanded */
+.b_text:not(.collapsed)::after {
+	display: none;
+}
+
+/* Button icon (optional) */
+.show_more::before {
+	content: '▼';
+	display: inline-block;
+	margin-right: 8px;
+	transition: transform 0.3s ease;
+	font-size: 0.8em;
+}
+
+.show_more[data-expanded="true"]::before {
+	transform: rotate(180deg);
+	/*content: '▲';*/
+}
+/* ============================================
+   MULTI-IMAGE GALLERY STYLES
+   ============================================ */
+/* ===== UPLOAD PREVIEW ===== */
+.image-preview-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+	gap: 10px;
+	margin: 15px 0;
+	padding: 15px;
+	background: #f8f9fa;
+	border-radius: 12px;
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.image-preview-item {
+	position: relative;
+	aspect-ratio: 1;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	transition: all 0.3s;
+	cursor: pointer;
+}
+
+.image-preview-item:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.image-preview-item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.image-preview-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent);
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	padding: 8px;
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.image-preview-item:hover .image-preview-overlay {
+	opacity: 1;
+}
+
+.image-number {
+	background: rgba(0,0,0,0.7);
+	color: white;
+	padding: 4px 8px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.remove-image-btn {
+	background: #e74c3c;
+	color: white;
+	border: none;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	font-size: 20px;
+	line-height: 1;
+	cursor: pointer;
+	transition: all 0.3s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+}
+
+.remove-image-btn:hover {
+	background: #c0392b;
+	transform: scale(1.1);
+}
+
+.multi-upload-info {
+	background: #d1ecf1;
+	border: 1px solid #bee5eb;
+	border-radius: 8px;
+	padding: 12px;
+	margin: 10px 0;
+	color: #0c5460;
+	text-align: center;
+	font-size: 14px;
+}
+
+.image-count {
+	font-weight: bold;
+}
+
+/* ===== GALLERY IN FEED (50% size) ===== */
+.b_gallery {
+	display: grid;
+	gap: 4px;
+	margin: 10px auto 0;
+	background: #000;
+	border-radius: 8px;
+	overflow: hidden;
+	width: 50%;
+	max-width: 50%;
+	box-sizing: border-box;
+}
+
+.b_gallery_item {
+	position: relative;
+	overflow: hidden;
+	display: block;
+	line-height: 0;
+	width: 100%;
+}
+
+.b_gallery_item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	transition: transform 0.3s;
+}
+
+.b_gallery_item:hover img {
+	transform: scale(1.05);
+}
+
+/* 1 Image */
+.b_gallery.gallery-grid-1 {
+	grid-template-columns: 1fr;
+}
+
+.b_gallery.gallery-grid-1 .b_gallery_item {
+	aspect-ratio: 16 / 9;
+	max-height: 250px;
+}
+
+/* 2 Images */
+.b_gallery.gallery-grid-2 {
+	grid-template-columns: 1fr 1fr;
+}
+
+.b_gallery.gallery-grid-2 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 200px;
+}
+
+/* 3 Images */
+.b_gallery.gallery-grid-3 {
+	grid-template-columns: repeat(3, 1fr);
+}
+
+.b_gallery.gallery-grid-3 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 150px;
+}
+
+/* 4 Images - one row */
+.b_gallery.gallery-grid-4 {
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.b_gallery.gallery-grid-4 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 150px;
+}
+
+/* 5 Images - 4 + 1 */
+.b_gallery.gallery-grid-5 {
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.b_gallery.gallery-grid-5 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 150px;
+}
+
+.b_gallery.gallery-grid-5 .b_gallery_item:nth-child(5) {
+	grid-column: 2 / 4;
+}
+
+/* 6 Images - 4 + 2 */
+.b_gallery.gallery-grid-6 {
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.b_gallery.gallery-grid-6 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 150px;
+}
+
+.b_gallery.gallery-grid-6 .b_gallery_item:nth-child(5) {
+	grid-column: 2 / 3;
+}
+
+.b_gallery.gallery-grid-6 .b_gallery_item:nth-child(6) {
+	grid-column: 3 / 4;
+}
+
+/* 7 Images - 4 + 3 */
+.b_gallery.gallery-grid-7 {
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.b_gallery.gallery-grid-7 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 150px;
+}
+
+/* 8 Images - 4 + 4 */
+.b_gallery.gallery-grid-8 {
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.b_gallery.gallery-grid-8 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 150px;
+}
+
+/* 9 Images - 4 + 4 + 1 */
+.b_gallery.gallery-grid-9 {
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.b_gallery.gallery-grid-9 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 150px;
+}
+
+.b_gallery.gallery-grid-9 .b_gallery_item:nth-child(9) {
+	grid-column: 2 / 4;
+}
+
+/* 10 Images - 4 + 4 + 2 */
+.b_gallery.gallery-grid-10 {
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.b_gallery.gallery-grid-10 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 150px;
+}
+
+.b_gallery.gallery-grid-10 .b_gallery_item:nth-child(9) {
+	grid-column: 2 / 3;
+}
+
+.b_gallery.gallery-grid-10 .b_gallery_item:nth-child(10) {
+	grid-column: 3 / 4;
+}
+
+/* 11 Images - 4 + 4 + 3 */
+.b_gallery.gallery-grid-11 {
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.b_gallery.gallery-grid-11 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 150px;
+}
+
+.b_gallery.gallery-grid-11 .b_gallery_item:nth-child(9) {
+	grid-column: 1 / 2;
+}
+
+.b_gallery.gallery-grid-11 .b_gallery_item:nth-child(10) {
+	grid-column: 2 / 3;
+}
+
+.b_gallery.gallery-grid-11 .b_gallery_item:nth-child(11) {
+	grid-column: 3 / 4;
+}
+
+/* 12 Images - 4 + 4 + 4 (perfect grid) */
+.b_gallery.gallery-grid-12 {
+	grid-template-columns: repeat(4, 1fr);
+}
+
+.b_gallery.gallery-grid-12 .b_gallery_item {
+	aspect-ratio: 1;
+	max-height: 150px;
+}
+
+/* "+X" overlay for more than 12 images (on last visible image) */
+.gallery-more-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0,0,0,0.7);
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 36px;
+	font-weight: bold;
+	pointer-events: none;
+}
+
+/* ===== Post Content Container Fix ===== */
+.b_post .b_content {
+	overflow: visible;
+	width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0;
+	padding: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+	.b_gallery {
+		width: 60%;
+		max-width: 60%;
+	}
+}
+
+@media (max-width: 768px) {
+	.image-preview-container {
+		grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+		gap: 8px;
+	}
+	
+	/* On mobile: enlarge gallery to 100% */
+	.b_gallery {
+		width: 100%;
+		max-width: 100%;
+	}
+	
+	/* On mobile: reduce grid to 2 columns */
+	.b_gallery.gallery-grid-3,
+	.b_gallery.gallery-grid-4,
+	.b_gallery.gallery-grid-5,
+	.b_gallery.gallery-grid-6,
+	.b_gallery.gallery-grid-7,
+	.b_gallery.gallery-grid-8,
+	.b_gallery.gallery-grid-9,
+	.b_gallery.gallery-grid-10,
+	.b_gallery.gallery-grid-11,
+	.b_gallery.gallery-grid-12 {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	
+	/* ✅ FIX: Force all images to be square on mobile */
+	.b_gallery .b_gallery_item {
+		aspect-ratio: 1 !important;
+		max-height: none !important;
+	}
+	
+	/* Reset special positioning on mobile */
+	.b_gallery.gallery-grid-5 .b_gallery_item:nth-child(5),
+	.b_gallery.gallery-grid-6 .b_gallery_item:nth-child(5),
+	.b_gallery.gallery-grid-6 .b_gallery_item:nth-child(6),
+	.b_gallery.gallery-grid-9 .b_gallery_item:nth-child(9),
+	.b_gallery.gallery-grid-10 .b_gallery_item:nth-child(9),
+	.b_gallery.gallery-grid-10 .b_gallery_item:nth-child(10),
+	.b_gallery.gallery-grid-11 .b_gallery_item:nth-child(9),
+	.b_gallery.gallery-grid-11 .b_gallery_item:nth-child(10),
+	.b_gallery.gallery-grid-11 .b_gallery_item:nth-child(11) {
+		grid-column: auto;
+	}
+	
+	.gallery-more-overlay {
+		font-size: 24px;
+	}
+}
+
+@media (max-width: 480px) {
+	.b_gallery {
+		width: 100%;
+		max-width: 100%;
+	}
+}
+
+/* ===== UPLOAD PROGRESS ===== */
+.e_loading .progress-text {
+	text-align: center;
+	margin-top: 10px;
+	font-size: 14px;
+	color: #666;
+}
+
+/* ===== DRAG & DROP HIGHLIGHT ===== */
+.drop_space.dragover {
+	border-color: #667eea;
+	background: rgba(102, 126, 234, 0.1);
+}
+
+/* ===== LIGHTBOX ADJUSTMENTS ===== */
+.lb-data .lb-number {
+	font-size: 14px;
+	color: #fff;
+}
+
+/* Lightbox Caption */
+.lb-data .lb-caption {
+	font-weight: normal;
+	line-height: 1.5;
+}
+
+/* ===== EDITABLE GALLERY (while editing) ===== */
+.b_gallery_edit {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+	gap: 10px;
+	padding: 15px;
+	background: #f8f9fa;
+	border-radius: 12px;
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.b_gallery_edit_item {
+	position: relative;
+	aspect-ratio: 1;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	transition: all 0.3s;
+}
+
+.b_gallery_edit_item:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.b_gallery_edit_item img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.gallery-image-number {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	background: rgba(0,0,0,0.7);
+	color: white;
+	padding: 4px 8px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: bold;
+	pointer-events: none;
+}
+
+.remove-gallery-image-btn {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	background: #e74c3c;
+	color: white;
+	border: none;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	font-size: 24px;
+	line-height: 1;
+	cursor: pointer;
+	transition: all 0.3s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	opacity: 0;
+	transform: scale(0.8);
+}
+
+.b_gallery_edit_item:hover .remove-gallery-image-btn {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.remove-gallery-image-btn:hover {
+	background: #c0392b;
+	transform: scale(1.1) !important;
+}
+
+.remove-gallery-image-btn:active {
+	transform: scale(0.95) !important;
+}
+
+/* ===== FILE ATTACH (paperclip) - targeted fixes (keine globalen Overrides) ===== */
+
+/* Ensure the label used for the paperclip matches other option icon size,
+   but do not touch ul.options li a which contains the other icon backgrounds. */
+ul.options li.file_attach {
+  display: inline-block;
+  margin-right: 6px;
+  vertical-align: middle;
+  position: relative; /* for absolute input inside */
+}
+
+/* The label itself (only for the file_attach li) */
+ul.options li.file_attach > .file-attach-label,
+ul.options li.file_attach > label.file-attach-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 6px;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative; /* positioning context for the input */
+}
+
+/* visible icon inside the label - centered and non-blocking for clicks */
+ul.options li.file_attach .file-attach-label .file-icon {
+  font-size: 18px;
+  line-height: 1;
+  pointer-events: none; /* allow clicks to pass through to input */
+  display: inline-block;
+  color: inherit;
+  transform: translateY(-1px); /* slight nudge to match baseline */
+}
+
+/* Invisible input overlay: covers the whole label and is clickable */
+ul.options li.file_attach .file-attach-label input[type="file"] {
+  position: absolute;
+  inset: 0;               /* top:0; right:0; bottom:0; left:0; */
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  z-index: 4;
+  background: transparent;
+}
+
+/* Hover / focus feedback for the label, similar to icon anchors */
+ul.options li.file_attach > .file-attach-label:hover,
+ul.options li.file_attach > .file-attach-label:focus-within {
+  background: rgba(0,0,0,0.03);
+  outline: none;
+}
+
+/* Accessibility: visible focus for keyboard users */
+ul.options li.file_attach > .file-attach-label:focus-within {
+  outline: 2px solid rgba(0,123,255,0.08);
+  outline-offset: 2px;
+}
+
+/* Keep file preview rules intact (no change) */
+.file-preview-container {
+  display: none;
+  margin-top: 8px;
+}
+.file-preview-item {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 6px 8px;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  background: #fafafa;
+  font-size: 13px;
+  color: #333;
+  vertical-align: middle;
+}
+.file-preview-item .file-name {
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: middle;
+}
+.file-preview-item .remove-file-btn {
+  margin-left: 6px;
+  border: 0;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  font-size: 14px;
+  vertical-align: middle;
+}

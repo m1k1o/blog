@@ -15,7 +15,7 @@ class Ajax
 			"msg" => $msg
 		];
 
-		// Incldue debug info
+		// Include debug info
 		if(ob_get_length() > 0 && Config::get_safe('debug', false)){
 			$this->_response["debug"] = ob_get_clean();
 		}
@@ -48,7 +48,8 @@ class Ajax
 			ob_clean();
 		}
 
-		header('Content-Type: application/json');
-		echo json_encode($this->_response);
+		header('Content-Type: application/json; charset=utf-8');
+		// IMPORTANT: JSON_UNESCAPED_UNICODE ensures emojis are transmitted correctly
+		echo json_encode($this->_response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 	}
 }
