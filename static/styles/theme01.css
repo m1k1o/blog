@@ -122,7 +122,7 @@ body {
   height: 40px;
   line-height: 40px;
   position: relative;
-  margin-top: -40px;
+  margin-top: 20px; /* FIX: War -40px, jetzt positiv für besseren Abstand */
   display: block;
   text-align: center;
   background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 75%, rgba(255,255,255,1) 100%);

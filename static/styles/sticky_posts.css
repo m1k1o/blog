@@ -1,0 +1,96 @@
+/* ============================================
+   STICKY POSTS STYLING
+   ============================================ */
+/* These styles must be included in main.css or as a separate CSS file */
+
+/* Sticky post highlighting */
+.post_row.sticky {
+	position: relative;
+	border: 2px solid #ff0000 !important;
+	/* background: linear-gradient(to right, rgba(255, 215, 0, 0.05), transparent 20%) !important;*/
+	background: #fff;
+}
+
+/* Sticky pin icon top right */
+.post_row.sticky::before {
+	content: "📌";
+	position: absolute;
+	top: 10px;
+	right: 50px;
+	font-size: 20px;
+	opacity: 0.6;
+	z-index: 5;
+}
+
+/* Sticky badge next to date */
+.post_row.sticky .b_date::after {
+	content: " • Sticky";
+	color: #FFD700;
+	font-weight: bold;
+	font-size: 0.9em;
+	margin-left: 8px;
+}
+
+/* Alternative: More subtle variant */
+.post_row.sticky.subtle {
+	border-left: 3px solid #4CAF50 !important;
+	background: rgba(76, 175, 80, 0.02) !important;
+}
+
+.post_row.sticky.subtle::before {
+	content: "📍";
+	font-size: 16px;
+	top: 8px;
+	right: 8px;
+	opacity: 0.5;
+}
+
+/* Hover effect for sticky posts */
+.post_row.sticky:hover {
+	box-shadow: 0 2px 12px rgba(255, 215, 0, 0.2) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+	.post_row.sticky::before {
+		font-size: 16px;
+		top: 8px;
+		right: 8px;
+	}
+	
+	.post_row.sticky .b_date::after {
+		display: none; /* Hide text badge on mobile */
+	}
+}
+
+/* Sticky button styles in dropdown */
+.post_tools .sticky_post,
+.post_tools .unsticky_post {
+	color: #FFD700 !important;
+	font-weight: 500;
+}
+
+.post_tools .sticky_post:hover,
+.post_tools .unsticky_post:hover {
+	background: rgba(255, 215, 0, 0.1) !important;
+}
+
+/* Animation on load */
+.post_row.sticky {
+	animation: stickyHighlight 5s ease-in-out;
+}
+
+@keyframes stickyHighlight {
+	0% {
+		border-left-color: transparent;
+		background: transparent;
+	}
+	50% {
+		border-left-color: #FFD700;
+		background: rgba(255, 215, 0, 0.15);
+	}
+	100% {
+		border-left-color: #FFD700;
+		background: linear-gradient(to right, rgba(255, 215, 0, 0.05), transparent 20%);
+	}
+}

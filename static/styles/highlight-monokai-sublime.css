@@ -9,6 +9,9 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
   overflow-x: auto;
   padding: 0.5em;
   background: #23241f;
+  max-width: 100%; /* FIX: Responsive statt fixer Breite */
+  margin: auto;
+  box-sizing: border-box; /* Verhindert overflow */
 }
 
 .hljs,
