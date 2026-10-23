@@ -171,7 +171,7 @@ chmod 777 ./data/
 ## Install
 If you have decided that you don't want to use Docker, you can intall it manually.
 
-**Requirements:** Apache 2.0*, PHP 7.4, (MariaDB 10.1 or SQLite 3)
+**Requirements:** Apache 2.0*, PHP 8.0+, (MariaDB 10.1 or SQLite 3)
 
 **NOTICE:** If you would like to use Nginx or another web server, make sure that the sensitive data are not exposed to the public. Since `.htaccess` is protecting those files in Apache, that could not be the case in a different environment. Take care of:
 * **config.ini** - disallow access to all *.ini* files for the public.

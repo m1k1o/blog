@@ -216,8 +216,8 @@ class Post
 			WHERE `id` = ?
 			AND `status` <> 5
 		", $r["id"])->first("date_format");
-		$date = array_map("intval", explode(" ", $date));
-		$date[4]  = floor($date[4]/10)*10;
+		$date = array_map("intval", explode(" ", (string)$date));
+		$date[4]  = floor(($date[4] ?? 0)/10)*10;
 		return $date;
 	}
 
@@ -306,7 +306,6 @@ class Post
 
 		curl_setopt($ch, CURLOPT_URL, $curl_request_url);
 		$html = curl_exec($ch);
-		curl_close($ch);
 
 		// Parse
 		$doc = new DOMDocument();
@@ -314,7 +313,7 @@ class Post
 
 		// Get title
 		$nodes = $doc->getElementsByTagName('title');
-		$title = $nodes->item(0)->nodeValue;
+		$title = $nodes->item(0)?->nodeValue;
 
 		// Content
 		$content = [
@@ -388,20 +387,20 @@ class Post
 
 	public static function load($r){
 		$from = [];
-		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", @$r["filter"]["from"])){
+		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", $r["filter"]["from"] ?? '')){
 			$from = $r["filter"]["from"]."-01 00:00";
 		}
 
-		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", @$r["filter"]["from"])){
+		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $r["filter"]["from"] ?? '')){
 			$from = $r["filter"]["from"]." 00:00";
 		}
 
 		$to = [];
-		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", @$r["filter"]["to"])){
+		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", $r["filter"]["to"] ?? '')){
 			$to = $r["filter"]["to"]."-01 00:00";
 		}
 
-		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", @$r["filter"]["to"])){
+		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $r["filter"]["to"] ?? '')){
 			$to = $r["filter"]["to"]." 00:00";
 		}
 
@@ -411,7 +410,7 @@ class Post
 		}
 
 		$tag = [];
-		if(preg_match("/^[A-Za-z0-9-_]+$/", @$r["filter"]["tag"])){
+		if(preg_match("/^[A-Za-z0-9-_]+$/", $r["filter"]["tag"] ?? '')){
 			$tag = '#'.$r["filter"]["tag"];
 		}
 

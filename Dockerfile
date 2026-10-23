@@ -1,14 +1,11 @@
-FROM php:7.4-apache
+FROM php:8.5-apache-trixie
 
 RUN set -eux; apt-get update; \
 	apt-get install -y --no-install-recommends libpq-dev \
 	#
-	# install curl
-	libcurl4-openssl-dev \
-	#
 	# install gd dependencies
-	zlib1g-dev libpng-dev libjpeg-dev \
-	libwebp-dev libxpm-dev libfreetype6-dev; \
+	zlib1g-dev libpng-dev libjpeg62-turbo-dev \
+	libwebp-dev libxpm-dev libfreetype-dev; \
 	#
 	# clean up
 	rm -rf /var/lib/apt/lists/*; \
@@ -17,8 +14,8 @@ RUN set -eux; apt-get update; \
 	docker-php-ext-configure gd --enable-gd \
 	--with-jpeg --with-webp --with-xpm --with-freetype; \
 	#
-	# install extensions
-	docker-php-ext-install curl gd pdo pdo_mysql pdo_pgsql exif; \
+	# install extensions (curl and pdo are built into the base image)
+	docker-php-ext-install gd pdo_mysql pdo_pgsql exif; \
 	#
 	# set up environment
 	a2enmod rewrite;

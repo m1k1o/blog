@@ -26,14 +26,14 @@ class Log
 	}
 
 	private static function escape($_text = null){
-		return preg_replace("/[\n\r\t]/", "-", $_text);
+		return preg_replace("/[\n\r\t]/", "-", (string)$_text);
 	}
 
 	private static function line($_text = null){
 		return trim(
 			date('Y-m-d H:i:s')."\t".
 			self::escape($_SERVER["REMOTE_ADDR"])."\t".
-			self::escape($_SERVER["HTTP_USER_AGENT"])."\t".
+			self::escape($_SERVER["HTTP_USER_AGENT"] ?? '')."\t".
 			self::escape($_text)
 		).PHP_EOL;
 	}

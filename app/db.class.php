@@ -51,7 +51,7 @@ class DB
 		}
 	}
 
-	private final function mysql_connect(){
+	private function mysql_connect(){
 		$host = Config::get_safe('mysql_host', false);
 		$port = Config::get_safe('mysql_port', false);
 		$socket = Config::get_safe('mysql_socket', false);
@@ -96,7 +96,7 @@ class DB
 		}
 	}
 
-	private final function postgres_connect(){
+	private function postgres_connect(){
 		$host = Config::get_safe('postgres_host', false);
 		$port = Config::get_safe('postgres_port', false);
 		$socket = Config::get_safe('postgres_socket', false);
@@ -138,7 +138,7 @@ class DB
 		}
 	}
 
-	private final function sqlite_connect(){
+	private function sqlite_connect(){
 		$sqlite_db = PROJECT_PATH.Config::get_safe('sqlite_db', "data/sqlite.db");
 
 		// First run of sqlite
@@ -180,7 +180,7 @@ class DB
 	}
 
 	// Just flattern array to be binded : [key1, key2, [key3, [key4]]] => [key1, key2, key3, key4]
-	private final function bind_value($key, $value){
+	private function bind_value($key, $value){
 		if(is_array($value)){
 			foreach($value as $one_value){
 				$key = $this->bind_value($key, $one_value);

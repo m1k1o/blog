@@ -34,7 +34,7 @@ class Image
 			return $img;
 		}
 
-		$exif = exif_read_data($path);
+		$exif = @exif_read_data($path);
 		if(!$exif || !isset($exif['Orientation'])){
 			return $img;
 		}
@@ -63,6 +63,10 @@ class Image
 		ini_set('memory_limit', '128M');
 
 		$source_details = getimagesize($source_path);
+		if(!$source_details || !$source_details[0] || !$source_details[1]){
+			return false;
+		}
+
 		$source_w = $source_details[0];
 		$source_h = $source_details[1];
 
@@ -171,7 +175,9 @@ class Image
 		// Create thumb
 		if(!self::thumb($path, $thumb)){
 			unlink($path);
-			unlink($thumb);
+			if(file_exists($thumb)){
+				unlink($thumb);
+			}
 			throw new Exception("File is not valid image.");
 		}
 
