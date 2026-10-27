@@ -29,7 +29,7 @@ class Post
 
 				public function asHtml(\JBBCode\ElementNode $el){
 					$content = $this->getContent($el);
-					$class = $el->getAttribute()['code'];
+					$class = htmlspecialchars($el->getAttribute()['code'], ENT_QUOTES, 'UTF-8');
 					return '<code class="'.$class.'">'.htmlentities($content).'</code>';
 				}
 			});

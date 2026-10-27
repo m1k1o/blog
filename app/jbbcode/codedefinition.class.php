@@ -130,11 +130,11 @@ class CodeDefinition
             $options = $el->getAttribute();
             if(count($options)==1){
                 $vals = array_values($options);
-                $html = str_ireplace('{option}', reset($vals), $html);
+                $html = str_ireplace('{option}', htmlspecialchars(reset($vals), ENT_QUOTES, 'UTF-8'), $html);
             }
             else{
                 foreach($options as $key => $val){
-                    $html = str_ireplace('{' . $key . '}', $val, $html);
+                    $html = str_ireplace('{' . $key . '}', htmlspecialchars($val, ENT_QUOTES, 'UTF-8'), $html);
                 }
             }
         }
