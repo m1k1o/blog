@@ -151,7 +151,13 @@ class Image
 
 		// Get metadata
 		$name = $_FILES['file']['name'];
-		$ext = pathinfo($name, PATHINFO_EXTENSION);
+		$ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+
+		// Validate extension against supported image types
+		$allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'wbmp', 'bmp'];
+		if (!in_array($ext, $allowed_extensions, true)) {
+			throw new Exception("File type not allowed.");
+		}
 
 		// Save to DB
 		$id = DB::get_instance()->insert('images', [
