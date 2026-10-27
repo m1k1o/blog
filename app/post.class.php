@@ -258,7 +258,17 @@ class Post
 		}
 
 		preg_match('/^https?:\/\/(www\.)?([^:\/\s]+)(.*)?$/i', $l, $url);
+		if (!$url) {
+			throw new Exception("Invalid URL.");
+		}
 		$curl_request_url = $l;
+
+		// SSRF protection: validate resolved IP is not private/reserved
+		$host = parse_url($l, PHP_URL_HOST);
+		$resolved_ip = gethostbyname($host);
+		if ($resolved_ip === $host || filter_var($resolved_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+			throw new Exception("URL resolves to a private or reserved IP address.");
+		}
 
 		// Get content
 		$ch = curl_init();
@@ -266,6 +276,7 @@ class Post
 		curl_setopt($ch, CURLOPT_ENCODING , "");
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
 		curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Proxycat/1.1)");
 		curl_setopt($ch, CURLOPT_REFERER, '');
 		curl_setopt($ch, CURLOPT_TIMEOUT, 7); // 7sec
