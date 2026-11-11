@@ -203,7 +203,7 @@ if (Config::get_safe("version", false)) {
 						</table>
 						<div class="modal-footer">
 							<ul class="options">
-								<li class="kepet"><a><span><input type="file" accept="image/*" multiple class="photo_upload" name="file"></span></a></li>
+								<li class="kepet"><a><span><input type="file" accept="image/*,.heic,.heif" multiple class="photo_upload" name="file"></span></a></li>
 								<li class="feeling"><a></a></li>
 								<li class="persons"><a></a></li>
 								<li class="location"><a></a></li>

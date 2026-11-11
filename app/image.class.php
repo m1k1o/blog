@@ -59,6 +59,28 @@ class Image
 		return $img;
 	}
 
+	private static function heic_supported(){
+		return extension_loaded('imagick') && !empty(Imagick::queryFormats('HEIC'));
+	}
+
+	private static function heic_to_jpeg($source_path, $target_path){
+		try {
+			$img = new Imagick();
+
+			// Force HEIC decoder, so that no other ImageMagick coder is used for untrusted input
+			$img->readImage('heic:'.$source_path);
+			$img->setImageFormat('jpeg');
+			$img->setImageCompressionQuality(90);
+
+			// Orientation is already applied by decoder, remove metadata so that it is not applied twice
+			$img->stripImage();
+
+			return $img->writeImage($target_path);
+		} catch (ImagickException $e) {
+			return false;
+		}
+	}
+
 	private static function thumb($source_path, $thumb_path){
 		ini_set('memory_limit', '128M');
 
@@ -154,9 +176,19 @@ class Image
 		$ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
 
 		// Validate extension against supported image types
-		$allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'wbmp', 'bmp'];
+		$allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'wbmp', 'bmp', 'heic', 'heif'];
 		if (!in_array($ext, $allowed_extensions, true)) {
 			throw new Exception("File type not allowed.");
+		}
+
+		// HEIC images can not be displayed by most browsers, convert them to JPEG
+		$is_heic = in_array($ext, ['heic', 'heif'], true);
+		if ($is_heic) {
+			if (!self::heic_supported()) {
+				throw new Exception("HEIC images are not supported, Imagick extension with HEIC support is required.");
+			}
+
+			$ext = 'jpg';
 		}
 
 		// Save to DB
@@ -176,6 +208,12 @@ class Image
 		// Save path
 		if(!move_uploaded_file($_FILES['file']['tmp_name'], $path)){
 			throw new Exception(self::PHP_FILE_UPLOAD_ERRORS[$_FILES['file']['error']]);
+		}
+
+		// Convert HEIC to JPEG
+		if($is_heic && !self::heic_to_jpeg($path, $path)){
+			unlink($path);
+			throw new Exception("File is not valid image.");
 		}
 
 		// Create thumb

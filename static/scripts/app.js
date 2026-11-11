@@ -508,7 +508,8 @@ $.fn.apply_edit = function(data){
 		};
 
 		var upload_image = function(file) {
-			if(file.type.match(/image/) === null){
+			// HEIC images might not have MIME type set by browser
+			if(file.type.match(/image/) === null && file.name.match(/\.hei[cf]$/i) === null){
 				$("body").error_msg("Only images can be uploaded.");
 				return ;
 			}
