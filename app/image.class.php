@@ -148,6 +148,51 @@ class Image
 			&& $imgt($old_image, $source_path);
 	}
 
+	// Delete uploaded image and its thumbnail, if it is not used by any post
+	public static function delete_unused($path){
+		// Only images uploaded to the blog can be deleted
+		$images = DB::get_instance()->query("
+			SELECT `path`, `thumb`
+			FROM `images`
+			WHERE `path` = ?
+		", $path)->all();
+
+		if(empty($images)){
+			return false;
+		}
+
+		// The same image can be used by multiple posts, because uploads are deduplicated.
+		// Search by file name only, so that differently encoded paths are matched as well.
+		$like_match = "LIKE ".DB::concat("'%'", "?", "'%'");
+		$name = basename($path);
+
+		$used = DB::get_instance()->query("
+			SELECT COUNT(*) AS `count`
+			FROM `posts`
+			WHERE `content` $like_match
+			OR `plain_text` $like_match
+		", $name, $name)->first("count");
+
+		if($used){
+			return false;
+		}
+
+		foreach($images as $image){
+			foreach([$image["path"], $image["thumb"]] as $file){
+				if($file && is_file($file)){
+					unlink($file);
+				}
+			}
+		}
+
+		DB::get_instance()->query("
+			DELETE FROM `images`
+			WHERE `path` = ?
+		", $path);
+
+		return true;
+	}
+
 	public static function upload(){
 		if(!$_FILES){
 			throw new Exception("No file.");
