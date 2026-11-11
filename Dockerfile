@@ -5,7 +5,10 @@ RUN set -eux; apt-get update; \
 	#
 	# install gd dependencies
 	zlib1g-dev libpng-dev libjpeg62-turbo-dev \
-	libwebp-dev libxpm-dev libfreetype-dev; \
+	libwebp-dev libxpm-dev libfreetype-dev \
+	#
+	# install imagick dependencies (libheif plugin is needed for HEIC images)
+	libmagickwand-7.q16-10 libheif-plugin-libde265 libmagickwand-dev; \
 	#
 	# clean up
 	rm -rf /var/lib/apt/lists/*; \
@@ -16,6 +19,11 @@ RUN set -eux; apt-get update; \
 	#
 	# install extensions (curl and pdo are built into the base image)
 	docker-php-ext-install gd pdo_mysql pdo_pgsql exif; \
+	pecl install imagick; \
+	docker-php-ext-enable imagick; \
+	#
+	# remove imagick build dependencies
+	apt-get purge -y --auto-remove libmagickwand-dev; \
 	#
 	# set up environment
 	a2enmod rewrite;
