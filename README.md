@@ -191,7 +191,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 # Features
 
 * Dark mode, retina ready, legacy theme available.
-* Use BBcode in texts.
+* Use BBcode in texts, see [Text formatting](#text-formatting).
 * Make posts available for **everyone**, **only you** or just for **friends**.
 * Extra fields in post: **Feeling**, **With** and **At**.
 * Hide posts from timeline so they are visible only when you need them to be.
@@ -211,6 +211,37 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Display posts from chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#from=2017-06`.
 * Display posts to chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#to=2017-06`.
 * Combine parameters in url using `&`, e.g. show posts between dates: `http://blog/#from=2017-06&to=2017-08`.
+
+## Text formatting
+
+Posts support the following BBCode tags:
+
+| Tag | Result |
+| --- | --- |
+| `[b]text[/b]` | **Bold** text. |
+| `[i]text[/i]` | *Italic* text. |
+| `[u]text[/u]` | Underlined text. |
+| `[url]https://example.com[/url]` | Link, the URL is used as its text. |
+| `[url=https://example.com]text[/url]` | Link with custom text, which can contain other tags. |
+| `[img]https://example.com/image.png[/img]` | Image, a full URL is required (relative paths are not supported). |
+| `[img=alt text]https://example.com/image.png[/img]` | Image with alternative text. |
+| `[color=red]text[/color]` | Colored text, accepts CSS colors such as `red`, `#ff0000` or `rgb(255,0,0)`. |
+| `[code]code[/code]` | Highlighted code, language can be specified as `[code=css]`. Requires `highlight = true` in config (enabled by default). |
+| `[goal]text[/goal]` | Highlighted goal with a star icon, use `[goal=trophy]` for a trophy icon. |
+
+Formatting that works without tags:
+
+* `*text*` is shown in bold.
+* `http://` and `https://` URLs are converted to links.
+* `#tags` (allowed characters `A-Za-z0-9-_` terminated by space or EOL) can be clicked to filter posts.
+* New lines are kept.
+
+Other tags, such as `[s]` or `[list]`, are not supported and are shown as plain text. You can add your own tags in config, `{param}` is replaced with the content of the tag:
+
+```ini
+[bbcode]
+bbtags[quote] = "<blockquote>{param}</blockquote>"
+```
 
 ## Access control
 
