@@ -180,12 +180,60 @@ class Post
 	public static function delete($r){
 		self::login_protected();
 
+		if(Config::get_safe("hard_delete", false)){
+			return self::hard_delete($r["id"]);
+		}
+
 		DB::get_instance()->query("
 			UPDATE `posts`
 			SET `status` = 5
 			WHERE `id` = ?
 		", $r["id"]);
 		return true;
+	}
+
+	private static function hard_delete($id){
+		$post = DB::get_instance()->query("
+			SELECT `content`
+			FROM `posts`
+			WHERE `id` = ?
+		", $id)->first();
+
+		if(!$post){
+			return true;
+		}
+
+		DB::get_instance()->query("
+			DELETE FROM `posts`
+			WHERE `id` = ?
+		", $id);
+
+		// Remove uploaded images, that are not used in any other post
+		foreach(self::content_images($post["content"]) as $path){
+			Image::delete_unused($path);
+		}
+
+		return true;
+	}
+
+	// Get paths of uploaded images from post content
+	private static function content_images($content){
+		$content = json_decode((string)$content, true);
+		if(!is_array($content)){
+			return [];
+		}
+
+		// Single image is an object, multiple images are a list of objects
+		$images = array_key_exists("path", $content) ? [$content] : $content;
+
+		$paths = [];
+		foreach($images as $image){
+			if(is_array($image) && isset($image["path"]) && is_string($image["path"])){
+				$paths[] = $image["path"];
+			}
+		}
+
+		return $paths;
 	}
 
 	public static function edit_data($r){
