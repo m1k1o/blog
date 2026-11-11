@@ -161,6 +161,29 @@ var cnt_funcs = {
 		obj.find("img").attr("src", data.thumb);
 
 		return obj;
+	},
+	images: function(data){
+		var obj = $("#prepared .b_imgs").clone();
+		var group = 'images-'+lightboxes++;
+
+		// Layout of the grid depends on number of images
+		obj.addClass("count-"+Math.min(data.length, 4));
+
+		$.each(data, function(i, image){
+			var img = $("#prepared .b_img").clone();
+			img.attr("href", image.path);
+			img.attr("data-lightbox", group);
+			img.find("img").attr("src", image.thumb);
+
+			// Only first four images are visible, last of them shows how many are left
+			if(i == 3 && data.length > 4){
+				img.append($('<span class="more"></span>').text("+"+(data.length - 4)));
+			}
+
+			obj.append(img);
+		});
+
+		return obj;
 	}
 };
 
@@ -424,6 +447,9 @@ $.fn.apply_edit = function(data){
 	// Parse link
 	var ignored_links = [], is_content = false;
 
+	// Uploaded images of the post
+	var images = [];
+
 	return this.each(function(){
 		var modal = $(this);
 
@@ -436,14 +462,40 @@ $.fn.apply_edit = function(data){
 			modal.find(".e_loading .e_meter > span").width((progress * 100) + "%");
 		};
 
-		var remove_content = function(){
+		var remove_content_loading = function(){
 			modal.find(".e_loading").hide();
 			modal.find(".e_loading .e_meter > span").width(0);
+		};
+
+		var remove_content = function(){
+			remove_content_loading();
 
 			modal.find(".content").empty().hide();
 			modal.find(".i_content_type").val("");
 			modal.find(".i_content").val("");
 			is_content = false;
+			images = [];
+		};
+
+		// Single image is stored as "image" content, multiple images as "images" content
+		var set_images = function(){
+			if(images.length === 0){
+				remove_content();
+			} else if(images.length === 1){
+				add_content("image", images[0]);
+			} else {
+				add_content("images", images.slice());
+			}
+		};
+
+		var add_image = function(image){
+			images.push(image);
+			set_images();
+		};
+
+		var remove_image = function(index){
+			images.splice(index, 1);
+			set_images();
 		};
 
 		var add_content = function(type, data){
@@ -452,15 +504,43 @@ $.fn.apply_edit = function(data){
 
 			modal.find(".e_loading").hide();
 			var content = modal.find(".content").empty();
-			var clear = $('<button class="clear"></button>');
-			clear.click(remove_content);
 
-			if(typeof cnt_funcs[type] === "function")
-				content.append(clear).append(cnt_funcs[type](data)).css("display", "block");
+			if(typeof cnt_funcs[type] === "function"){
+				var obj = cnt_funcs[type](data);
+
+				// Every image can be removed separately
+				if(type === "images"){
+					obj.find(".b_img").each(function(i){
+						var clear = $('<button class="clear"></button>');
+						clear.click(function(e){
+							// Do not open lightbox
+							e.preventDefault();
+							e.stopPropagation();
+							remove_image(i);
+						});
+						$(this).append(clear);
+					});
+				} else {
+					var clear = $('<button class="clear"></button>');
+					clear.click(remove_content);
+					content.append(clear);
+				}
+
+				content.append(obj).css("display", "block");
+			}
 
 			modal.find(".i_content_type").val(type);
 			modal.find(".i_content").val(JSON.stringify(data));
 			is_content = true;
+
+			// Keep track of images, so that new uploads are added to them
+			if(type === "images"){
+				images = data.slice();
+			} else if(type === "image"){
+				images = [data];
+			} else {
+				images = [];
+			}
 		};
 
 		var parse_link = function(t){
@@ -507,17 +587,48 @@ $.fn.apply_edit = function(data){
 			});
 		};
 
-		var upload_image = function(file) {
-			// HEIC images might not have MIME type set by browser
-			if(file.type.match(/image/) === null && file.name.match(/\.hei[cf]$/i) === null){
-				$("body").error_msg("Only images can be uploaded.");
+		// Images waiting for upload, they are uploaded one by one
+		var upload_queue = [], uploading = false, uploaded = 0;
+
+		var upload_images = function(files) {
+			$.each(files, function(i, file){
+				// HEIC images might not have MIME type set by browser
+				if(file.type.match(/image/) === null && file.name.match(/\.hei[cf]$/i) === null){
+					$("body").error_msg("Only images can be uploaded.");
+					return ;
+				}
+
+				upload_queue.push(file);
+			});
+
+			if(!uploading && upload_queue.length > 0){
+				uploading = true;
+				uploaded = 0;
+				add_content_loading();
+				upload_next_image();
+			}
+		};
+
+		var upload_next_image = function() {
+			if(upload_queue.length === 0){
+				uploading = false;
+				remove_content_loading();
 				return ;
 			}
 
-			var form_data = new FormData();
-			form_data.append('file', file);
+			// Progress is shown for all images in current batch
+			var total = uploaded + upload_queue.length;
 
-			add_content_loading();
+			var form_data = new FormData();
+			form_data.append('file', upload_queue.shift());
+
+			// Stop uploading remaining images, already uploaded ones are kept
+			var upload_failed = function(msg){
+				$("body").error_msg(msg);
+				upload_queue = [];
+				uploading = false;
+				remove_content_loading();
+			};
 
 			$.post({
 				xhr: function(){
@@ -528,7 +639,7 @@ $.fn.apply_edit = function(data){
 						if (evt.lengthComputable) {
 							var percentComplete = evt.loaded / evt.total;
 							//Do something with upload progress
-							content_loading_progress(percentComplete);
+							content_loading_progress((uploaded + percentComplete) / total);
 						}
 					}, false);
 
@@ -542,19 +653,25 @@ $.fn.apply_edit = function(data){
 				data: form_data,
 				success: function(data){
 					if(data.error){
-						$("body").error_msg(data.msg);
-						remove_content();
+						upload_failed(data.msg);
 						return ;
 					}
 
-					add_content("image", data);
+					add_image(data);
+					uploaded++;
+
+					// Adding image hides loading
+					if(upload_queue.length > 0){
+						modal.find(".e_loading").css("display", "block");
+					}
+
+					upload_next_image();
 				},
 				error: function() {
-					$("body").error_msg("Error when communicating with the server.");
-					remove_content();
+					upload_failed("Error when communicating with the server.");
 				}
 			});
-		}
+		};
 
 		// Set data and key listeners for text div
 		//modal.find(".e_text").text(data.plain_text)
@@ -585,7 +702,7 @@ $.fn.apply_edit = function(data){
 				// Try to get image from clipboard
 				if(item.type.indexOf('image') !== -1){
 					var file = item.getAsFile();
-					upload_image(file);
+					upload_images([file]);
 					break;
 				}
 			}
@@ -607,7 +724,10 @@ $.fn.apply_edit = function(data){
 		// Upload image button
 		var file_data = modal.find(".photo_upload");
 		$(file_data).change(function(){
-			upload_image(file_data[0].files[0]);
+			upload_images(file_data[0].files);
+
+			// Allow selecting the same files again
+			file_data.val("");
 		});
 
 		if(data.feeling){
@@ -684,7 +804,7 @@ $.fn.apply_edit = function(data){
 		}
 
 		// Drag & Drop
-		modal.find(".drop_space").filedrop(upload_image);
+		modal.find(".drop_space").filedrop(upload_images);
 	});
 };
 
@@ -1078,9 +1198,9 @@ $.fn.filedrop = function(callback){
 			// Get all files that are dropped
 			var files = event.originalEvent.target.files || event.originalEvent.dataTransfer.files
 
-			// Pass first uploaded file to callback
+			// Pass all uploaded files to callback
 			if(typeof callback === "function" && files.length > 0)
-				callback(files[0]);
+				callback(files);
 
 			return false
 		})

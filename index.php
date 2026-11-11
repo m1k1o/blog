@@ -150,6 +150,9 @@ if (Config::get_safe("version", false)) {
 		<!-- Post Image -->
 		<a class="b_img"><img></a>
 
+		<!-- Post Images -->
+		<div class="b_imgs"></div>
+
 		<!-- New Post -->
 		<div class="b_post new_post">
 			<div class="modal-header">

@@ -199,6 +199,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Upload images using button *(for mobile)*.
 * Upload images using drag & drop *(drop it into textarea)*.
 * Upload images using CTRL + V *(paste it into textarea)*. 
+* Add multiple images to a single post, they are shown as a grid and can be browsed in a gallery.
 * HEIC images are converted to JPEG on upload *(requires PHP `imagick` extension with HEIC support, included in Docker image)*.
 * Highlight code in post using `[code]..your code..[/code]`.
 * Highlight your goal using `[goal]Text of your goal.[/goal]`.
