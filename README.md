@@ -202,6 +202,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Upload images using CTRL + V *(paste it into textarea)*. 
 * Add multiple images to a single post, they are shown as a grid and can be browsed in a gallery.
 * HEIC images are converted to JPEG on upload *(requires PHP `imagick` extension with HEIC support, included in Docker image)*.
+* Upload videos *(MP4, WebM, Ogg or MOV)* using button or drag & drop, they are played directly in the post. A post can have either images or a single video. Uploads are limited to 256 MB, the limit can be changed in `.htaccess` *(`upload_max_filesize` and `post_max_size`)*.
 * Highlight code in post using `[code]..your code..[/code]`.
 * Highlight your goal using `[goal]Text of your goal.[/goal]`.
 * Use tags in posts (allowed characters `A-Za-z0-9-_` terminated by space or EOL): `#song`.

@@ -153,6 +153,9 @@ if (Config::get_safe("version", false)) {
 		<!-- Post Images -->
 		<div class="b_imgs"></div>
 
+		<!-- Post Video -->
+		<div class="b_video"><video controls preload="metadata" playsinline></video></div>
+
 		<!-- New Post -->
 		<div class="b_post new_post">
 			<div class="modal-header">
@@ -206,7 +209,7 @@ if (Config::get_safe("version", false)) {
 						</table>
 						<div class="modal-footer">
 							<ul class="options">
-								<li class="kepet"><a><span><input type="file" accept="image/*,.heic,.heif" multiple class="photo_upload" name="file"></span></a></li>
+								<li class="kepet"><a><span><input type="file" accept="image/*,.heic,.heif,video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.m4v,.mov,.webm,.ogv" multiple class="photo_upload" name="file"></span></a></li>
 								<li class="feeling"><a></a></li>
 								<li class="persons"><a></a></li>
 								<li class="location"><a></a></li>

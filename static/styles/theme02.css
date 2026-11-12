@@ -600,6 +600,17 @@ body {
   right: 5px;
 }
 
+.b_video {
+  margin-top: 10px;
+  font-size: 0;
+}
+
+.b_video video {
+  width: 100%;
+  max-height: 470px;
+  background: #000;
+}
+
 .b_goal {
   text-align: center;
   font-size: 1.5em;

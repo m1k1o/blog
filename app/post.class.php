@@ -208,7 +208,7 @@ class Post
 			WHERE `id` = ?
 		", $id);
 
-		// Remove uploaded images, that are not used in any other post
+		// Remove uploaded images and videos, that are not used in any other post
 		foreach(self::content_images($post["content"]) as $path){
 			Image::delete_unused($path);
 		}
@@ -216,14 +216,14 @@ class Post
 		return true;
 	}
 
-	// Get paths of uploaded images from post content
+	// Get paths of uploaded images and videos from post content
 	private static function content_images($content){
 		$content = json_decode((string)$content, true);
 		if(!is_array($content)){
 			return [];
 		}
 
-		// Single image is an object, multiple images are a list of objects
+		// Single image or video is an object, multiple images are a list of objects
 		$images = array_key_exists("path", $content) ? [$content] : $content;
 
 		$paths = [];
@@ -442,6 +442,12 @@ class Post
 		self::login_protected();
 
 		return Image::upload();
+	}
+
+	public static function upload_video(){
+		self::login_protected();
+
+		return Image::upload_video();
 	}
 
 	public static function load($r){
