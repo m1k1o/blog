@@ -166,6 +166,10 @@ if (Config::get_safe("version", false)) {
 			<li><a class="edit_post"><?php echo __("Edit Post"); ?></a></li>
 			<li><a class="edit_date"><?php echo __("Change Date"); ?></a></li>
 			<li>
+				<a class="pin"><?php echo __("Pin Post"); ?></a>
+				<a class="unpin"><?php echo __("Unpin Post"); ?></a>
+			</li>
+			<li>
 				<a class="hide"><?php echo __("Hide from Timeline"); ?></a>
 				<a class="show"><?php echo __("Show on Timeline"); ?></a>
 			</li>
@@ -303,6 +307,7 @@ if (Config::get_safe("version", false)) {
 					</div>
 					<i class="privacy_icon"></i>
 					<a class="b_date"></a>
+					<span class="b_pinned"><?php echo __("Pinned Post"); ?></span>
 					<a class="b_tools"></a>
 				</div>
 			</div>

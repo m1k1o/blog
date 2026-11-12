@@ -57,7 +57,13 @@ var posts = {
 	},
 
 	add_new: function(post) {
-		$("#posts").prepend(post);
+		// Pinned posts stay on top of the timeline
+		var pinned = $("#posts > .is_pinned").last();
+		if($.isEmptyObject(this.filter) && pinned.length){
+			pinned.after(post);
+		} else {
+			$("#posts").prepend(post);
+		}
 		this.offset++;
 	},
 
@@ -817,6 +823,10 @@ $.fn.post_fill = function(data){
 	if(parseInt(data.is_hidden)) {
 		post.addClass("is_hidden");
 	}
+
+	if(parseInt(data.is_pinned)) {
+		post.addClass("is_pinned");
+	}
 	post.find(".b_overlay .button").click(function(){
 		var overlay = post.find(".b_overlay");
 		var elementTop = $(overlay).offset().top;
@@ -1091,6 +1101,40 @@ $.fn.apply_post = function(){
 				});
 			});
 
+			// Pin event
+			if(post.hasClass("is_pinned")) {
+				$(o_mask).find(".pin").hide();
+			} else {
+				$(o_mask).find(".unpin").hide();
+			}
+			$(o_mask).find(".pin, .unpin").click(function(){
+				// Hide mask
+				$("#dd_mask").click();
+
+				var action = 'pin';
+				if(post.hasClass("is_pinned")) {
+					action = 'unpin';
+				}
+
+				$.post({
+					dataType: "json",
+					url: "ajax.php",
+					data: {
+						action: action,
+						id: post_id
+					},
+					success: function(data){
+						if(data.error){
+							$("body").error_msg(data.msg);
+							return ;
+						}
+
+						// Load posts again, so that pinned posts are on top
+						posts.reload();
+					}
+				});
+			});
+
 			// Hide event
 			if(post.hasClass("is_hidden")) {
 				$(o_mask).find(".hide").hide();
@@ -1120,7 +1164,8 @@ $.fn.apply_post = function(){
 						}
 
 						if(action == 'hide') {
-							post.addClass("is_hidden");
+							// Hidden post is not pinned anymore
+							post.addClass("is_hidden").removeClass("is_pinned");
 						} else {
 							post.removeClass("is_hidden");
 						}

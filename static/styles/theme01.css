@@ -223,6 +223,21 @@ body {
   text-decoration: underline;
 }
 
+.b_pinned {
+  display: none;
+  font-size: 11px;
+  color: #9197a3;
+}
+
+.b_pinned:before {
+  content: "\00b7";
+  margin-right: 4px;
+}
+
+.b_post.is_pinned .b_pinned {
+  display: inline;
+}
+
 .b_tools {
   display: none;
   position: absolute;
