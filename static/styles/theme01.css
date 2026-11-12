@@ -1115,6 +1115,7 @@ body > .error {
   left: 10px;
   bottom: 10px;
   max-width: 300px;
+  z-index: 110;
 }
 
 .more_posts {
