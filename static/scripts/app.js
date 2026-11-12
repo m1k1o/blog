@@ -871,8 +871,11 @@ $.fn.post_fill = function(data){
 	}
 	*/
 
+	// Collapse long text, reset previous state first, because post is filled again after editing
 	var height = 200;
-	if(data.text.length > 400 && post.find(".show_more").length == 0){
+	post.find(".show_more").remove();
+	post.find(".b_text").css("max-height", '');
+	if(data.text.length > 400){
 		post.find(".b_text").css("max-height", height+"px");
 		var show_more = $('#prepared .show_more').clone();
 		show_more.insertAfter(post.find(".b_text"));
@@ -880,8 +883,6 @@ $.fn.post_fill = function(data){
 			$(this).remove();
 			post.find(".b_text").css("max-height", '');
 		});
-	} else if(post.find(".show_more").length != 0) {
-		post.find(".show_more").remove();
 	}
 
 	// Highlight
@@ -904,6 +905,8 @@ $.fn.post_fill = function(data){
 
 	post.find(".privacy_icon").attr("class", "privacy_icon "+data.privacy).attr("title", "Shared with: "+data.privacy);
 
+	// Remove previous content, it might have been removed when editing
+	post.find(".b_content").empty();
 	if(data.content_type && typeof cnt_funcs[data.content_type] === "function"){
 		try{
 			data.content = JSON.parse(data.content)
