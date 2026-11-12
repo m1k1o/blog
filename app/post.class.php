@@ -177,6 +177,30 @@ class Post
 		return true;
 	}
 
+	public static function pin($r){
+		self::login_protected();
+
+		DB::get_instance()->query("
+			UPDATE `posts`
+			SET `status` = 2
+			WHERE `id` = ?
+			AND `status` <> 5
+		", $r["id"]);
+		return true;
+	}
+
+	public static function unpin($r){
+		self::login_protected();
+
+		DB::get_instance()->query("
+			UPDATE `posts`
+			SET `status` = 1
+			WHERE `id` = ?
+			AND `status` = 2
+		", $r["id"]);
+		return true;
+	}
+
 	public static function delete($r){
 		self::login_protected();
 
@@ -499,10 +523,15 @@ class Post
 
 		$like_match = "LIKE ".DB::concat("'%'", "?", "'%'");
 
+		// Pinned posts are shown on top of the timeline, but not in filtered results
+		$pinned_first = !$from && !$to && !$id && !$tag && !$loc && !$person;
+
 		return DB::get_instance()->query("
 			SELECT
 				`id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`,
-				$datetime AS `datetime`, (`status` <> 1) AS `is_hidden`
+				$datetime AS `datetime`,
+				CASE WHEN `status` = 4 THEN 1 ELSE 0 END AS `is_hidden`,
+				CASE WHEN `status` = 2 THEN 1 ELSE 0 END AS `is_pinned`
 			FROM `posts`
 			WHERE ".
 				(!User::is_logged_in() ? (User::is_visitor() ? "`privacy` IN ('public', 'friends') AND " : "`privacy` = 'public' AND ") : "").
@@ -513,7 +542,7 @@ class Post
 				($loc ? "`location` $like_match AND " : "").
 				($person ? "`persons` $like_match AND " : "").
 				"`status` <> 5
-			ORDER BY `posts`.`datetime` ".(@$r["sort"] == 'reverse' ? "ASC" : "DESC")."
+			ORDER BY ".($pinned_first ? "CASE WHEN `status` = 2 THEN 0 ELSE 1 END, " : "")."`posts`.`datetime` ".(@$r["sort"] == 'reverse' ? "ASC" : "DESC")."
 			LIMIT ? OFFSET ?
 			", $from, $to, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
 		)->all();

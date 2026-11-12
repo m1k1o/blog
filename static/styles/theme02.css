@@ -295,6 +295,20 @@ body {
   text-decoration: underline;
 }
 
+.b_pinned {
+  display: none;
+  color: var(--secondary-text);
+}
+
+.b_pinned:before {
+  content: "\00b7";
+  margin-right: 4px;
+}
+
+.b_post.is_pinned .b_pinned {
+  display: inline;
+}
+
 .b_tools {
   display: none;
   position: absolute;
