@@ -197,6 +197,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Hide posts from timeline so they are visible only when you need them to be.
 * Delete posts permanently, including their uploaded images *(set `hard_delete = true` in config, by default deleted posts are kept in the database)*.
 * All pasted links will get preview with page title, description and image (can be configured proxy).
+* Images of link previews and pasted image links are saved on your server, so they are preserved when the linked page goes down *(set `save_link_images = false` in config to load them from the linked page instead)*.
 * Upload images using button *(for mobile)*.
 * Upload images using drag & drop *(drop it into textarea)*.
 * Upload images using CTRL + V *(paste it into textarea)*. 

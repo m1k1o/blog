@@ -198,22 +198,17 @@ class Image
 			throw new Exception("No file.");
 		}
 
+		$error = $_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE;
+		if($error !== UPLOAD_ERR_OK){
+			throw new Exception(self::PHP_FILE_UPLOAD_ERRORS[$error]);
+		}
+
 		// Create MD5
 		$md5 = md5_file($_FILES['file']['tmp_name']);
 
 		// Find duplicate
-		if($d = DB::get_instance()->query("SELECT `path`, `thumb` FROM `images` WHERE `md5` = ? AND `status` = 1 LIMIT 1", $md5)->first()){
+		if($d = self::find_duplicate($md5)){
 			return $d;
-		}
-
-		// Ensure, that directories exists
-		$_images_path = Config::get('images_path');
-		$_thumbnails_path = Config::get('thumbnails_path');
-		if(
-			(!is_dir($_images_path) && !mkdir($_images_path, 0755, true)) ||
-			(!is_dir($_thumbnails_path) && !mkdir($_thumbnails_path, 0755, true))
-		){
-			throw new Exception("Images or thumbnails directory could not be created.");
 		}
 
 		// Get metadata
@@ -236,6 +231,45 @@ class Image
 			$ext = 'jpg';
 		}
 
+		return self::save($_FILES['file']['tmp_name'], $name, $ext, $md5, $is_heic);
+	}
+
+	// Store image downloaded from another server, source file is moved unless it is a duplicate
+	public static function import($source_path, $name){
+		// Extension is taken from content, only types supported by thumbnails are allowed
+		$details = @getimagesize($source_path);
+		$ext = $details ? image_type_to_extension($details[2], false) : false;
+		if (!in_array($ext, ['jpeg', 'png', 'gif', 'webp', 'wbmp', 'bmp'], true)) {
+			throw new Exception("File is not valid image.");
+		}
+
+		// Create MD5
+		$md5 = md5_file($source_path);
+
+		// Find duplicate
+		if($d = self::find_duplicate($md5)){
+			return $d;
+		}
+
+		return self::save($source_path, substr($name, 0, 255), $ext, $md5);
+	}
+
+	private static function find_duplicate($md5){
+		return DB::get_instance()->query("SELECT `path`, `thumb` FROM `images` WHERE `md5` = ? AND `status` = 1 LIMIT 1", $md5)->first();
+	}
+
+	// Store image in images directory and create its thumbnail, source file is moved
+	private static function save($source_path, $name, $ext, $md5, $is_heic = false){
+		// Ensure, that directories exists
+		$_images_path = Config::get('images_path');
+		$_thumbnails_path = Config::get('thumbnails_path');
+		if(
+			(!is_dir($_images_path) && !mkdir($_images_path, 0755, true)) ||
+			(!is_dir($_thumbnails_path) && !mkdir($_thumbnails_path, 0755, true))
+		){
+			throw new Exception("Images or thumbnails directory could not be created.");
+		}
+
 		// Save to DB
 		$id = DB::get_instance()->insert('images', [
 			'name' => $name,
@@ -250,9 +284,13 @@ class Image
 		$path = $_images_path.$name;
 		$thumb = $_thumbnails_path.$name;
 
-		// Save path
-		if(!move_uploaded_file($_FILES['file']['tmp_name'], $path)){
-			throw new Exception(self::PHP_FILE_UPLOAD_ERRORS[$_FILES['file']['error']]);
+		// Save path, moved file gets the same permissions as uploaded file would get
+		$saved = is_uploaded_file($source_path)
+			? move_uploaded_file($source_path, $path)
+			: rename($source_path, $path) && chmod($path, 0666 & ~umask());
+
+		if(!$saved){
+			throw new Exception("File could not be saved.");
 		}
 
 		// Convert HEIC to JPEG

@@ -3,6 +3,9 @@ defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 class Post
 {
+	// Maximum size of link image, that is saved locally
+	const LINK_IMAGE_MAX_SIZE = 10 * 1024 * 1024;
+
 	private static function login_protected(){
 		if(!User::is_logged_in()){
 			throw new Exception(__("You need to be logged in to perform this action."));
@@ -194,7 +197,7 @@ class Post
 
 	private static function hard_delete($id){
 		$post = DB::get_instance()->query("
-			SELECT `content`
+			SELECT `content_type`, `content`
 			FROM `posts`
 			WHERE `id` = ?
 		", $id)->first();
@@ -209,18 +212,24 @@ class Post
 		", $id);
 
 		// Remove uploaded images, that are not used in any other post
-		foreach(self::content_images($post["content"]) as $path){
+		foreach(self::content_images($post["content_type"], $post["content"]) as $path){
 			Image::delete_unused($path);
 		}
 
 		return true;
 	}
 
-	// Get paths of uploaded images from post content
-	private static function content_images($content){
+	// Get paths of uploaded and saved images from post content
+	private static function content_images($content_type, $content){
 		$content = json_decode((string)$content, true);
 		if(!is_array($content)){
 			return [];
+		}
+
+		// Images of links can be saved locally, see save_link_image
+		$link_image = ["link" => "thumb", "img_link" => "src"][$content_type] ?? null;
+		if($link_image){
+			return isset($content[$link_image]) && is_string($content[$link_image]) ? [$content[$link_image]] : [];
 		}
 
 		// Single image is an object, multiple images are a list of objects
@@ -299,7 +308,7 @@ class Post
 				"valid" => true,
 				"content_type" => "img_link",
 				"content" => [
-					"src" => $l,
+					"src" => self::save_link_image($l),
 					"host" => $img[1]
 				]
 			];
@@ -309,62 +318,11 @@ class Post
 		if (!$url) {
 			throw new Exception("Invalid URL.");
 		}
-		$curl_request_url = $l;
 
-		// SSRF protection: validate resolved IP is not private/reserved
-		$host = parse_url($l, PHP_URL_HOST);
-		$resolved_ip = gethostbyname($host);
-		if ($resolved_ip === $host || filter_var($resolved_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
-			throw new Exception("URL resolves to a private or reserved IP address.");
-		}
+		self::check_public_url($l);
 
 		// Get content
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_ENCODING , "");
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
-		curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Proxycat/1.1)");
-		curl_setopt($ch, CURLOPT_REFERER, '');
-		curl_setopt($ch, CURLOPT_TIMEOUT, 7); // 7sec
-
-		// Proxy settings
-		if($proxy = Config::get_safe("proxy", false)){
-			$proxytype = Config::get_safe("proxytype", false);
-			$proxyauth = Config::get_safe("proxyauth", false);
-			if($proxytype === 'URL_PREFIX'){
-				$curl_request_url = $proxy.$curl_request_url;
-
-				if($proxyauth){
-					curl_setopt($ch, CURLOPT_USERPWD, $proxyauth);
-				}
-			} else {
-				curl_setopt($ch, CURLOPT_PROXY, $proxy);
-
-				if($proxyauth){
-					curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyauth);
-				}
-
-				switch ($proxytype) {
-					case 'CURLPROXY_SOCKS4':
-						$proxytype = CURLPROXY_SOCKS4;
-						break;
-					case 'CURLPROXY_SOCKS5':
-						$proxytype = CURLPROXY_SOCKS5;
-						break;
-					case 'CURLPROXY_HTTP':
-					default:
-						$proxytype = CURLPROXY_HTTP;
-						break;
-				}
-
-				curl_setopt($ch, CURLOPT_PROXYTYPE, $proxytype);
-			}
-		}
-
-		curl_setopt($ch, CURLOPT_URL, $curl_request_url);
-		$html = curl_exec($ch);
+		$html = curl_exec(self::curl($l));
 
 		// Parse
 		$doc = new DOMDocument();
@@ -431,11 +389,120 @@ class Post
 			}
 		}
 
+		if(isset($content["thumb"])){
+			$content["thumb"] = self::save_link_image($content["thumb"]);
+		}
+
 		return [
 			"valid" => true,
 			"content_type" => "link",
 			"content" => $content
 		];
+	}
+
+	// SSRF protection: validate resolved IP is not private/reserved
+	private static function check_public_url($l){
+		$host = parse_url($l, PHP_URL_HOST);
+		$resolved_ip = gethostbyname((string)$host);
+		if ($resolved_ip === $host || filter_var($resolved_ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+			throw new Exception("URL resolves to a private or reserved IP address.");
+		}
+	}
+
+	// Create request for remote URL, proxy from config is used
+	private static function curl($l){
+		$curl_request_url = $l;
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_ENCODING , "");
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+		curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Proxycat/1.1)");
+		curl_setopt($ch, CURLOPT_REFERER, '');
+		curl_setopt($ch, CURLOPT_TIMEOUT, 7); // 7sec
+
+		// Proxy settings
+		if($proxy = Config::get_safe("proxy", false)){
+			$proxytype = Config::get_safe("proxytype", false);
+			$proxyauth = Config::get_safe("proxyauth", false);
+			if($proxytype === 'URL_PREFIX'){
+				$curl_request_url = $proxy.$curl_request_url;
+
+				if($proxyauth){
+					curl_setopt($ch, CURLOPT_USERPWD, $proxyauth);
+				}
+			} else {
+				curl_setopt($ch, CURLOPT_PROXY, $proxy);
+
+				if($proxyauth){
+					curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyauth);
+				}
+
+				switch ($proxytype) {
+					case 'CURLPROXY_SOCKS4':
+						$proxytype = CURLPROXY_SOCKS4;
+						break;
+					case 'CURLPROXY_SOCKS5':
+						$proxytype = CURLPROXY_SOCKS5;
+						break;
+					case 'CURLPROXY_HTTP':
+					default:
+						$proxytype = CURLPROXY_HTTP;
+						break;
+				}
+
+				curl_setopt($ch, CURLOPT_PROXYTYPE, $proxytype);
+			}
+		}
+
+		curl_setopt($ch, CURLOPT_URL, $curl_request_url);
+
+		return $ch;
+	}
+
+	// Save image of link locally, so that it is preserved when the linked page goes down.
+	// Remote URL is kept, when the image can not be saved.
+	private static function save_link_image($l){
+		if(!Config::get_safe("save_link_images", false)){
+			return $l;
+		}
+
+		// Protocol-relative URLs are downloaded using HTTPS
+		$url = preg_replace("/^\/\//", "https://", $l);
+
+		$tmp_path = null;
+		try {
+			self::check_public_url($url);
+
+			$ch = self::curl($url);
+
+			// Stop downloading too large files
+			curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+			curl_setopt($ch, CURLOPT_XFERINFOFUNCTION, function($ch, $download_size, $downloaded){
+				return $downloaded > self::LINK_IMAGE_MAX_SIZE ? 1 : 0;
+			});
+
+			$data = curl_exec($ch);
+			if($data === false || curl_getinfo($ch, CURLINFO_RESPONSE_CODE) !== 200){
+				return $l;
+			}
+
+			$tmp_path = tempnam(sys_get_temp_dir(), "blog");
+			if($tmp_path === false || file_put_contents($tmp_path, $data) === false){
+				return $l;
+			}
+
+			$name = basename((string)parse_url($url, PHP_URL_PATH));
+			return Image::import($tmp_path, $name)["path"];
+		} catch (Exception $e) {
+			return $l;
+		} finally {
+			if($tmp_path && is_file($tmp_path)){
+				unlink($tmp_path);
+			}
+		}
 	}
 
 	public static function upload_image(){
