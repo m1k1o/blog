@@ -224,6 +224,19 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Display posts from chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#from=2017-06`.
 * Display posts to chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#to=2017-06`.
 * Combine parameters in url using `&`, e.g. show posts between dates: `http://blog/#from=2017-06&to=2017-08`.
+* Export posts as a static page using the **Export** button, see [Export](#export).
+
+## Export
+
+When you are logged in, the **Export** button downloads a ZIP archive with the posts shown on the timeline. The archive contains `index.html`, a static page that looks like your blog, together with all uploaded images and videos used by the exported posts, so it can be opened offline and archived. Link previews and linked images are not downloaded, they are still loaded from the original page.
+
+All matching posts are exported, not only the ones already loaded on the page, including private and hidden posts. Filters in the URL apply to the export as well, so you can export only a part of your posts, e.g.:
+
+* Posts from 2017: `http://blog/#from=2017-01&to=2018-01`.
+* Posts with a tag: `http://blog/#tag=songs`.
+* Posts from oldest to newest: `http://blog/#sort=reverse`.
+
+Export requires the PHP `zip` extension *(included in Docker image)*.
 
 ## Text formatting
 

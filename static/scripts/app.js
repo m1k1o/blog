@@ -222,9 +222,10 @@ var login = {
 						return ;
 					}
 
-					// Remove new post input
+					// Remove new post input and export button
 					if(login.is){
 						new_post.remove();
+						$("#headline .export_btn").remove();
 					}
 
 					// Is not logged in anymore
@@ -241,6 +242,21 @@ var login = {
 		});
 
 		$("#headline").append(btn);
+	},
+
+	// Export button
+	export_btn: function(){
+		var btn = $('#prepared .export_btn').clone();
+
+		// Download posts that are shown on the timeline
+		$(btn).click(function(){
+			location.href = "export.php?" + $.param({
+				sort: posts.sort,
+				filter: posts.filter
+			});
+		});
+
+		$("#headline").prepend(btn);
 	},
 
 	// Login button
@@ -285,9 +301,10 @@ var login = {
 						login.is = data.logged_in;
 						login.visitor = data.is_visitor;
 
-						// Logged in user can add post
+						// Logged in user can add post and export posts
 						if(login.is){
 							new_post.create();
+							login.export_btn();
 						}
 						// Remove login button
 						btn.remove();
@@ -334,9 +351,10 @@ var login = {
 					login.logout_btn();
 				}
 
-				// Logged in user can add post
+				// Logged in user can add post and export posts
 				if(login.is){
 					new_post.create();
+					login.export_btn();
 				}
 
 				// Initialize

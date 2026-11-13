@@ -167,6 +167,10 @@ body {
   background-color: var(--primary-background);
 }
 
+#headline .export_btn {
+  margin-right: 5px;
+}
+
 #b_feed {
   margin: 0 auto;
   max-width: 502px;

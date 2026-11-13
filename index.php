@@ -100,6 +100,9 @@ if (Config::get_safe("version", false)) {
 		<!-- Logout Button -->
 		<button type="button" class="button gray logout_btn"><?php echo __("Logout"); ?></button>
 
+		<!-- Export Button -->
+		<button type="button" class="button gray export_btn" title="<?php echo __("Download posts shown on the timeline as a static page"); ?>"><?php echo __("Export"); ?></button>
+
 		<!-- Login Modal -->
 		<div class="modal login_modal">
 			<div class="modal-dialog" style="max-width: 350px;">
