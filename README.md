@@ -290,6 +290,14 @@ friends[thomas] = anotherpass
 ## Localisation
 Timezone can be set in config or, for docker users, `TZ` environment variable is supported. List of timezones can be found [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
+### Date format
+Dates of posts are shown as `13 Nov 2026 18:30` by default. The format can be changed with `datetime_format` in config (or `BLOG_DATETIME_FORMAT` environment variable), using [PHP date format](https://www.php.net/manual/en/datetime.format.php) characters. Full month names (`F`) are translated to the selected language, e.g. `j. F Y, H:i` is shown as `13. November 2026, 18:30` in German.
+
+```ini
+[language]
+datetime_format = "j. F Y, H:i"
+```
+
 ### Language support
 Feel free to create new PR and add a new language. Specify language in config or in url: `http://blog/?hl=sk`.
 

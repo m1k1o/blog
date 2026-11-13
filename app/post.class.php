@@ -86,6 +86,32 @@ class Post
 		return $parser->getAsHtml();
 	}
 
+	// Format date of a post for display, see `datetime_format` in config
+	private static function format_datetime($timestamp){
+		$format = (string)Config::get_safe("datetime_format", "d M Y H:i");
+
+		// Full month name (F) is translated to the selected language,
+		// it is inserted into the format as escaped characters
+		$month = '';
+		foreach(str_split(__(date("F", $timestamp))) as $char){
+			$month .= '\\'.$char;
+		}
+
+		$output = '';
+		for($i = 0; $i < strlen($format); $i++){
+			if($format[$i] === '\\'){
+				// Keep escaped character as it is
+				$output .= substr($format, $i++, 2);
+			} else if($format[$i] === 'F'){
+				$output .= $month;
+			} else {
+				$output .= $format[$i];
+			}
+		}
+
+		return date($output, $timestamp);
+	}
+
 	private static function raw_data($raw_input){
 		$default_input = [
 			"text" => '',
@@ -132,7 +158,7 @@ class Post
 
 		$data['id'] = DB::get_instance()->insert('posts', $data)->last_id();
 
-		$data['datetime'] = date("d M Y H:i");
+		$data['datetime'] = self::format_datetime(time());
 		unset($data['plain_text']);
 
 		return $data;
@@ -309,7 +335,7 @@ class Post
 			WHERE `id` = ?
 			AND `status` <> 5
 		", $datetime, $r["id"]);
-		return [ "datetime" => date("d M Y H:i", strtotime($datetime)) ];
+		return [ "datetime" => self::format_datetime(strtotime($datetime)) ];
 	}
 
 	public static function parse_link($r){
@@ -513,23 +539,14 @@ class Post
 			$person = $r["filter"]["person"];
 		}
 
-		if (DB::connection() === 'sqlite') {
-			$datetime = "strftime('%d %m %Y %H:%M', `posts`.`datetime`)";
-		} else if (DB::connection() === 'postgres') {
-			$datetime = "to_char(posts.datetime,'DD Mon YYYY HH24:MI')";
-		} else {
-			$datetime = "DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i')";
-		}
-
 		$like_match = "LIKE ".DB::concat("'%'", "?", "'%'");
 
 		// Pinned posts are shown on top of the timeline, but not in filtered results
 		$pinned_first = !$from && !$to && !$id && !$tag && !$loc && !$person;
 
-		return DB::get_instance()->query("
+		$posts = DB::get_instance()->query("
 			SELECT
-				`id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`,
-				$datetime AS `datetime`,
+				`id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`, `datetime`,
 				CASE WHEN `status` = 4 THEN 1 ELSE 0 END AS `is_hidden`,
 				CASE WHEN `status` = 2 THEN 1 ELSE 0 END AS `is_pinned`
 			FROM `posts`
@@ -546,6 +563,17 @@ class Post
 			LIMIT ? OFFSET ?
 			", $from, $to, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
 		)->all();
+
+		// Dates are formatted here, so they look the same with every database
+		foreach($posts as &$post){
+			$timestamp = strtotime((string)$post["datetime"]);
+			if($timestamp !== false){
+				$post["datetime"] = self::format_datetime($timestamp);
+			}
+		}
+		unset($post);
+
+		return $posts;
 	}
 
 	public static function login($r){
