@@ -57,7 +57,13 @@ var posts = {
 	},
 
 	add_new: function(post) {
-		$("#posts").prepend(post);
+		// Pinned posts stay on top of the timeline
+		var pinned = $("#posts > .is_pinned").last();
+		if($.isEmptyObject(this.filter) && pinned.length){
+			pinned.after(post);
+		} else {
+			$("#posts").prepend(post);
+		}
 		this.offset++;
 	},
 
@@ -182,6 +188,12 @@ var cnt_funcs = {
 
 			obj.append(img);
 		});
+
+		return obj;
+	},
+	video: function(data){
+		var obj = $("#prepared .b_video").clone();
+		obj.find("video").attr("src", data.path);
 
 		return obj;
 	}
@@ -587,14 +599,29 @@ $.fn.apply_edit = function(data){
 			});
 		};
 
-		// Images waiting for upload, they are uploaded one by one
-		var upload_queue = [], uploading = false, uploaded = 0;
+		// HEIC images and some videos might not have MIME type set by browser
+		var is_image = function(file){
+			return file.type.match(/image/) !== null || file.name.match(/\.hei[cf]$/i) !== null;
+		};
 
-		var upload_images = function(files) {
+		var is_video = function(file){
+			return file.type.match(/^video\//) !== null || file.name.match(/\.(mp4|m4v|mov|webm|ogv)$/i) !== null;
+		};
+
+		// Files waiting for upload, they are uploaded one by one
+		var upload_queue = [], uploading = false, uploading_video = false, uploaded = 0;
+
+		var upload_files = function(files) {
 			$.each(files, function(i, file){
-				// HEIC images might not have MIME type set by browser
-				if(file.type.match(/image/) === null && file.name.match(/\.hei[cf]$/i) === null){
-					$("body").error_msg("Only images can be uploaded.");
+				var video = is_video(file);
+				if(!video && !is_image(file)){
+					$("body").error_msg("Only images and videos can be uploaded.");
+					return ;
+				}
+
+				// Post can have either images or a single video, uploaded video replaces images
+				if(uploading_video || (video && (files.length > 1 || uploading))){
+					$("body").error_msg("Video can't be uploaded together with other files.");
 					return ;
 				}
 
@@ -605,28 +632,31 @@ $.fn.apply_edit = function(data){
 				uploading = true;
 				uploaded = 0;
 				add_content_loading();
-				upload_next_image();
+				upload_next_file();
 			}
 		};
 
-		var upload_next_image = function() {
+		var upload_next_file = function() {
 			if(upload_queue.length === 0){
-				uploading = false;
+				uploading = uploading_video = false;
 				remove_content_loading();
 				return ;
 			}
 
-			// Progress is shown for all images in current batch
+			// Progress is shown for all files in current batch
 			var total = uploaded + upload_queue.length;
 
-			var form_data = new FormData();
-			form_data.append('file', upload_queue.shift());
+			var file = upload_queue.shift();
+			var video = uploading_video = is_video(file);
 
-			// Stop uploading remaining images, already uploaded ones are kept
+			var form_data = new FormData();
+			form_data.append('file', file);
+
+			// Stop uploading remaining files, already uploaded ones are kept
 			var upload_failed = function(msg){
 				$("body").error_msg(msg);
 				upload_queue = [];
-				uploading = false;
+				uploading = uploading_video = false;
 				remove_content_loading();
 			};
 
@@ -646,7 +676,7 @@ $.fn.apply_edit = function(data){
 					return xhr;
 				},
 				dataType: "json",
-				url: "ajax.php?action=upload_image",
+				url: "ajax.php?action="+(video ? "upload_video" : "upload_image"),
 				cache: false,
 				contentType: false,
 				processData: false,
@@ -657,7 +687,11 @@ $.fn.apply_edit = function(data){
 						return ;
 					}
 
-					add_image(data);
+					if(video){
+						add_content("video", data);
+					} else {
+						add_image(data);
+					}
 					uploaded++;
 
 					// Adding image hides loading
@@ -665,7 +699,7 @@ $.fn.apply_edit = function(data){
 						modal.find(".e_loading").css("display", "block");
 					}
 
-					upload_next_image();
+					upload_next_file();
 				},
 				error: function() {
 					upload_failed("Error when communicating with the server.");
@@ -702,7 +736,7 @@ $.fn.apply_edit = function(data){
 				// Try to get image from clipboard
 				if(item.type.indexOf('image') !== -1){
 					var file = item.getAsFile();
-					upload_images([file]);
+					upload_files([file]);
 					break;
 				}
 			}
@@ -724,7 +758,7 @@ $.fn.apply_edit = function(data){
 		// Upload image button
 		var file_data = modal.find(".photo_upload");
 		$(file_data).change(function(){
-			upload_images(file_data[0].files);
+			upload_files(file_data[0].files);
 
 			// Allow selecting the same files again
 			file_data.val("");
@@ -804,7 +838,7 @@ $.fn.apply_edit = function(data){
 		}
 
 		// Drag & Drop
-		modal.find(".drop_space").filedrop(upload_images);
+		modal.find(".drop_space").filedrop(upload_files);
 	});
 };
 
@@ -816,6 +850,10 @@ $.fn.post_fill = function(data){
 
 	if(parseInt(data.is_hidden)) {
 		post.addClass("is_hidden");
+	}
+
+	if(parseInt(data.is_pinned)) {
+		post.addClass("is_pinned");
 	}
 	post.find(".b_overlay .button").click(function(){
 		var overlay = post.find(".b_overlay");
@@ -871,8 +909,11 @@ $.fn.post_fill = function(data){
 	}
 	*/
 
+	// Collapse long text, reset previous state first, because post is filled again after editing
 	var height = 200;
-	if(data.text.length > 400 && post.find(".show_more").length == 0){
+	post.find(".show_more").remove();
+	post.find(".b_text").css("max-height", '');
+	if(data.text.length > 400){
 		post.find(".b_text").css("max-height", height+"px");
 		var show_more = $('#prepared .show_more').clone();
 		show_more.insertAfter(post.find(".b_text"));
@@ -880,8 +921,6 @@ $.fn.post_fill = function(data){
 			$(this).remove();
 			post.find(".b_text").css("max-height", '');
 		});
-	} else if(post.find(".show_more").length != 0) {
-		post.find(".show_more").remove();
 	}
 
 	// Highlight
@@ -904,6 +943,8 @@ $.fn.post_fill = function(data){
 
 	post.find(".privacy_icon").attr("class", "privacy_icon "+data.privacy).attr("title", "Shared with: "+data.privacy);
 
+	// Remove previous content, it might have been removed when editing
+	post.find(".b_content").empty();
 	if(data.content_type && typeof cnt_funcs[data.content_type] === "function"){
 		try{
 			data.content = JSON.parse(data.content)
@@ -1091,6 +1132,40 @@ $.fn.apply_post = function(){
 				});
 			});
 
+			// Pin event
+			if(post.hasClass("is_pinned")) {
+				$(o_mask).find(".pin").hide();
+			} else {
+				$(o_mask).find(".unpin").hide();
+			}
+			$(o_mask).find(".pin, .unpin").click(function(){
+				// Hide mask
+				$("#dd_mask").click();
+
+				var action = 'pin';
+				if(post.hasClass("is_pinned")) {
+					action = 'unpin';
+				}
+
+				$.post({
+					dataType: "json",
+					url: "ajax.php",
+					data: {
+						action: action,
+						id: post_id
+					},
+					success: function(data){
+						if(data.error){
+							$("body").error_msg(data.msg);
+							return ;
+						}
+
+						// Load posts again, so that pinned posts are on top
+						posts.reload();
+					}
+				});
+			});
+
 			// Hide event
 			if(post.hasClass("is_hidden")) {
 				$(o_mask).find(".hide").hide();
@@ -1120,7 +1195,8 @@ $.fn.apply_post = function(){
 						}
 
 						if(action == 'hide') {
-							post.addClass("is_hidden");
+							// Hidden post is not pinned anymore
+							post.addClass("is_hidden").removeClass("is_pinned");
 						} else {
 							post.removeClass("is_hidden");
 						}

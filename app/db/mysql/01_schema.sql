@@ -7,7 +7,7 @@ CREATE TABLE `images` (
   `md5` char(32) NOT NULL,
   `datetime` datetime NOT NULL,
   `status` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `posts` (
   `id` int(11) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE `posts` (
   `privacy` set('private','friends','public') NOT NULL,
   `datetime` datetime NOT NULL,
   `status` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
 
 ALTER TABLE `images`

@@ -223,6 +223,21 @@ body {
   text-decoration: underline;
 }
 
+.b_pinned {
+  display: none;
+  font-size: 11px;
+  color: #9197a3;
+}
+
+.b_pinned:before {
+  content: "\00b7";
+  margin-right: 4px;
+}
+
+.b_post.is_pinned .b_pinned {
+  display: inline;
+}
+
 .b_tools {
   display: none;
   position: absolute;
@@ -513,6 +528,17 @@ body {
 .content .b_imgs .clear {
   top: 5px;
   right: 5px;
+}
+
+.b_video {
+  margin-top: 10px;
+  font-size: 0;
+}
+
+.b_video video {
+  width: 100%;
+  max-height: 470px;
+  background: #000;
 }
 
 .b_goal {
@@ -1089,6 +1115,7 @@ body > .error {
   left: 10px;
   bottom: 10px;
   max-width: 300px;
+  z-index: 110;
 }
 
 .more_posts {

@@ -153,6 +153,9 @@ if (Config::get_safe("version", false)) {
 		<!-- Post Images -->
 		<div class="b_imgs"></div>
 
+		<!-- Post Video -->
+		<div class="b_video"><video controls preload="metadata" playsinline></video></div>
+
 		<!-- New Post -->
 		<div class="b_post new_post">
 			<div class="modal-header">
@@ -165,6 +168,10 @@ if (Config::get_safe("version", false)) {
 		<ul class="b_dropdown post_tools">
 			<li><a class="edit_post"><?php echo __("Edit Post"); ?></a></li>
 			<li><a class="edit_date"><?php echo __("Change Date"); ?></a></li>
+			<li>
+				<a class="pin"><?php echo __("Pin Post"); ?></a>
+				<a class="unpin"><?php echo __("Unpin Post"); ?></a>
+			</li>
 			<li>
 				<a class="hide"><?php echo __("Hide from Timeline"); ?></a>
 				<a class="show"><?php echo __("Show on Timeline"); ?></a>
@@ -206,7 +213,7 @@ if (Config::get_safe("version", false)) {
 						</table>
 						<div class="modal-footer">
 							<ul class="options">
-								<li class="kepet"><a><span><input type="file" accept="image/*,.heic,.heif" multiple class="photo_upload" name="file"></span></a></li>
+								<li class="kepet"><a><span><input type="file" accept="image/*,.heic,.heif,video/mp4,video/webm,video/ogg,video/quicktime,.mp4,.m4v,.mov,.webm,.ogv" multiple class="photo_upload" name="file"></span></a></li>
 								<li class="feeling"><a></a></li>
 								<li class="persons"><a></a></li>
 								<li class="location"><a></a></li>
@@ -303,6 +310,7 @@ if (Config::get_safe("version", false)) {
 					</div>
 					<i class="privacy_icon"></i>
 					<a class="b_date"></a>
+					<span class="b_pinned"><?php echo __("Pinned Post"); ?></span>
 					<a class="b_tools"></a>
 				</div>
 			</div>

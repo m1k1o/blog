@@ -6,6 +6,8 @@ class Image
 	const THUMB_W = 476;
 	const THUMB_H = 476;
 
+	const VIDEO_EXTENSIONS = ['mp4', 'm4v', 'mov', 'webm', 'ogv'];
+
 	const PHP_FILE_UPLOAD_ERRORS = [
 		0 => 'There is no error, the file uploaded with success.',
 		1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
@@ -193,15 +195,36 @@ class Image
 		return true;
 	}
 
-	public static function upload(){
+	private static function check_upload(){
 		if(!$_FILES){
+			// Request body is discarded by PHP, when it is larger than allowed
+			if(!empty($_SERVER['CONTENT_LENGTH'])){
+				throw new Exception("The uploaded file exceeds the post_max_size directive in php.ini.");
+			}
+
 			throw new Exception("No file.");
 		}
 
 		$error = $_FILES['file']['error'] ?? UPLOAD_ERR_NO_FILE;
 		if($error !== UPLOAD_ERR_OK){
-			throw new Exception(self::PHP_FILE_UPLOAD_ERRORS[$error]);
+			throw new Exception(self::PHP_FILE_UPLOAD_ERRORS[$error] ?? "File could not be uploaded.");
 		}
+	}
+
+	// Images always have a thumbnail, videos never have one
+	private static function find_duplicate($md5, $video = false){
+		return DB::get_instance()->query("
+			SELECT `path`, `thumb`
+			FROM `images`
+			WHERE `md5` = ?
+			AND `status` = 1
+			AND `thumb` IS ".($video ? "NULL" : "NOT NULL")."
+			LIMIT 1
+		", $md5)->first();
+	}
+
+	public static function upload(){
+		self::check_upload();
 
 		// Create MD5
 		$md5 = md5_file($_FILES['file']['tmp_name']);
@@ -252,10 +275,6 @@ class Image
 		}
 
 		return self::save($source_path, substr($name, 0, 255), $ext, $md5);
-	}
-
-	private static function find_duplicate($md5){
-		return DB::get_instance()->query("SELECT `path`, `thumb` FROM `images` WHERE `md5` = ? AND `status` = 1 LIMIT 1", $md5)->first();
 	}
 
 	// Store image in images directory and create its thumbnail, source file is moved
@@ -318,6 +337,74 @@ class Image
 		return [
 			"path" => $path,
 			"thumb" => $thumb
+		];
+	}
+
+	private static function is_video($path){
+		$mime = (new finfo(FILEINFO_MIME_TYPE))->file($path);
+		return is_string($mime) && str_starts_with($mime, 'video/');
+	}
+
+	public static function upload_video(){
+		self::check_upload();
+
+		// Get metadata
+		$name = $_FILES['file']['name'];
+		$ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+
+		// Validate extension against supported video types
+		if (!in_array($ext, self::VIDEO_EXTENSIONS, true)) {
+			throw new Exception("File type not allowed.");
+		}
+
+		if (!extension_loaded('fileinfo')) {
+			throw new Exception("Videos are not supported, fileinfo extension is required.");
+		}
+
+		// Check content, so that only videos are stored with video extension
+		if (!self::is_video($_FILES['file']['tmp_name'])) {
+			throw new Exception("File is not valid video.");
+		}
+
+		// Create MD5
+		$md5 = md5_file($_FILES['file']['tmp_name']);
+
+		// Find duplicate
+		if($d = self::find_duplicate($md5, true)){
+			return ["path" => $d["path"]];
+		}
+
+		// Videos are stored together with images, they have no thumbnail
+		$_images_path = Config::get('images_path');
+		if(!is_dir($_images_path) && !mkdir($_images_path, 0755, true)){
+			throw new Exception("Images directory could not be created.");
+		}
+
+		// Save to DB
+		$id = DB::get_instance()->insert('images', [
+			'name' => $name,
+			'type' => $ext,
+			'md5' => $md5,
+			'datetime' => 'NOW()',
+			'status' => 0,
+		])->last_id();
+
+		// Create path name
+		$path = $_images_path.dechex($id).self::random_str(3).".".$ext;
+
+		// Save path
+		if(!move_uploaded_file($_FILES['file']['tmp_name'], $path)){
+			throw new Exception("File could not be saved.");
+		}
+
+		// Save to DB
+		DB::get_instance()->update('images', [
+			'path' => $path,
+			'status' => 1,
+		], "WHERE `id` = ?", $id);
+
+		return [
+			"path" => $path
 		];
 	}
 }

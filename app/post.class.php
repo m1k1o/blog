@@ -89,6 +89,32 @@ class Post
 		return $parser->getAsHtml();
 	}
 
+	// Format date of a post for display, see `datetime_format` in config
+	private static function format_datetime($timestamp){
+		$format = (string)Config::get_safe("datetime_format", "d M Y H:i");
+
+		// Full month name (F) is translated to the selected language,
+		// it is inserted into the format as escaped characters
+		$month = '';
+		foreach(str_split(__(date("F", $timestamp))) as $char){
+			$month .= '\\'.$char;
+		}
+
+		$output = '';
+		for($i = 0; $i < strlen($format); $i++){
+			if($format[$i] === '\\'){
+				// Keep escaped character as it is
+				$output .= substr($format, $i++, 2);
+			} else if($format[$i] === 'F'){
+				$output .= $month;
+			} else {
+				$output .= $format[$i];
+			}
+		}
+
+		return date($output, $timestamp);
+	}
+
 	private static function raw_data($raw_input){
 		$default_input = [
 			"text" => '',
@@ -135,7 +161,7 @@ class Post
 
 		$data['id'] = DB::get_instance()->insert('posts', $data)->last_id();
 
-		$data['datetime'] = date("d M Y H:i");
+		$data['datetime'] = self::format_datetime(time());
 		unset($data['plain_text']);
 
 		return $data;
@@ -180,6 +206,30 @@ class Post
 		return true;
 	}
 
+	public static function pin($r){
+		self::login_protected();
+
+		DB::get_instance()->query("
+			UPDATE `posts`
+			SET `status` = 2
+			WHERE `id` = ?
+			AND `status` <> 5
+		", $r["id"]);
+		return true;
+	}
+
+	public static function unpin($r){
+		self::login_protected();
+
+		DB::get_instance()->query("
+			UPDATE `posts`
+			SET `status` = 1
+			WHERE `id` = ?
+			AND `status` = 2
+		", $r["id"]);
+		return true;
+	}
+
 	public static function delete($r){
 		self::login_protected();
 
@@ -211,7 +261,7 @@ class Post
 			WHERE `id` = ?
 		", $id);
 
-		// Remove uploaded images, that are not used in any other post
+		// Remove uploaded and saved images and videos, that are not used in any other post
 		foreach(self::content_images($post["content_type"], $post["content"]) as $path){
 			Image::delete_unused($path);
 		}
@@ -219,7 +269,7 @@ class Post
 		return true;
 	}
 
-	// Get paths of uploaded and saved images from post content
+	// Get paths of uploaded and saved images and videos from post content
 	private static function content_images($content_type, $content){
 		$content = json_decode((string)$content, true);
 		if(!is_array($content)){
@@ -232,7 +282,7 @@ class Post
 			return isset($content[$link_image]) && is_string($content[$link_image]) ? [$content[$link_image]] : [];
 		}
 
-		// Single image is an object, multiple images are a list of objects
+		// Single image or video is an object, multiple images are a list of objects
 		$images = array_key_exists("path", $content) ? [$content] : $content;
 
 		$paths = [];
@@ -294,7 +344,7 @@ class Post
 			WHERE `id` = ?
 			AND `status` <> 5
 		", $datetime, $r["id"]);
-		return [ "datetime" => date("d M Y H:i", strtotime($datetime)) ];
+		return [ "datetime" => self::format_datetime(strtotime($datetime)) ];
 	}
 
 	public static function parse_link($r){
@@ -511,6 +561,12 @@ class Post
 		return Image::upload();
 	}
 
+	public static function upload_video(){
+		self::login_protected();
+
+		return Image::upload_video();
+	}
+
 	public static function load($r){
 		$from = [];
 		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", $r["filter"]["from"] ?? '')){
@@ -550,20 +606,16 @@ class Post
 			$person = $r["filter"]["person"];
 		}
 
-		if (DB::connection() === 'sqlite') {
-			$datetime = "strftime('%d %m %Y %H:%M', `posts`.`datetime`)";
-		} else if (DB::connection() === 'postgres') {
-			$datetime = "to_char(posts.datetime,'DD Mon YYYY HH24:MI')";
-		} else {
-			$datetime = "DATE_FORMAT(`posts`.`datetime`,'%d %b %Y %H:%i')";
-		}
-
 		$like_match = "LIKE ".DB::concat("'%'", "?", "'%'");
 
-		return DB::get_instance()->query("
+		// Pinned posts are shown on top of the timeline, but not in filtered results
+		$pinned_first = !$from && !$to && !$id && !$tag && !$loc && !$person;
+
+		$posts = DB::get_instance()->query("
 			SELECT
-				`id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`,
-				$datetime AS `datetime`, (`status` <> 1) AS `is_hidden`
+				`id`, `text`, `feeling`, `persons`, `location`, `privacy`, `content_type`, `content`, `datetime`,
+				CASE WHEN `status` = 4 THEN 1 ELSE 0 END AS `is_hidden`,
+				CASE WHEN `status` = 2 THEN 1 ELSE 0 END AS `is_pinned`
 			FROM `posts`
 			WHERE ".
 				(!User::is_logged_in() ? (User::is_visitor() ? "`privacy` IN ('public', 'friends') AND " : "`privacy` = 'public' AND ") : "").
@@ -574,10 +626,21 @@ class Post
 				($loc ? "`location` $like_match AND " : "").
 				($person ? "`persons` $like_match AND " : "").
 				"`status` <> 5
-			ORDER BY `posts`.`datetime` ".(@$r["sort"] == 'reverse' ? "ASC" : "DESC")."
+			ORDER BY ".($pinned_first ? "CASE WHEN `status` = 2 THEN 0 ELSE 1 END, " : "")."`posts`.`datetime` ".(@$r["sort"] == 'reverse' ? "ASC" : "DESC")."
 			LIMIT ? OFFSET ?
 			", $from, $to, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
 		)->all();
+
+		// Dates are formatted here, so they look the same with every database
+		foreach($posts as &$post){
+			$timestamp = strtotime((string)$post["datetime"]);
+			if($timestamp !== false){
+				$post["datetime"] = self::format_datetime($timestamp);
+			}
+		}
+		unset($post);
+
+		return $posts;
 	}
 
 	public static function login($r){

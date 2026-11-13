@@ -180,6 +180,16 @@ If you have decided that you don't want to use Docker, you can intall it manuall
 ### Database Schema
 You can find database schema in `./app/db` folder.
 
+### Emojis in MySQL
+MySQL tables created with older versions use the `utf8` charset, which can't store emojis and other 4-byte characters, so they are removed from posts. To keep them, convert the tables to `utf8mb4`:
+
+```sql
+ALTER TABLE `posts` CONVERT TO CHARACTER SET utf8mb4;
+ALTER TABLE `images` CONVERT TO CHARACTER SET utf8mb4;
+```
+
+Emojis are removed until both tables are converted. New MySQL databases, SQLite and Postgres support them out of the box.
+
 ### Debug mode
 To check if your server is set up correctly, turn on a debug mode (in config add `debug = true`) to see the details. In the debug mode, an error may be shown if you are missing some **PHP extensions** needed to be installed on your server.
 
@@ -192,9 +202,11 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 
 * Dark mode, retina ready, legacy theme available.
 * Use BBcode in texts, see [Text formatting](#text-formatting).
+* Use emojis in posts 🎉 *(MySQL databases created with older versions need to be converted, see [Emojis in MySQL](#emojis-in-mysql))*.
 * Make posts available for **everyone**, **only you** or just for **friends**.
 * Extra fields in post: **Feeling**, **With** and **At**.
 * Hide posts from timeline so they are visible only when you need them to be.
+* Pin posts to the top of the timeline, e.g. to always show an important announcement first *(pinned posts are not moved to the top when posts are filtered)*.
 * Delete posts permanently, including their uploaded images *(set `hard_delete = true` in config, by default deleted posts are kept in the database)*.
 * All pasted links will get preview with page title, description and image (can be configured proxy).
 * Images of link previews and pasted image links are saved on your server, so they are preserved when the linked page goes down *(set `save_link_images = false` in config to load them from the linked page instead)*.
@@ -203,6 +215,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Upload images using CTRL + V *(paste it into textarea)*. 
 * Add multiple images to a single post, they are shown as a grid and can be browsed in a gallery.
 * HEIC images are converted to JPEG on upload *(requires PHP `imagick` extension with HEIC support, included in Docker image)*.
+* Upload videos *(MP4, WebM, Ogg or MOV)* using button or drag & drop, they are played directly in the post. A post can have either images or a single video. Uploads are limited to 256 MB, the limit can be changed in `.htaccess` *(`upload_max_filesize` and `post_max_size`)*.
 * Highlight code in post using `[code]..your code..[/code]`.
 * Highlight your goal using `[goal]Text of your goal.[/goal]`.
 * Use tags in posts (allowed characters `A-Za-z0-9-_` terminated by space or EOL): `#song`.
@@ -288,6 +301,14 @@ friends[thomas] = anotherpass
 
 ## Localisation
 Timezone can be set in config or, for docker users, `TZ` environment variable is supported. List of timezones can be found [here](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+### Date format
+Dates of posts are shown as `13 Nov 2026 18:30` by default. The format can be changed with `datetime_format` in config (or `BLOG_DATETIME_FORMAT` environment variable), using [PHP date format](https://www.php.net/manual/en/datetime.format.php) characters. Full month names (`F`) are translated to the selected language, e.g. `j. F Y, H:i` is shown as `13. November 2026, 18:30` in German.
+
+```ini
+[language]
+datetime_format = "j. F Y, H:i"
+```
 
 ### Language support
 Feel free to create new PR and add a new language. Specify language in config or in url: `http://blog/?hl=sk`.
