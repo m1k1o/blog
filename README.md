@@ -180,6 +180,16 @@ If you have decided that you don't want to use Docker, you can intall it manuall
 ### Database Schema
 You can find database schema in `./app/db` folder.
 
+### Emojis in MySQL
+MySQL tables created with older versions use the `utf8` charset, which can't store emojis and other 4-byte characters, so they are removed from posts. To keep them, convert the tables to `utf8mb4`:
+
+```sql
+ALTER TABLE `posts` CONVERT TO CHARACTER SET utf8mb4;
+ALTER TABLE `images` CONVERT TO CHARACTER SET utf8mb4;
+```
+
+Emojis are removed until both tables are converted. New MySQL databases, SQLite and Postgres support them out of the box.
+
 ### Debug mode
 To check if your server is set up correctly, turn on a debug mode (in config add `debug = true`) to see the details. In the debug mode, an error may be shown if you are missing some **PHP extensions** needed to be installed on your server.
 
@@ -192,6 +202,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 
 * Dark mode, retina ready, legacy theme available.
 * Use BBcode in texts, see [Text formatting](#text-formatting).
+* Use emojis in posts 🎉 *(MySQL databases created with older versions need to be converted, see [Emojis in MySQL](#emojis-in-mysql))*.
 * Make posts available for **everyone**, **only you** or just for **friends**.
 * Extra fields in post: **Feeling**, **With** and **At**.
 * Hide posts from timeline so they are visible only when you need them to be.

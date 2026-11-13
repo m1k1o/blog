@@ -11,6 +11,9 @@ class DB
 
 	private $_query_counter;
 
+	// Can 4-bytes characters (e.g. emojis) be stored?
+	private $_utf8mb4 = null;
+
 	// Handle instances
 	public final static function get_instance(){
 		if(self::$_instance === null){
@@ -72,7 +75,7 @@ class DB
 				// DB
 				';dbname='.Config::get('db_name').
 				// Charset
-				';charset=utf8',
+				';charset=utf8mb4',
 				// Username
 				Config::get('mysql_user'),
 				// Password
@@ -86,7 +89,7 @@ class DB
 
 			$this->_PDO->exec(
 				// Set charset
-				'SET NAMES utf8;'.
+				'SET NAMES utf8mb4;'.
 
 				// Set timezone
 				'SET time_zone="'.date('P').'";'
@@ -189,14 +192,33 @@ class DB
 			return $key;
 		}
 
-		// BUG: Force strings to be UTF-8
-		// remove all 4-bytes characters.
-		if(is_string($value)){
+		// Remove all 4-bytes characters, if they can't be stored
+		if(is_string($value) && preg_match('/[\xF0-\xF7]/', $value) && !$this->utf8mb4()){
 			$value = preg_replace('/[\xF0-\xF7].../s', '', $value);
 		}
 
 		$this->_query->bindValue($key, $value);
 		return ++$key;
+	}
+
+	// MySQL tables created with older versions use utf8 charset, that can't store
+	// 4-bytes characters. SQLite and Postgres store them without problems.
+	private function utf8mb4(){
+		if($this->_utf8mb4 === null){
+			$this->_utf8mb4 = true;
+
+			if(DB::connection() === 'mysql'){
+				$this->_utf8mb4 = $this->_PDO->query("
+					SELECT COUNT(*)
+					FROM `information_schema`.`COLUMNS`
+					WHERE `TABLE_SCHEMA` = DATABASE()
+					AND `TABLE_NAME` IN ('posts', 'images')
+					AND `CHARACTER_SET_NAME` <> 'utf8mb4'
+				")->fetchColumn() == 0;
+			}
+		}
+
+		return $this->_utf8mb4;
 	}
 
 	// Process Query
