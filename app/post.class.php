@@ -3,7 +3,7 @@ defined('PROJECT_PATH') OR exit('No direct script access allowed');
 
 class Post
 {
-	private static function login_protected(){
+	protected static function login_protected(){
 		if(!User::is_logged_in()){
 			throw new Exception(__("You need to be logged in to perform this action."));
 		}
@@ -87,7 +87,7 @@ class Post
 	}
 
 	// Format date of a post for display, see `datetime_format` in config
-	private static function format_datetime($timestamp){
+	protected static function format_datetime($timestamp){
 		$format = (string)Config::get_safe("datetime_format", "d M Y H:i");
 
 		// Full month name (F) is translated to the selected language,
@@ -267,7 +267,7 @@ class Post
 	}
 
 	// Get paths of uploaded images and videos from post content
-	private static function content_images($content){
+	protected static function content_images($content){
 		$content = json_decode((string)$content, true);
 		if(!is_array($content)){
 			return [];
@@ -500,49 +500,71 @@ class Post
 		return Image::upload_video();
 	}
 
-	public static function load($r){
-		$from = [];
-		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", $r["filter"]["from"] ?? '')){
-			$from = $r["filter"]["from"]."-01 00:00";
+	// SQL conditions and values selecting posts that match the filter
+	protected static function filter_query($filter){
+		if(!is_array($filter)){
+			$filter = [];
 		}
 
-		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $r["filter"]["from"] ?? '')){
-			$from = $r["filter"]["from"]." 00:00";
+		$from = [];
+		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", $filter["from"] ?? '')){
+			$from = $filter["from"]."-01 00:00";
+		}
+
+		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $filter["from"] ?? '')){
+			$from = $filter["from"]." 00:00";
 		}
 
 		$to = [];
-		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", $r["filter"]["to"] ?? '')){
-			$to = $r["filter"]["to"]."-01 00:00";
+		if(preg_match("/^[0-9]{4}-[0-9]{2}$/", $filter["to"] ?? '')){
+			$to = $filter["to"]."-01 00:00";
 		}
 
-		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $r["filter"]["to"] ?? '')){
-			$to = $r["filter"]["to"]." 00:00";
+		if(preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $filter["to"] ?? '')){
+			$to = $filter["to"]." 00:00";
 		}
 
 		$id = [];
-		if(@$r["filter"]["id"]){
-			$id = intval($r["filter"]["id"]);
+		if(@$filter["id"]){
+			$id = intval($filter["id"]);
 		}
 
 		$tag = [];
-		if(preg_match("/^[A-Za-z0-9-_]+$/", $r["filter"]["tag"] ?? '')){
-			$tag = '#'.$r["filter"]["tag"];
+		if(preg_match("/^[A-Za-z0-9-_]+$/", $filter["tag"] ?? '')){
+			$tag = '#'.$filter["tag"];
 		}
 
 		$loc = [];
-		if(@$r["filter"]["loc"]){
-			$loc = $r["filter"]["loc"];
+		if(@$filter["loc"]){
+			$loc = $filter["loc"];
 		}
 
 		$person = [];
-		if(@$r["filter"]["person"]){
-			$person = $r["filter"]["person"];
+		if(@$filter["person"]){
+			$person = $filter["person"];
 		}
 
 		$like_match = "LIKE ".DB::concat("'%'", "?", "'%'");
 
+		$where =
+			(!User::is_logged_in() ? (User::is_visitor() ? "`privacy` IN ('public', 'friends') AND " : "`privacy` = 'public' AND ") : "").
+			($from ? "`posts`.`datetime` > ? AND " : "").
+			($to ? "`posts`.`datetime` < ? AND " : "").
+			($id ? "`id` = ? AND " : "").
+			($tag ? "`plain_text` $like_match AND " : "").
+			($loc ? "`location` $like_match AND " : "").
+			($person ? "`persons` $like_match AND " : "").
+			"`status` <> 5";
+
+		// Unused conditions have empty values, that are not bound
+		return [$where, [$from, $to, $id, $tag, $loc, $person]];
+	}
+
+	public static function load($r){
+		list($where, $values) = self::filter_query($r["filter"] ?? []);
+
 		// Pinned posts are shown on top of the timeline, but not in filtered results
-		$pinned_first = !$from && !$to && !$id && !$tag && !$loc && !$person;
+		$pinned_first = !array_filter($values);
 
 		$posts = DB::get_instance()->query("
 			SELECT
@@ -550,18 +572,10 @@ class Post
 				CASE WHEN `status` = 4 THEN 1 ELSE 0 END AS `is_hidden`,
 				CASE WHEN `status` = 2 THEN 1 ELSE 0 END AS `is_pinned`
 			FROM `posts`
-			WHERE ".
-				(!User::is_logged_in() ? (User::is_visitor() ? "`privacy` IN ('public', 'friends') AND " : "`privacy` = 'public' AND ") : "").
-				($from ? "`posts`.`datetime` > ? AND " : "").
-				($to ? "`posts`.`datetime` < ? AND " : "").
-				($id ? "`id` = ? AND " : "").
-				($tag ? "`plain_text` $like_match AND " : "").
-				($loc ? "`location` $like_match AND " : "").
-				($person ? "`persons` $like_match AND " : "").
-				"`status` <> 5
+			WHERE $where
 			ORDER BY ".($pinned_first ? "CASE WHEN `status` = 2 THEN 0 ELSE 1 END, " : "")."`posts`.`datetime` ".(@$r["sort"] == 'reverse' ? "ASC" : "DESC")."
 			LIMIT ? OFFSET ?
-			", $from, $to, $id, $tag, $loc, $person, $r["limit"], $r["offset"]
+			", $values, $r["limit"], $r["offset"]
 		)->all();
 
 		// Dates are formatted here, so they look the same with every database

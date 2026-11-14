@@ -7,6 +7,9 @@ RUN set -eux; apt-get update; \
 	zlib1g-dev libpng-dev libjpeg62-turbo-dev \
 	libwebp-dev libxpm-dev libfreetype-dev \
 	#
+	# install zip dependencies (zip is needed to export posts)
+	libzip-dev \
+	#
 	# install imagick dependencies (libheif plugin is needed for HEIC images)
 	libmagickwand-7.q16-10 libheif-plugin-libde265 libmagickwand-dev; \
 	#
@@ -18,7 +21,7 @@ RUN set -eux; apt-get update; \
 	--with-jpeg --with-webp --with-xpm --with-freetype; \
 	#
 	# install extensions (curl and pdo are built into the base image)
-	docker-php-ext-install gd pdo_mysql pdo_pgsql exif; \
+	docker-php-ext-install gd pdo_mysql pdo_pgsql exif zip; \
 	pecl install imagick; \
 	docker-php-ext-enable imagick; \
 	#
