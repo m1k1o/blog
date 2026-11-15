@@ -56,10 +56,10 @@ class Export extends Post
 		}
 	}
 
-	// Uploaded images (including thumbnails) and videos used by the post
-	private static function uploads($content){
+	// Uploaded and saved images (including thumbnails) and videos used by the post
+	private static function uploads($content_type, $content){
 		$files = [];
-		foreach(self::content_images($content) as $path){
+		foreach(self::content_images($content_type, $content) as $path){
 			// Only files uploaded to the blog are exported
 			$image = DB::get_instance()->query("
 				SELECT `path`, `thumb`
@@ -326,7 +326,7 @@ class Export extends Post
 		}
 
 		foreach($posts as $post){
-			foreach(self::uploads($post["content"]) as $path){
+			foreach(self::uploads($post["content_type"], $post["content"]) as $path){
 				self::add_file($zip, $added, $path);
 			}
 		}
