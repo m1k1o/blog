@@ -12,7 +12,16 @@ class Post
 		}
 	}
 
+	// Convert text of a post to HTML, see `formatting` in config
 	private static function parse_content($c){
+		if(Config::get_safe("formatting", "bbcode") === "markdown"){
+			return (new Markdown())->text($c);
+		}
+
+		return self::parse_bbcode($c);
+	}
+
+	private static function parse_bbcode($c){
 		$parser = new JBBCode\Parser();
 		$parser->addCodeDefinitionSet(new JBBCode\DefaultCodeDefinitionSet());
 

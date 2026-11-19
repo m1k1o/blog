@@ -201,7 +201,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 # Features
 
 * Dark mode, retina ready, legacy theme available.
-* Use BBcode in texts, see [Text formatting](#text-formatting).
+* Use BBCode or Markdown in texts, see [Text formatting](#text-formatting).
 * Use emojis in posts 🎉 *(MySQL databases created with older versions need to be converted, see [Emojis in MySQL](#emojis-in-mysql))*.
 * Make posts available for **everyone**, **only you** or just for **friends**.
 * Extra fields in post: **Feeling**, **With** and **At**.
@@ -241,6 +241,10 @@ Export requires the PHP `zip` extension *(included in Docker image)*.
 
 ## Text formatting
 
+Posts are formatted using BBCode by default. To use [Markdown](#markdown) instead, set `formatting = markdown` in config (or `BLOG_FORMATTING=markdown` environment variable).
+
+### BBCode
+
 Posts support the following BBCode tags:
 
 | Tag | Result |
@@ -269,6 +273,30 @@ Other tags, such as `[s]` or `[list]`, are not supported and are shown as plain 
 [bbcode]
 bbtags[quote] = "<blockquote>{param}</blockquote>"
 ```
+
+### Markdown
+
+With `formatting = markdown`, posts support Markdown, e.g.:
+
+| Markdown | Result |
+| --- | --- |
+| `**text**` | **Bold** text. |
+| `*text*` or `_text_` | *Italic* text (with BBCode, `*text*` is bold). |
+| `~~text~~` | ~~Strikethrough~~ text. |
+| `[text](https://example.com)` | Link with custom text. |
+| `![alt text](https://example.com/image.png)` | Image with alternative text. |
+| `` `code` `` | Inline code. |
+| `> text` | Quote. |
+| `# Title`, `## Title`, ... | Headings, a space is required after `#`. |
+| `- item` or `1. item` | Bulleted or numbered list. |
+| `---` | Horizontal line, it needs an empty line above it (otherwise the line above becomes a heading). |
+| <code>&#124; a &#124; b &#124;</code> | Table, rows are separated by new lines and the header row is followed by <code>&#124; --- &#124; --- &#124;</code>. |
+
+Code blocks are written between lines with three backticks, language can be specified after them, e.g. ` ```css `. They are highlighted when `highlight = true` is set in config (enabled by default).
+
+As with BBCode, `http://` and `https://` URLs are converted to links, `#tags` can be clicked to filter posts and new lines are kept. Links to other pages are opened in a new tab. HTML is not allowed and is shown as plain text. `[goal]` and custom `bbtags` are not available in Markdown.
+
+Changing `formatting` doesn't change existing posts, they are shown as they were saved. It applies to new posts and to posts that are edited afterwards, so when you edit an older post, update its formatting as well.
 
 ## Access control
 

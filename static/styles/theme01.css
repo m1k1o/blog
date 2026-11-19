@@ -319,6 +319,80 @@ body {
   text-decoration: underline;
 }
 
+/* Markdown */
+.b_text p,
+.b_text ul,
+.b_text ol,
+.b_text pre,
+.b_text table,
+.b_text blockquote {
+  margin: 0 0 10px;
+}
+
+.b_text > p:last-child,
+.b_text > ul:last-child,
+.b_text > ol:last-child,
+.b_text > pre:last-child,
+.b_text > table:last-child,
+.b_text > blockquote:last-child {
+  margin-bottom: 0;
+}
+
+.b_text h1,
+.b_text h2,
+.b_text h3,
+.b_text h4,
+.b_text h5,
+.b_text h6 {
+  margin: 0 0 10px;
+  font-size: 1.15em;
+}
+
+.b_text h1 {
+  font-size: 1.5em;
+}
+
+.b_text h2 {
+  font-size: 1.3em;
+}
+
+.b_text ul,
+.b_text ol {
+  padding-left: 25px;
+}
+
+.b_text blockquote {
+  padding-left: 10px;
+  border-left: 3px solid #ced0d4;
+  color: #90949c;
+}
+
+.b_text img {
+  max-width: 100%;
+}
+
+.b_text table {
+  border-collapse: collapse;
+}
+
+.b_text th,
+.b_text td {
+  padding: 4px 8px;
+  border: 1px solid #ced0d4;
+}
+
+.b_text hr {
+  border: 0;
+  border-top: 1px solid #ced0d4;
+}
+
+.b_text :not(pre) > code:not([class]) {
+  padding: 1px 4px;
+  border-radius: 3px;
+  white-space: pre-wrap;
+  background: #f6f7f9;
+}
+
 .b_link {
   padding: 1px;
   display: block;
