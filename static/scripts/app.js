@@ -941,9 +941,9 @@ $.fn.post_fill = function(data){
 		});
 	}
 
-	// Highlight
+	// Highlight code blocks, inline code of Markdown has no class and is not highlighted
 	if(typeof hljs !== "undefined"){
-		post.find("code").each(function(i, block) {
+		post.find("code[class], pre code").each(function(i, block) {
 			hljs.highlightBlock(block);
 		});
 	}

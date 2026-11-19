@@ -208,7 +208,7 @@ class Export extends Post
 
 		// Code is highlighted the same way as on the timeline
 		if(Config::get_safe("highlight", false)){
-			$scripts_html .= '<script>$(".b_post code").each(function(i, block){ hljs.highlightBlock(block); });</script>'.PHP_EOL;
+			$scripts_html .= '<script>$(".b_post").find("code[class], pre code").each(function(i, block){ hljs.highlightBlock(block); });</script>'.PHP_EOL;
 		}
 
 		$cover = Config::get_safe("cover", false)
