@@ -201,6 +201,7 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 # Features
 
 * Dark mode, retina ready, legacy theme available.
+* Timeline gets wider on bigger screens, so it uses more space on Full HD, 2K or 4K displays, see [Layout](#layout).
 * Use BBCode or Markdown in texts, see [Text formatting](#text-formatting).
 * Use emojis in posts 🎉 *(MySQL databases created with older versions need to be converted, see [Emojis in MySQL](#emojis-in-mysql))*.
 * Make posts available for **everyone**, **only you** or just for **friends**.
@@ -226,6 +227,29 @@ To check if your server is set up correctly, turn on a debug mode (in config add
 * Display posts to chosen date using (format YYYY-MM-DD or YYY-MM): `http://blog/#to=2017-06`.
 * Combine parameters in url using `&`, e.g. show posts between dates: `http://blog/#from=2017-06&to=2017-08`.
 * Export posts as a static page using the **Export** button, see [Export](#export).
+
+## Layout
+
+The default theme (`theme02`) adapts to the screen size. On screens at least 1280px wide, the timeline, the post editor and images are larger, and on screens at least 1920px wide they are larger again. The cover image is stretched to the full width of the header:
+
+| Screen width | Timeline | Header | Images and videos (max. height) | Link preview images |
+| --- | --- | --- | --- | --- |
+| below 1280px | 502px | 850px | 470px | 260px |
+| from 1280px | 680px | 1000px | 640px | 352px |
+| from 1920px | 850px | 1100px | 800px | 440px |
+
+The sizes are CSS variables, so they can be changed with a custom stylesheet (`styles[]` in config). For example, to keep the narrow timeline on every screen:
+
+```css
+:root {
+  --feed-width: 502px;
+  --headbar-width: 850px;
+  --media-max-height: 470px;
+  --link-thumb-height: 260px;
+}
+```
+
+The legacy theme (`theme01`) keeps the fixed width.
 
 ## Export
 
